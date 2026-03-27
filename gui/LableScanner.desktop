@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/cbm/ST3/bin/sh_lable_scanner.sh
+GenericName[en_US]=Lable Scanner
+GenericName=Lable Scanner
+Icon=/home/cbm/ST3/gui/LableScanner.png
+MimeType=
+Name[en_US]=Lable Scanner
+Name=Lable Scanner
+Path=/home/cbm/ST3
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

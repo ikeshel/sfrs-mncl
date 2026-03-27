@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/irakli/ST3/bin/sh_ldotest.sh
+GenericName[en_US]=
+GenericName=
+Icon=/home/irakli/ST3/gui/LDO_icon.png
+MimeType=
+Name[en_US]=LDO_test
+Name=LDO_test
+Path=/home/irakli/ST3
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

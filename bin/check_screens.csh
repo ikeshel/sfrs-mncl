@@ -2,7 +2,12 @@
 
 # i.keshelashvili@gsi.de
 
-source /home/irakli/mncl/bin/list_of_nodes.csh
+set list_of_screens = "list_of_screens.csv"
+
+if (! -f $list_of_screens) then
+    echo "\033[5;31mError: list_of_screens.csv file not found\033[0m"
+    exit 1
+endif
 
 foreach session ($sessions)
     # Check if screen session already exists
