@@ -2,8 +2,7 @@
 
 # i.keshelashvili@gsi.de
 
-# List of screen sessions to create
-set sessions = (mbs web)
+source /home/irakli/mncl/bin/list_of_nodes.csh
 
 foreach session ($sessions)
     # Check if screen session already exists

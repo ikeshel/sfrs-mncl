@@ -1,7 +1,8 @@
 #!/bin/csh
 
-# List of screen sessions to close
-set sessions = (mbs web)
+# i.keshelashvili@gsi.de
+
+source /home/irakli/mncl/bin/list_of_nodes.csh
 
 foreach session ($sessions)
     # Check if screen session exists
