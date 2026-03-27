@@ -13,11 +13,11 @@ source bin/read_config.csh
 
 foreach node ($list_paras)
     # Check if ssh connection can be established to the node
-    ssh -o BatchMode=yes -o ConnectTimeout=3 pi@$node "echo ok" >& /dev/null
+    ssh -o BatchMode=yes -o ConnectTimeout=3 ikeshel@$node "echo ok" >& /dev/null
 
     if ($status == 0) then
         echo "Node $node is alive (SSH reachable)"
-        exit 0
+	continue
     endif
     echo "Node $node is not reachable via SSH"
 end
