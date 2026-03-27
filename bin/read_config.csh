@@ -35,7 +35,7 @@ foreach line ("`cat $conf_file`")
     set para = $line[1] # First element is the para
     set name = $line[2] # Second element is the name
     if ($vv) then
-        echo "Read para: $para, name: $name"
+        echo "para: $para --> name: $name"
     endif
     set list_paras = ($list_paras $para)
     set list_names = ($list_names $name)

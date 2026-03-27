@@ -11,15 +11,14 @@ endif
 
 source bin/read_config.csh
 
-foreach session ($list_paras)
-    # Check if screen session already exists
-    # Ping raspi4 once with short timeout
-    ping -c 1 -W 2 $session >& /dev/null
+foreach node ($list_paras)
+
+    ping -c 1 -W 2 $node >& /dev/null
 
     if ($status == 0) then
-        echo "$session is alive"
+        echo "Node $node is alive"
     else
-        echo "$session is not reachable"
+        echo "Node $node is not reachable"
     endif
 end
 
