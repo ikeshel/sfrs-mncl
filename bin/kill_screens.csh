@@ -2,17 +2,22 @@
 
 # i.keshelashvili@gsi.de
 
-set list_of_screens = "list_of_screens.csv"
+# This script reads the list of screen sessions from the list_of_screens.conf file and kills them if they exist. 
+# It also prints the list of active screens after killing.   
 
-if (! -f $list_of_screens) then
-    echo "\033[5;31mError: list_of_screens.csv file not found\033[0m"
+set conf_file = "list_of_screens.conf"
+
+# Check if the list_of_screens.conf file exists
+if (! -f $conf_file) then
+    echo "\033[5;31mError: $conf_file file not found\033[0m"
     exit 1
 endif
 
-set sessions = `awk -F',' '{print $1}' $list_of_screens`
-echo "Sessions to kill: $sessions"
+# Source the read_config.csh script to read the list of screens
+source bin/read_config.csh
 
-foreach session ($sessions)
+# Loop through the list of screens and kill them if they exist
+foreach session ($list_paras)
     # Check if screen session exists
     if (`screen -ls | grep -c "\.$session"` > 0) then
         echo "Closing screen session: $session"
@@ -22,5 +27,6 @@ foreach session ($sessions)
     endif
 end
 
+# Print the list of active screens after killing
 echo ""
 screen -ls

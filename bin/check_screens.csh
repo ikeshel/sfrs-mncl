@@ -2,14 +2,16 @@
 
 # i.keshelashvili@gsi.de
 
-set list_of_screens = "list_of_screens.csv"
+set conf_file = "list_of_screens.conf"
 
-if (! -f $list_of_screens) then
-    echo "\033[5;31mError: list_of_screens.csv file not found\033[0m"
+if (! -f $conf_file) then
+    echo "\033[5;31mError: $conf_file file not found\033[0m"
     exit 1
 endif
 
-foreach session ($sessions)
+source bin/read_config.csh
+
+foreach session ($list_paras)
     # Check if screen session already exists
     if (`screen -ls | grep -c "\.$session"` == 0) then
         echo "Creating screen session: $session"
@@ -20,6 +22,6 @@ foreach session ($sessions)
 end
 
 echo ""
-echo "Done. Active sessions:"
+echo "List of active list_paras:"
 screen -ls
 
