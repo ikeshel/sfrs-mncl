@@ -1,0 +1,20 @@
+#
+# Python Dependencies Documentation
+# This file contains a list of Python package dependencies required for the project.
+#
+## How to Install Dependencies
+#
+# To install all dependencies listed in this file, use pip:
+# pip3 install -r python_dependencies.txt
+
+#
+loguru
+requests
+numpy
+pyserial
+opencv-python
+python-xlib
+PyQt5
+pyqtgraph
+bs4
+pyyaml
