@@ -62,7 +62,7 @@ class MainWindow(QMainWindow,
                          f"width={self.ww}, height={self.hh}")
             self.move(self.xx, self.yy)
             # self.resize(self.ww, self.hh)
-            self.setFixedWidth(self.ww)
+            self.setFixedWidth(600)
 
         else:
             # screen = Display(os.environ['DISPLAY']).screen() 
@@ -83,7 +83,7 @@ class MainWindow(QMainWindow,
 
         node = QWidget()
         node.setObjectName(f"node_{name}")
-        node.setFixedSize(400, 150)
+        # node.setFixedSize(400, 150)
         node.setStyleSheet("background-color: white; border: 1px solid black;")
 
         # Create the SVG widget and add it to the container
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow,
 
         self.lbl_node_name = QtWidgets.QLabel(node)
         self.lbl_node_name.setObjectName(f"lbl_{name}")
-        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 70, 35))
+        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 90, 40))
         self.lbl_node_name.setAlignment(Qt.AlignCenter)
         self.lbl_node_name.setFont(QFont("Arial", 10, QFont.Bold))
         self.lbl_node_name.setText(f"{name}\n{link}")

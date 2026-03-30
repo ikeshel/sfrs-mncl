@@ -787,3 +787,108 @@
 26-03-30 16:48:38 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=412, height=504
 26-03-30 16:49:26 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
 26-03-30 16:49:26 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 16:59:51 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 16:59:51 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 412, 'x_position': 1680, 'y_position': 0}
+26-03-30 16:59:51 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=412, height=504
+26-03-30 17:06:21 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:06:21 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:06:59 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:06:59 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 412, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:06:59 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=412, height=504
+26-03-30 17:07:09 | DEBUG    | mbs_node_manager:closeEvent:147 - closeEvent
+26-03-30 17:07:09 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:07:22 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:07:22 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 412, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:07:22 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=412, height=504
+26-03-30 17:07:28 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:07:28 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:12:41 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:12:41 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:12:41 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=504
+26-03-30 17:12:50 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:12:50 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:13:02 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:13:02 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:13:02 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=504
+26-03-30 17:13:07 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:13:07 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:17:47 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:17:47 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:17:47 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=504
+26-03-30 17:19:19 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:19:19 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:19:36 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:19:36 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 504, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:19:36 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=504
+26-03-30 17:19:43 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:19:43 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:20:07 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:20:07 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 865, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:20:07 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=865
+26-03-30 17:20:11 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:20:11 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:20:13 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:20:13 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 498, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:20:13 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=498
+26-03-30 17:20:28 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:20:28 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:20:32 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:20:32 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 500, 'width': 600, 'x_position': 1680, 'y_position': 0}
+26-03-30 17:20:32 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1680, y=0, width=600, height=500
+26-03-30 17:20:36 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:20:36 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:20:38 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:20:38 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1733, 'y_position': 33}
+26-03-30 17:20:38 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1733, y=33, width=600, height=700
+26-03-30 17:21:26 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:21:26 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:21:28 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:21:28 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1733, 'y_position': 5}
+26-03-30 17:21:28 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1733, y=5, width=600, height=700
+26-03-30 17:22:05 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:22:05 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:30:07 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:30:07 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1733, 'y_position': 0}
+26-03-30 17:30:07 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1733, y=0, width=600, height=700
+26-03-30 17:31:21 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:31:21 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:35:48 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:35:48 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1733, 'y_position': 0}
+26-03-30 17:35:48 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1733, y=0, width=600, height=700
+26-03-30 17:37:31 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:37:31 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:38:54 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:38:54 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1733, 'y_position': 0}
+26-03-30 17:38:54 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1733, y=0, width=600, height=700
+26-03-30 17:39:11 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:39:11 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:42:08 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:42:08 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1030, 'y_position': 26}
+26-03-30 17:42:08 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=1030, y=26, width=600, height=700
+26-03-30 17:42:24 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:42:24 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:42:33 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:42:33 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 371, 'y_position': 33}
+26-03-30 17:42:33 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=371, y=33, width=600, height=700
+26-03-30 17:42:38 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:42:38 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:42:40 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:42:40 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 2152, 'y_position': 154}
+26-03-30 17:42:40 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=2152, y=154, width=600, height=700
+26-03-30 17:43:11 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:43:11 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:43:52 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:43:52 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 2404, 'y_position': 173}
+26-03-30 17:43:52 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=2404, y=173, width=600, height=700
+26-03-30 17:43:56 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:43:56 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:44:08 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:44:08 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 2404, 'y_position': 145}
+26-03-30 17:44:08 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=2404, y=145, width=600, height=700
+26-03-30 17:44:29 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:44:29 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-30 17:44:32 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-30 17:44:32 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 2174, 'y_position': 187}
+26-03-30 17:44:32 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=2174, y=187, width=600, height=700
+26-03-30 17:44:36 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
+26-03-30 17:44:36 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
