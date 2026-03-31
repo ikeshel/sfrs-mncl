@@ -1,19 +1,17 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/cbm/ST3/bin/sh_febtest.sh
+Exec=/home/irakli/mncl/mbs_node_manager.py
 GenericName[en_US]=
 GenericName=
-Icon=/home/cbm/ST3/gui/FEB8_icon.png
+Icon=/home/irakli/mncl/gui/MBS_Node_Manager.png
 MimeType=
-Name[en_US]=FEB test
-Name=FEB test
-Path=/home/cbm/ST3
+Name[en_US]=MBS Node Manager
+Name=MBS Node Manager
+Path=/home/irakli/mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=
 Type=Application
-X-DBUS-ServiceName=
-X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=

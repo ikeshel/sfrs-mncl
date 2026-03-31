@@ -17,13 +17,27 @@ class MenuBarManager:
     #==========================================================================
     def __init__(self):
         self.menubar = self.menuBar()
-    
-        self.edit_menu = self.menubar.addMenu("Edit")
-        self.help_menu = self.menubar.addMenu("Help")
 
+        # Node Menu
+        self.node_menu = self.menubar.addMenu("Node")
+        self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards) # self.show_window)
+        self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browser) # self.open_external_browser)
+        self.node_menu.addSeparator()
+        self.node_menu.addAction("Configure All Nodes")
+        self.node_menu.addSeparator()
+        self.node_menu.addAction("Add Node").setDisabled(True)
+        self.node_menu.addAction("Remove Node").setDisabled(True)
+        self.node_menu.addSeparator()
+
+        # Settings Menu
+        self.settings_menu = self.menubar.addMenu("Settings")
+        self.settings_menu.addAction("Configure Nodes")
+
+        # Help Menu
+        self.help_menu = self.menubar.addMenu("Help")
         self.about_action = self.help_menu.addAction("About")
         self.about_action.triggered.connect(self.show_about)
-        
+
     #==========================================================================
     def show_about(self):
         QMessageBox.information(self, 
@@ -34,10 +48,3 @@ class MenuBarManager:
                                 f"Email: {__email__}\n"
                                 f"Copyright: {__copyright__}")
 
-#==============================================================================
-#==============================================================================
-#==============================================================================
-if __name__ == '__main__':
-
-    win = MenuBarManager()
-    logger.debug(f"MenuBarManager")

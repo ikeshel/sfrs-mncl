@@ -1,5 +1,14 @@
-26-03-30 17:44:32 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
-26-03-30 17:44:32 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 2174, 'y_position': 187}
-26-03-30 17:44:32 | DEBUG    | mbs_node_manager:__init__:61 - Window position: x=2174, y=187, width=600, height=700
-26-03-30 17:44:36 | DEBUG    | mbs_node_manager:closeEvent:146 - closeEvent
-26-03-30 17:44:36 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-31 14:51:01 | DEBUG    | mbs_browser:__init__:30 - Opening MBS Browser instance #1 with URL: http://x86l-132:8899/MBS/localhost/ControlGUI/
+26-03-31 14:51:02 | DEBUG    | mbs_browser:__init__:30 - Opening MBS Browser instance #2 with URL: http://x86l-170:8899/MBS/localhost/ControlGUI/
+26-03-31 14:51:02 | DEBUG    | mbs_browser:__init__:30 - Opening MBS Browser instance #3 with URL: http://x86l-253:8899/MBS/localhost/ControlGUI/
+26-03-31 14:51:02 | DEBUG    | mbs_node_manager:__init__:122 - Added node: ToF with host x86l-132 to main window menu
+26-03-31 14:51:02 | DEBUG    | mbs_node_manager:__init__:122 - Added node: MUSIC with host x86l-170 to main window menu
+26-03-31 14:51:02 | DEBUG    | mbs_node_manager:__init__:122 - Added node: SiFi with host x86l-253 to main window menu
+26-03-31 14:51:02 | DEBUG    | win_pos_manager:read_window_data:34 - Window size and position loaded from .size_pos_MainWindow.yaml
+26-03-31 14:51:02 | DEBUG    | win_pos_manager:read_window_data:35 - {'height': 700, 'width': 600, 'x_position': 1912, 'y_position': 15}
+26-03-31 14:51:02 | DEBUG    | mbs_node_manager:__init__:132 - Window position: x=1912, y=15, width=600, height=700
+26-03-31 14:51:17 | DEBUG    | mbs_node_manager:closeEvent:222 - closeEvent
+26-03-31 14:51:17 | DEBUG    | win_pos_manager:save_window_data:55 - Window size and position saved to .size_pos_MainWindow.yaml
+26-03-31 14:51:17 | DEBUG    | mbs_node_manager:closeEvent:77 - Closing node ToF window...
+26-03-31 14:51:17 | DEBUG    | mbs_node_manager:closeEvent:77 - Closing node MUSIC window...
+26-03-31 14:51:17 | DEBUG    | mbs_node_manager:closeEvent:77 - Closing node SiFi window...

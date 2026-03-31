@@ -2,7 +2,7 @@
 
 # i.keshelashvili@gsi.de
 
-set conf_file = "list_of_nodes.conf"
+set conf_file = "config/list_of_nodes.conf"
 
 if (! -f $conf_file) then
     echo "\033[5;31mError: $conf_file file not found\033[0m"
