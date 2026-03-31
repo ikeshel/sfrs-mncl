@@ -36,12 +36,7 @@ class MBSBrowser(QWidget):
         self.resize(self.ws[0], self.ws[1])
         self.move(self.wp[0], self.wp[1])
         self.setWindowTitle(f"MBS Browser")
-
-    #==========================================================================
-    def __del__(self):
-        MBSBrowser.instance_count -= 1    
-        logger.debug(f"Closing MBS Browser instance. Remaining instances: {MBSBrowser.instance_count}")
-
+    
     #=====================================================================
     def initUI(self):
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -55,5 +50,8 @@ class MBSBrowser(QWidget):
 #******************************************************************************
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    browser = MBSBrowser()
+
+    browser = MBSBrowser(sys.argv[1] if len(sys.argv) == 2 else "http://x86l-132:8899/MBS/localhost/ControlGUI/")
+    browser.show()
+
     sys.exit(app.exec_())
