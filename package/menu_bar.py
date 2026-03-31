@@ -18,10 +18,15 @@ class MenuBarManager:
     def __init__(self):
         self.menubar = self.menuBar()
 
+        # Help Menu
+        self.help_menu = self.menubar.addMenu("Help")
+        self.about_action = self.help_menu.addAction("About")
+        self.about_action.triggered.connect(self.show_about)
+
         # Node Menu
-        self.node_menu = self.menubar.addMenu("Node")
-        self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards) # self.show_window)
-        self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browser) # self.open_external_browser)
+        self.node_menu = self.menubar.addMenu("All nodes")
+        self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
+        self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
         self.node_menu.addSeparator()
         self.node_menu.addAction("Configure All Nodes")
         self.node_menu.addSeparator()
@@ -33,10 +38,15 @@ class MenuBarManager:
         self.settings_menu = self.menubar.addMenu("Settings")
         self.settings_menu.addAction("Configure Nodes")
 
-        # Help Menu
-        self.help_menu = self.menubar.addMenu("Help")
-        self.about_action = self.help_menu.addAction("About")
-        self.about_action.triggered.connect(self.show_about)
+    #==========================================================================
+    def build_node_menu(self, node):
+
+        node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_window)
+        node.menu.addAction("Open Dashboard in external browser").triggered.connect(node.open_external_browser)
+        node.menu.addSeparator()
+        node.menu.addAction("Check screens").triggered.connect(node.check_screens)
+        node.menu.addSeparator()
+        node.menu.addAction("Restart Node").triggered.connect(node.restart_node)
 
     #==========================================================================
     def show_about(self):

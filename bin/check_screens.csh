@@ -21,7 +21,4 @@ foreach session ($list_paras)
     endif
 end
 
-echo ""
-echo "List of active list_paras:"
-screen -ls
 

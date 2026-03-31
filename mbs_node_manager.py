@@ -24,6 +24,8 @@ sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from mbs_browser      import MBSBrowser
+import subprocess
+
 
 #==============================================================================
 #==============================================================================
@@ -37,6 +39,7 @@ class MBSNode(QtWidgets.QWidget):
         super().__init__()
         self.name = name
         self.node_host = node_host
+        self.menu = None
         self.setObjectName(f"node_{name}")
         self.setStyleSheet("background-color: white; border: 1px solid black;")
         self.init_ui()
@@ -72,7 +75,49 @@ class MBSNode(QtWidgets.QWidget):
             self.browser_window.show()
             self.browser_window.raise_()
             self.browser_window.activateWindow()
-    
+
+    #==========================================================================
+    def open_external_browser(self):
+
+        url = f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/"
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
+        # os.system(f"xdg-open {url}") # alternative method to open URL in default browser
+        logger.success(f"Opening {self.name} dashboard in external browser: {url}")
+
+    #===========================================================================
+    def check_screens(self):
+        logger.debug(f"Checking screens for {self.name} node...")
+        # Here you would add the actual logic to check the screens, e.g. by sending a command to the server
+        # For demonstration, we will just show a message box
+        try:
+            result = subprocess.run(
+                f'ssh ikeshel@{self.node_host} "cd ~/mncl;./bin/check_screens.csh"',
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            logger.info(f"Check screens output for {self.name}: {result.stdout}")
+            if result.stderr:
+                logger.warning(f"Check screens error for {self.name}: {result.stderr}")
+        except subprocess.TimeoutExpired:
+            logger.error(f"Check screens command timed out for {self.name}")
+        except Exception as e:
+            logger.error(f"Check screens failed for {self.name}: {e}")
+
+    #==========================================================================
+    def restart_node(self):
+        logger.debug(f"Restarting {self.name} node...")
+        # Here you would add the actual logic to restart the node, e.g. by sending a command to the server
+        # For demonstration, we will just show a message box
+        if QtWidgets.QMessageBox.question(self, 
+                                       "Restart Node", 
+                                       f"Are you sure you want to restart the {self.name} node?", 
+                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, 
+                                       QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
+            logger.info(f"{self.name} node has been restarted.")
+
+    #==========================================================================    
     def closeEvent(self, a0):
         logger.debug(f"Closing node {self.name} window...")
         self.browser_window.close() #if hasattr(self, 'browser_window') else None
@@ -108,22 +153,18 @@ class MainWindow(QMainWindow,
 
         self.node_TOF = MBSNode("ToF", "x86l-132")
         self.layout.addWidget(self.node_TOF)
-        self.node_menu.addAction(f"Node {self.node_TOF.name}").triggered.connect(self.node_TOF.show_window)
 
         self.node_MUSIC = MBSNode("MUSIC", "x86l-170")
         self.layout.addWidget(self.node_MUSIC)
-        self.node_menu.addAction(f"Node {self.node_MUSIC.name}").triggered.connect(self.node_MUSIC.show_window)
 
         self.node_SIFI = MBSNode("SiFi", "x86l-253")
         self.layout.addWidget(self.node_SIFI)
-        self.node_menu.addAction(f"Node {self.node_SIFI.name}").triggered.connect(self.node_SIFI.show_window)
 
+        # add node menus to the main menu bar
         for node in MBSNode.list_of_nodes:
             logger.debug(f"Added node: {node.name} with host {node.node_host} to main window menu")
-            self.node_menu.addAction(f"Node {node.name}")
-
-
-        # self.node_menu.triggered.connect(self.open_external_browser)
+            node.menu = self.menubar.addMenu(f"{node.name}")
+            self.build_node_menu(node)
 
 
         ## -------------------------------------------------------------------------------------------
@@ -150,12 +191,13 @@ class MainWindow(QMainWindow,
         self.raise_()
 
     #==========================================================================
-    def open_external_browser(self):
+    def open_external_browsers(self):
 
         for node in MBSNode.list_of_nodes:
             node_host = node.node_host
             logger.info(f"Opening {node_host} dashboard...")
-            os.system(f"xdg-open {node_host}:8899/MBS/localhost/ControlGUI/")
+            node.open_external_browser()
+            
     
     #==========================================================================
     def show_all_dashboards(self):
