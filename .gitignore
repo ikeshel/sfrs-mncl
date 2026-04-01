@@ -1,9 +1,11 @@
 
+__pycache__/
 logs/
 package/__pycache__/ 
 gui/__pycache__/
+
+.size_pos_*.yaml
 *.pyc
 *.pyo
 *.pyd
-__pycache__/
 *.log
