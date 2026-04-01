@@ -1,0 +1,9 @@
+
+logs/
+package/__pycache__/ 
+gui/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
