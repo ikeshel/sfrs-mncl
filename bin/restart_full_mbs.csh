@@ -1,5 +1,4 @@
-!/bin/csh -f
-# source ~/force_env.csh
+!/bin/tcsh -f
 
 echo "  Restarting MBS and webmbs..."
 ~/mncl/bin/kill_screens.csh
