@@ -46,7 +46,8 @@ class MenuBarManager:
         node.menu.addSeparator()
         node.menu.addAction("Check screens").triggered.connect(node.check_screens)
         node.menu.addSeparator()
-        node.menu.addAction("Restart Node").triggered.connect(node.restart_node)
+        node.menu.addAction("Kill screens").triggered.connect(node.kill_screens)
+        node.menu.addAction("Restart MBS").triggered.connect(node.restart_mbs)
 
     #==========================================================================
     def show_about(self):

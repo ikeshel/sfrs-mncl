@@ -23,15 +23,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="2.0933334"
-     inkscape:cx="299.99999"
-     inkscape:cy="109.87261"
+     inkscape:zoom="2.0833333"
+     inkscape:cx="240"
+     inkscape:cy="177.6"
      inkscape:window-width="1680"
      inkscape:window-height="1022"
      inkscape:window-x="1680"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg50" />
+     inkscape:current-layer="g637" />
   <!-- Outer rack unit -->
   <!-- Left control panel -->
   <!-- Power button -->
@@ -68,12 +68,6 @@
        stroke="#444444"
        stroke-width="0.944133"
        id="rect4" />
-    <circle
-       style="fill:#ffff00;stroke-width:2;stroke-linejoin:round"
-       id="path500"
-       cx="56.80402"
-       cy="109.03518"
-       r="12.311558" />
     <g
        id="g553"
        transform="matrix(0,0.5,-0.5,0,18.34518,50.18782)">
@@ -142,46 +136,58 @@
          id="rect352-1"
          style="stroke-width:0.730297" />
     </g>
-    <text
-       x="57"
-       y="130"
-       font-size="5px"
-       fill="#cccccc"
-       text-anchor="middle"
-       id="text8"
-       style="stroke-width:0.5">POWER</text>
     <rect
-       x="47.329956"
-       y="68.725876"
-       width="7.5"
-       height="15"
-       fill="#444444"
-       id="rect10"
-       style="stroke-width:0.5" />
-    <rect
-       x="59.829956"
-       y="68.725876"
-       width="7.5"
-       height="15"
+       x="47.384876"
+       y="73.404709"
+       width="15.872145"
+       height="15.452548"
        fill="#444444"
        id="rect12"
-       style="stroke-width:0.5" />
-    <ellipse
-       cx="63.554142"
-       cy="90.535027"
-       fill="#ff0000"
-       id="ellipse1912-3"
-       style="fill:#00ff00;stroke-width:0.2;stroke:#ffffff;stroke-opacity:1;stroke-dasharray:none"
-       rx="3.3333333"
-       ry="3.3333335" />
-    <ellipse
-       cx="51.133759"
-       cy="90.375793"
-       fill="#ff0000"
-       id="ellipse605"
-       style="fill:#800000;stroke-width:0.2;stroke:#ffffff;stroke-opacity:1;stroke-dasharray:none"
-       rx="3.3333333"
-       ry="3.3333335" />
+       style="stroke-width:0.738264" />
+    <g
+       id="g1393"
+       transform="translate(0.60615971)">
+      <rect
+         style="fill:#4d4d4d;stroke:#2c2c2c;stroke-width:2.66667;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect515"
+         width="9.2356682"
+         height="21.019108"
+         x="58.538216"
+         y="108.05096" />
+      <path
+         style="fill:#333333;stroke:#404040;stroke-width:2.66667;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="M 58.060507,118.56051 H 68.251589"
+         id="path1389" />
+    </g>
+    <g
+       id="g1399"
+       transform="translate(-12.727174)">
+      <rect
+         style="fill:#4d4d4d;stroke:#2c2c2c;stroke-width:2.66667;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1395"
+         width="9.2356682"
+         height="21.019108"
+         x="58.538216"
+         y="108.05096" />
+      <path
+         style="fill:#333333;stroke:#404040;stroke-width:2.66667;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="M 58.060507,118.56051 H 68.251589"
+         id="path1397" />
+    </g>
+    <rect
+       style="fill:#1a1a1a;stroke:#2c2c2c;stroke-width:1.08895;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1637"
+       width="11.62074"
+       height="2.8526161"
+       x="49.525578"
+       y="76.714943" />
+    <rect
+       style="fill:#1a1a1a;stroke:#2c2c2c;stroke-width:1.08895;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1639"
+       width="11.62074"
+       height="2.8526161"
+       x="49.525578"
+       y="83.381622" />
   </g>
   <g
      id="g462"

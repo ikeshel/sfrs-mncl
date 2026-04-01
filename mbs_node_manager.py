@@ -8,123 +8,75 @@ __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 #
-import sys, os
+import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
 # 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QFont
+from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
-from PyQt5.QtSvg import QSvgWidget
+from PyQt5.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
 #
 sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
-from mbs_browser      import MBSBrowser
-import subprocess
+from mbs_node         import MBSNode
 
 
-#==============================================================================
-#==============================================================================
-# MBS Node Widget
-class MBSNode(QtWidgets.QWidget):
 
-    list_of_nodes = [] # class variable to keep track of all node instances
+###############################################################################
+class NodeWorkerSignals(QObject):
+    """ Signals to be emitted from the worker thread """
+    data = pyqtSignal(dict)
 
-    #=========================================================================
-    def __init__(self, name="Node", node_host="localhost"):
-        super().__init__()
-        self.name = name
-        self.node_host = node_host
-        self.menu = None
-        self.setObjectName(f"node_{name}")
-        self.setStyleSheet("background-color: white; border: 1px solid black;")
-        self.init_ui()
-        MBSNode.list_of_nodes.append(self) # add instance to the class variable list
+###############################################################################
+class NodeWorker(QRunnable):
+    """ Worker thread that performs a task in the background. """
 
-    #=========================================================================
-    def init_ui(self):
-        node_svg = QSvgWidget("images/node.svg")
-        
-        svg_layout = QtWidgets.QVBoxLayout()
-        svg_layout.setContentsMargins(0, 0, 0, 0)
-        svg_layout.addWidget(node_svg)
-        self.setLayout(svg_layout)
-        
-        self.lbl_node_name = QtWidgets.QLabel(self)
-        self.lbl_node_name.setObjectName(f"lbl_{self.name}")
-        self.lbl_node_name.setText(f"{self.name}\n{self.node_host}")
-        self.lbl_node_name.setCursor(Qt.PointingHandCursor)
-        self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
-        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 90, 40))
-        self.lbl_node_name.setAlignment(Qt.AlignCenter)
-        self.lbl_node_name.setFont(QFont("Arial", 10, QFont.Bold))
-        self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
-        self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
+    def __init__(self, nodes=None):
+        super(NodeWorker, self).__init__()
+
+        self.nodes       = nodes
+        self.signals     = NodeWorkerSignals()
+        self.is_running  = True
+        self.datadict    = {}
+
+        logger.debug(f"{__class__.__module__} started")
+
+        self.delay_ms = 100 # milliseconds
+        self.last_time = 0
 
     #==========================================================================
-    def show_window(self):
+    def run(self):
 
-        if self.browser_window.isVisible():
-            logger.debug(f"{self.name} dashboard is already open. Bringing it to front...")
-            self.browser_window.close() # close the existing window before opening a new one
-        else:
-            self.browser_window.show()
-            self.browser_window.raise_()
-            self.browser_window.activateWindow()
+        logger.debug("NodeWorker.run()")
 
-    #==========================================================================
-    def open_external_browser(self):
+        while True:
+            if self.is_running == False:
+                logger.debug("NodeWorker.run() break")
+                break
 
-        url = f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/"
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
-        # os.system(f"xdg-open {url}") # alternative method to open URL in default browser
-        logger.success(f"Opening {self.name} dashboard in external browser: {url}")
+            self.datadict['time'] = time.time() # seconds
+            QThread.msleep(self.delay_ms)
+            
+            ## state machine ---------------------------------------------------
+            ##
+            if self.last_time < self.datadict['time']-1: # check ping every 1 second
+                for node in self.nodes:
+                    self.datadict[node.name] = node.check_ping()
+                self.last_time = self.datadict['time']
+            
+            self.signals.data.emit( self.datadict )
 
-    #===========================================================================
-    def check_screens(self):
-        logger.debug(f"Checking screens for {self.name} node...")
-        # Here you would add the actual logic to check the screens, e.g. by sending a command to the server
-        # For demonstration, we will just show a message box
-        try:
-            result = subprocess.run(
-                f'ssh ikeshel@{self.node_host} "cd ~/mncl;./bin/check_screens.csh"',
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            logger.info(f"Check screens output for {self.name}: {result.stdout}")
-            if result.stderr:
-                logger.warning(f"Check screens error for {self.name}: {result.stderr}")
-        except subprocess.TimeoutExpired:
-            logger.error(f"Check screens command timed out for {self.name}")
-        except Exception as e:
-            logger.error(f"Check screens failed for {self.name}: {e}")
+        logger.debug("NodeWorker.run() finished")
 
     #==========================================================================
-    def restart_node(self):
-        logger.debug(f"Restarting {self.name} node...")
-        # Here you would add the actual logic to restart the node, e.g. by sending a command to the server
-        # For demonstration, we will just show a message box
-        if QtWidgets.QMessageBox.question(self, 
-                                       "Restart Node", 
-                                       f"Are you sure you want to restart the {self.name} node?", 
-                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, 
-                                       QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
-            logger.info(f"{self.name} node has been restarted.")
-
-    #==========================================================================    
-    def closeEvent(self, a0):
-        logger.debug(f"Closing node {self.name} window...")
-        self.browser_window.close() #if hasattr(self, 'browser_window') else None
-        MBSNode.list_of_nodes.remove(self) # remove instance from the class variable list
-        return super().closeEvent(a0)
-
-
+    def stop(self):
+        logger.debug("NodeWorker.stop()")
+        self.is_running = False
 
 #==============================================================================
 ## MBS Node Manager Main Window
@@ -166,6 +118,15 @@ class MainWindow(QMainWindow,
             node.menu = self.menubar.addMenu(f"{node.name}")
             self.build_node_menu(node)
 
+        # -------------------------------------------------------------------------------------------
+        # starting threads
+        self.threadpool = QThreadPool()
+        logger.debug(f"Multithreading with maximum {self.threadpool.maxThreadCount()} threads")
+
+        self.node_worker = NodeWorker(MBSNode.list_of_nodes)
+        self.node_worker.signals.data.connect(self.data_received)
+        self.threadpool.start(self.node_worker)
+        self.measurementFlag = False
 
         ## -------------------------------------------------------------------------------------------
         ## read window position
@@ -191,6 +152,15 @@ class MainWindow(QMainWindow,
         self.raise_()
 
     #==========================================================================
+    @pyqtSlot(dict)
+    def data_received (self, data_dict):
+        ''' timer loop to HMP readout and status check '''
+       
+        # logger.debug(f"Data received: {data_dict}")
+        pass
+
+
+    #==========================================================================
     def open_external_browsers(self):
 
         for node in MBSNode.list_of_nodes:
@@ -205,25 +175,6 @@ class MainWindow(QMainWindow,
         for node in MBSNode.list_of_nodes:
             logger.info(f"Showing {node.name} dashboard...")
             node.show_window()
-
-    #==========================================================================
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
-
-        # Draw lines between nodes
-        pen = QtGui.QPen(Qt.black, 2)
-        painter.setPen(pen)
-
-        # Get the center points of the nodes
-        node1_center = self.node_TOF.geometry().center()
-        node2_center = self.node_MUSIC.geometry().center()
-        node3_center = self.node_SIFI.geometry().center()
-
-        # Draw lines between nodes
-        painter.drawLine(node1_center, node2_center)
-        painter.drawLine(node2_center, node3_center)
 
     #==========================================================================
     def add_loggers(self):
@@ -259,15 +210,40 @@ class MainWindow(QMainWindow,
 
 
     #==========================================================================
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Draw lines between nodes
+        pen = QtGui.QPen(Qt.black, 2)
+        painter.setPen(pen)
+
+        # Get the center points of the nodes
+        node1_center = self.node_TOF.geometry().center()
+        node2_center = self.node_MUSIC.geometry().center()
+        node3_center = self.node_SIFI.geometry().center()
+
+        # Draw lines between nodes
+        painter.drawLine(node1_center, node2_center)
+        painter.drawLine(node2_center, node3_center)
+
+    #==========================================================================
     def closeEvent(self, event):
         '''Must stay with Main widget'''
         logger.debug("closeEvent")
         self.save_window_data() # save window position and size on close
 
-        self.node_TOF.close() # close node windows
-        self.node_MUSIC.close()
-        self.node_SIFI.close()
+        # close all node browser windows
+        for node in MBSNode.list_of_nodes:
+             node.browser_window.close() # close browser windows
 
+        # stop the worker thread
+        self.node_worker.is_running = False  # Stop the worker loop
+        self.node_worker.stop()  # Stop the worker
+        self.threadpool.waitForDone()
+
+        # accept the close event to allow the window to close
         event.accept() # let the window close
 
 #******************************************************************************
