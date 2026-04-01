@@ -9,16 +9,16 @@ if (! -f $conf_file) then
     exit 1
 endif
 
-source bin/read_config.csh
+source $HOME/mncl/bin/read_config.csh
 
 foreach node ($list_paras)
 
     ping -c 1 -W 2 $node >& /dev/null
 
     if ($status == 0) then
-        echo "$node alive"
+        echo "$node alive ping"
     else
-        echo "$node dead"
+        echo "$node dead ping"
     endif
 end
 
