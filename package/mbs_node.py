@@ -88,8 +88,27 @@ class MBSNode(QtWidgets.QWidget):
         # os.system(f"xdg-open {url}") # alternative method to open URL in default browser
         logger.success(f"Opening {self.name} dashboard in external browser: {url}")
 
+    #==========================================================================
+    def check_ssh(self, timeout: int = 1) -> bool:
+
+        self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
+
+        try:
+            result = subprocess.run(
+                ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo alive"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            if self.ping_toggling:
+                self.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {self.radius}px;")
+            else:
+                self.status_ping.setStyleSheet(f"background-color: green; border-radius: {self.radius}px;")
+            return result.returncode == 0
+        except Exception:
+            return False
+
     #===========================================================================
-    def check_ping(self):
+    def check_ping(self) -> bool:
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
 

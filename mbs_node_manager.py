@@ -66,7 +66,8 @@ class NodeWorker(QRunnable):
             ##
             if self.last_time < self.datadict['time']-1: # check ping every 1 second
                 for node in self.nodes:
-                    self.datadict[node.name] = node.check_ping()
+                    # self.datadict[node.name] = node.check_ping()
+                    self.datadict[node.name] = node.check_ssh()
                 self.last_time = self.datadict['time']
             
             self.signals.data.emit( self.datadict )
@@ -126,7 +127,6 @@ class MainWindow(QMainWindow,
         self.node_worker = NodeWorker(MBSNode.list_of_nodes)
         self.node_worker.signals.data.connect(self.data_received)
         self.threadpool.start(self.node_worker)
-        self.measurementFlag = False
 
         ## -------------------------------------------------------------------------------------------
         ## read window position
