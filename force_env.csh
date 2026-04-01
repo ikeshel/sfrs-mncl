@@ -1,0 +1,31 @@
+setenv GSI_OS=Linux
+setenv GSI_OS_VERSION=5.10-64
+setenv GSI_OS_VERSIONX=OSV_5_10_0_64
+setenv GSI_OS_TYPE=Deb
+setenv GSI_CPU_PLATFORM=PCx86
+setenv GSI_CPU_ARCH=x86
+setenv GSI_CPU_ENDIAN=LITTLEENDIAN
+setenv PATH=$PATH:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/bin:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/bin:/mbs/driv/mbspexV3_5.10-64_DEB/bin:/usr/local/bin:/usr/bin:/bin:/usr/games:/nfs/groups/daq/usr/kurz/mbstest/rising/time_stamp_module/handling:/nfs/groups/daq/usr/kurz/mbstest/rising/time_stamp_module/handling:/nfs/groups/daq/usr/kurz/mbstest/rising/time_stamp_module/handling
+setenv LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib
+
+setenv MBSROOT /mbs/v7x
+setenv HELPDIR=/mbs/v7x/hlp
+setenv HTPORT=8095
+setenv DABCVER=head
+setenv DABCPATH=/dabc/PCx86_Linux_OSV_5_10_0_64_Deb
+setenv DABCSYS=/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head
+setenv LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib:/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/lib:/dabc/PCx86_Linux_OSV_5_10_0_64_Deb/head/lib
+setenv SAFTLIB_LEAPSECONDSLIST=/mbs/driv/white_rabbit/fallout/PCx86_Linux_OSV_5_10_0_64_Deb/share/saftlib/leap-seconds.list
+setenv FSQDIR=/mbs/storage/PCx86_Linux_5.10-64_Deb
+setenv MBSBIN=/mbs/v7x/bin_PCx86_Linux_5.10-64_Deb
+setenv TRLOII=/mbs/driv/trloii/prod/PCx86_Linux_OSV_5_10_0_64_Deb
+setenv ROOTSYS=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04
+setenv DYLD_LIBRARY_PATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:
+setenv SHLIB_PATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:
+setenv LIBPATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:
+setenv PYTHONPATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/lib:
+setenv MANPATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04:/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04:/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04:/usr/local/man:/usr/local/share/man:/usr/share/man
+setenv CMAKE_PREFIX_PATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04:
+setenv JUPYTER_PATH=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/etc/notebook:
+setenv JUPYTER_CONFIG_DIR=/analysis/PCx86_Linux_OSV_5_10_0_64_Deb/root/build-6.34.04/etc/notebook:
+setenv CLING_STANDARD_PCH=none

@@ -13,6 +13,7 @@ source $HOME/mncl/bin/read_config.csh
 
 foreach node ($list_paras)
 
+    echo "ping -c 1 -W 2 $node >& /dev/null"
     ping -c 1 -W 2 $node >& /dev/null
 
     if ($status == 0) then
