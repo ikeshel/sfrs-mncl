@@ -2,7 +2,7 @@
 
 # i.keshelashvili@gsi.de
 
-# set conf_file = "config/list_of_screens.conf"
+# set conf_file = "$HOME/mncl/config/list_of_screens.conf"
 
 # If -v flag is provided, print the list of nodes and names
 set vv = 0 # do not use var name 'verbouse' because it is csh reserved word

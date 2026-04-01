@@ -5,7 +5,7 @@
 # This script reads the list of screen sessions from the list_of_screens.conf file and kills them if they exist. 
 # It also prints the list of active screens after killing.   
 
-set conf_file = "config/list_of_screens.conf"
+set conf_file = "$HOME/mncl/config/list_of_screens.conf"
 
 # Check if the list_of_screens.conf file exists
 if (! -f $conf_file) then
@@ -14,7 +14,7 @@ if (! -f $conf_file) then
 endif
 
 # Source the read_config.csh script to read the list of screens
-source bin/read_config.csh
+source $HOME/mncl/bin/read_config.csh
 
 # Loop through the list of screens and kill them if they exist
 foreach session ($list_paras)
