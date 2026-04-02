@@ -57,7 +57,7 @@ class MBSNode(QtWidgets.QWidget):
         self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
         self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 90, 40))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lbl_node_name.setFont(QFont("Arial", 10, QFont.Weight.Bold))
+        self.lbl_node_name.setFont(QFont("Times", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
 
