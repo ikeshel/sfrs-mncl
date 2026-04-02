@@ -91,19 +91,13 @@ class MBSNode(QtWidgets.QWidget):
     #==========================================================================
     def check_ssh(self, timeout: int = 1) -> bool:
 
-        self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
-
         try:
             result = subprocess.run(
                 ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo alive"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
-            if self.ping_toggling:
-                self.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {self.radius}px;")
-            else:
-                self.status_ping.setStyleSheet(f"background-color: green; border-radius: {self.radius}px;")
-            return result.returncode == 0
+            return result.returncode == 0 # return True if SSH connection is successful, False otherwise
         except Exception:
             return False
 
