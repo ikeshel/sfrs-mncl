@@ -12,6 +12,8 @@ import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
+os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
+
 # 
 from PyQt6 import QtGui
 from PyQt6.QtGui import QPainter
