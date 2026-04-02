@@ -20,6 +20,7 @@ compiling:
 	@echo '---------------------'
 
 	## COMMON
+	${CC} sfp_control.ui        -o sfp_control.py
 	${CC} tamex_channel.ui      -o tamex_channel.py	
 	@echo '---------------------'
 

@@ -102,33 +102,14 @@ class MBSNode(QtWidgets.QWidget):
             return False
 
     #===========================================================================
-    def check_ping(self) -> bool:
+    def check_ping(self, timeout: int = 1) -> bool:
 
-        self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
-
-        try:
-            result = subprocess.run(
-                f'ping -c 1 {self.node_host}',
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=1
-            )
-            if result.returncode == 0:
-                # logger.debug(f"{self.name} node is reachable: {result.stdout}")
-                if self.ping_toggling:
-                    self.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {self.radius}px;")
-                else:
-                    self.status_ping.setStyleSheet(f"background-color: green; border-radius: {self.radius}px;")
-                return True
-        except subprocess.TimeoutExpired:
-            logger.error(f"Ping command timed out for {self.name} node")
-            self.status_ping.setStyleSheet(f"background-color: red; border-radius: {self.radius}px;")
-            return False
-        except Exception as e:
-            logger.error(f"Ping failed for {self.name} node: {e}")
-            self.status_ping.setStyleSheet(f"background-color: red; border-radius: {self.radius}px;")
-            return False
+        return subprocess.call(
+            ["ping", "-c", "1", "-W", str(timeout), self.node_host],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        ) == 0
+        
 
     #===========================================================================
     def check_screens(self):

@@ -27,6 +27,7 @@ from menu_bar         import MenuBarManager
 # GUI
 sys.path.append('gui')
 from tamex_channel import Ui_TamexChannel
+from sfp_control   import Ui_SfpControl
 
 ###############################################################################
 class TamexWorkerSignals(QObject):
@@ -101,30 +102,26 @@ class MainWindow(QMainWindow,
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
-        self.layout = QVBoxLayout()
-        self.central_widget.setLayout(self.layout)
+        self.v_leyout = QVBoxLayout()
+        self.central_widget.setLayout(self.v_leyout)
+
+        self.sfp_control = Ui_SfpControl()
+        self.sfp_control.setupUi(self)
+        self.v_leyout.addWidget(self.sfp_control.layoutWidget)
+
+        self.sfp_control.cob_sfp.currentIndexChanged.connect(self.sfp_selection_changed)
 
         self.tmx_ch = [None]*8
         for i in range(len(self.tmx_ch)):
             self.tmx_ch[i] = Ui_TamexChannel()
             self.tmx_ch[i].setupUi(self)
+            self.tmx_ch[i].layoutWidget.setObjectName(f"TamexChannel_{i+1}")
             self.tmx_ch[i].lbl_ch.setText(f"CH {i+1}")
-            self.layout.addWidget(self.tmx_ch[i].widget)
+            self.v_leyout.addWidget(self.tmx_ch[i].layoutWidget)
 
-        # self.node_TOF = MBSNode("ToF", "x86l-132")
-        # self.layout.addWidget(self.node_TOF)
-
-        # self.node_MUSIC = MBSNode("MUSIC", "x86l-170")
-        # self.layout.addWidget(self.node_MUSIC)
-
-        # self.node_SIFI = MBSNode("SiFi", "x86l-253")
-        # self.layout.addWidget(self.node_SIFI)
-
-        # # add node menus to the main menu bar
-        # for node in MBSNode.list_of_nodes:
-        #     logger.debug(f"Added node: {node.name} with host {node.node_host} to main window menu")
-        #     node.menu = self.menubar.addMenu(f"{node.name}")
-        #     self.build_node_menu(node)
+            self.tmx_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
+            self.tmx_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
+            self.tmx_ch[i].dsb_mV .valueChanged.connect(lambda value, ch=i: self.on_mv_value_changed(ch, value))
 
         # -------------------------------------------------------------------------------------------
         # starting threads
@@ -141,8 +138,8 @@ class MainWindow(QMainWindow,
             logger.debug(f"Window position: x={self.xx}, y={self.yy}, "
                          f"width={self.ww}, height={self.hh}")
             self.move(self.xx, self.yy)
-            # self.resize(self.ww, self.hh)
-            self.setFixedWidth(600)
+            self.resize(self.ww, self.hh)
+            # self.setFixedWidth(600)
 
         else:
             # screen = Display(os.environ['DISPLAY']).screen() 
@@ -167,7 +164,32 @@ class MainWindow(QMainWindow,
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
 
-            
+    #==========================================================================
+    def sfp_selection_changed(self, index):
+        logger.debug(f"SFP selection changed to index {index}")
+        # Implement the logic to handle the SFP selection change here
+
+    #==========================================================================
+    # DAC value changed by spinbox
+    def on_dac_value_changed(self, ch, value):
+        logger.debug(f"Channel {ch+1} DAC value changed to {value}")
+        self.tmx_ch[ch].hsb_dac.setValue(value) # update slider
+        self.tmx_ch[ch].dsb_mV.setValue(value * 1000.0 / 1023.0) # update mV
+
+    #==========================================================================
+    # DAC value changed by slider
+    def on_dac_slider_changed(self, ch, value):
+        logger.debug(f"Channel {ch+1} DAC slider changed to {value}")
+        self.tmx_ch[ch].isb_dac.setValue(value) # update spinbox
+        self.tmx_ch[ch].dsb_mV.setValue(value * 1000.0 / 1023.0) # update mV     
+
+    #==========================================================================
+    # mV value changed by double spinbox
+    def on_mv_value_changed(self, ch, value):
+        logger.debug(f"Channel {ch+1} mV value changed to {value}")
+        dac_value = int(value * 1023.0 / 1000.0) # convert mV to DAC value
+        self.tmx_ch[ch].isb_dac.setValue(dac_value) # update spinbox
+        self.tmx_ch[ch].hsb_dac.setValue(dac_value) # update slider       
     
     #==========================================================================
     def add_loggers(self):

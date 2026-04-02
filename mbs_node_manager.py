@@ -64,8 +64,8 @@ class NodeWorker(QRunnable):
             self.datadict['time'] = time.time() # seconds
             if self.last_time < self.datadict['time']-1: # check every 1 second
                 for node in self.nodes:
-                    # self.datadict[f"ping_{node.name}"] = node.check_ping()
-                    self.datadict[f"ssh_{node.name}"] = node.check_ssh()
+                    # self.datadict[f"alive_{node.name}"] = node.check_ping()
+                    self.datadict[f"alive_{node.name}"] = node.check_ssh()
                 self.last_time = self.datadict['time']
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
@@ -160,8 +160,8 @@ class MainWindow(QMainWindow,
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
         for node in MBSNode.list_of_nodes:
-            if f"ssh_{node.name}" in data_dict:
-                if data_dict[f"ssh_{node.name}"] == True:
+            if f"alive_{node.name}" in data_dict:
+                if data_dict[f"alive_{node.name}"] == True:
                     if self.ping_toggling:
                         node.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {node.radius}px;")
                     else:
@@ -171,7 +171,7 @@ class MainWindow(QMainWindow,
                         node.status_ping.setStyleSheet(f"background-color: pink; border-radius: {node.radius}px;")
                     else:
                         node.status_ping.setStyleSheet(f"background-color: red; border-radius: {node.radius}px;")
-                del data_dict[f"ssh_{node.name}"] # remove the key to avoid processing it again
+                del data_dict[f"alive_{node.name}"] # remove the key to avoid processing it again
 
     #==========================================================================
     def open_external_browsers(self):

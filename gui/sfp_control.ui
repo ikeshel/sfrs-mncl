@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SfpControl</class>
+ <widget class="QWidget" name="SfpControl">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>393</width>
+    <height>58</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>371</width>
+     <height>39</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QComboBox" name="cob_sfp">
+      <item>
+       <property name="text">
+        <string>SFP 0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SFP 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SFP 2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SFP 3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SFP All</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="cob_dev">
+      <item>
+       <property name="text">
+        <string>DEV 0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>DEV ALL</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

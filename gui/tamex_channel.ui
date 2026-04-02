@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>5</x>
@@ -36,7 +36,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QSpinBox" name="sb_dac">
+     <widget class="QSpinBox" name="isb_dac">
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
@@ -44,12 +44,15 @@
        <number>1023</number>
       </property>
       <property name="value">
-       <number>1023</number>
+       <number>0</number>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QSlider" name="isb_dac">
+     <widget class="QSlider" name="hsb_dac">
+      <property name="maximum">
+       <number>1023</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
