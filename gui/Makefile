@@ -1,7 +1,7 @@
 # 
 # i.keshelashvili@gsi.de
 # 
-CC = pyuic5
+CC = pyuic6
 
 SRCS = $(shell ls gui_*.ui)
 

@@ -13,10 +13,10 @@ import subprocess
 from loguru import logger
 
 # 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtSvg import QSvgWidget
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtGui import QFont, QPixmap
+from PyQt6.QtWidgets import QLabel
 
 #
 sys.path.append('package')
@@ -42,7 +42,8 @@ class MBSNode(QtWidgets.QWidget):
 
     #=========================================================================
     def init_ui(self):
-        node_svg = QSvgWidget("images/node.svg")
+        node_svg = QLabel()
+        node_svg.setPixmap(QPixmap("images/node.svg"))
         
         svg_layout = QtWidgets.QVBoxLayout()
         svg_layout.setContentsMargins(0, 0, 0, 0)
@@ -52,11 +53,11 @@ class MBSNode(QtWidgets.QWidget):
         self.lbl_node_name = QtWidgets.QLabel(self)
         self.lbl_node_name.setObjectName(f"lbl_{self.name}")
         self.lbl_node_name.setText(f"{self.name}\n{self.node_host}")
-        self.lbl_node_name.setCursor(Qt.PointingHandCursor)
+        self.lbl_node_name.setCursor(Qt.CursorShape.PointingHandCursor)
         self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
         self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 90, 40))
-        self.lbl_node_name.setAlignment(Qt.AlignCenter)
-        self.lbl_node_name.setFont(QFont("Arial", 10, QFont.Bold))
+        self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_node_name.setFont(QFont("Arial", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
 

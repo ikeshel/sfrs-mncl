@@ -2,24 +2,22 @@
 
 __author__     = "Irakli Keshelashvili"
 __copyright__  = "Copyright 2026, The Super FRS Project"
-__version__    = "0.0.1"
+__version__    = "1.0.0"
 __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-#
+##
 import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
-# 
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
-from PyQt5.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
+##
+from PyQt6.QtCore import QThread, pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
+from PyQt6.QtCore import QThreadPool, QObject, QRunnable
 
-#
+##
 sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
@@ -254,4 +252,5 @@ if __name__ == "__main__":
 
     window = MainWindow()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
+

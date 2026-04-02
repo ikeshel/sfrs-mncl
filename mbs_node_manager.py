@@ -13,19 +13,16 @@ from loguru import logger
 from Xlib.display import Display
 
 # 
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
-from PyQt5.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
+from PyQt6 import QtGui
+from PyQt6.QtGui import QPainter
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
+from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
-#
+##
 sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from mbs_node         import MBSNode
-
-
 
 ###############################################################################
 class NodeWorkerSignals(QObject):
@@ -226,10 +223,10 @@ class MainWindow(QMainWindow,
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Draw lines between nodes
-        pen = QtGui.QPen(Qt.black, 2)
+        pen = QtGui.QPen(Qt.GlobalColor.white, 2)
         painter.setPen(pen)
 
         # Get the center points of the nodes
@@ -273,4 +270,4 @@ if __name__ == "__main__":
 
     window = MainWindow()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

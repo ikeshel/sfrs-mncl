@@ -8,8 +8,7 @@ __status__     = "Production"
 
 from loguru import logger
 
-from PyQt5.QtWidgets import QMenuBar, QMenu
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 
 #==============================================================================
 class MenuBarManager:

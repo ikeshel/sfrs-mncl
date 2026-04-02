@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 __author__     = "Irakli Keshelashvili"
 __copyright__  = "Copyright 2026, The Super FRS Project"
@@ -10,9 +11,9 @@ __status__     = "Production"
 import sys
 from loguru import logger
 
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 #******************************************************************************
 class MBSBrowser(QWidget):
@@ -35,11 +36,11 @@ class MBSBrowser(QWidget):
 
         self.resize(self.ws[0], self.ws[1])
         self.move(self.wp[0], self.wp[1])
-        self.setWindowTitle(f"MBS Browser")
+        self.setWindowTitle("MBS Browser")
     
     #=====================================================================
     def initUI(self):
-        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(self.wm[0], self.wm[1], self.wm[2], self.wm[3])
@@ -54,4 +55,4 @@ if __name__ == "__main__":
     browser = MBSBrowser(sys.argv[1] if len(sys.argv) == 2 else "http://x86l-132:8899/MBS/localhost/ControlGUI/")
     browser.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
