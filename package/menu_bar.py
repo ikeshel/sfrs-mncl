@@ -23,20 +23,23 @@ class MenuBarManager:
         self.about_action = self.help_menu.addAction("About")
         self.about_action.triggered.connect(self.show_about)
 
-        # Node Menu
-        self.node_menu = self.menubar.addMenu("All nodes")
-        self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
-        self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
-        self.node_menu.addSeparator()
-        self.node_menu.addAction("Configure All Nodes")
-        self.node_menu.addSeparator()
-        self.node_menu.addAction("Add Node").setDisabled(True)
-        self.node_menu.addAction("Remove Node").setDisabled(True)
-        self.node_menu.addSeparator()
+    #==========================================================================
+    def setup_mbs_menu(self):
 
-        # Settings Menu
-        self.settings_menu = self.menubar.addMenu("Settings")
-        self.settings_menu.addAction("Configure Nodes")
+            # Node Menu
+            self.node_menu = self.menubar.addMenu("All nodes")
+            self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
+            self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
+            self.node_menu.addSeparator()
+            self.node_menu.addAction("Configure All Nodes")
+            self.node_menu.addSeparator()
+            self.node_menu.addAction("Add Node").setDisabled(True)
+            self.node_menu.addAction("Remove Node").setDisabled(True)
+            self.node_menu.addSeparator()
+
+            # Settings Menu
+            self.settings_menu = self.menubar.addMenu("Settings")
+            self.settings_menu.addAction("Configure Nodes")
 
     #==========================================================================
     def build_node_menu(self, node):

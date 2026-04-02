@@ -23,24 +23,25 @@ from PyQt5.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot,
 sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
-from mbs_node         import MBSNode
 
-
+# GUI
+sys.path.append('gui')
+from tamex_channel import Ui_TamexChannel
 
 ###############################################################################
-class NodeWorkerSignals(QObject):
+class TamexWorkerSignals(QObject):
     """ Signals to be emitted from the worker thread """
     data = pyqtSignal(dict)
 
 ###############################################################################
-class NodeWorker(QRunnable):
+class TamexWorker(QRunnable):
     """ Worker thread that performs a task in the background. """
 
     def __init__(self, nodes=None):
-        super(NodeWorker, self).__init__()
+        super(TamexWorker, self).__init__()
 
         self.nodes       = nodes
-        self.signals     = NodeWorkerSignals()
+        self.signals     = TamexWorkerSignals()
         self.is_running  = True
         self.datadict    = {}
 
@@ -52,29 +53,30 @@ class NodeWorker(QRunnable):
     #==========================================================================
     def run(self):
 
-        logger.debug("NodeWorker.run()")
+        logger.debug("TamexWorker.run()")
 
         while True:
             if self.is_running == False:
-                logger.debug("NodeWorker.run() break")
+                logger.debug("TamexWorker.run() break")
                 break
 
             QThread.msleep(self.delay_ms)
             
             self.datadict['time'] = time.time() # seconds
             if self.last_time < self.datadict['time']-1: # check every 1 second
-                for node in self.nodes:
-                    # self.datadict[f"ping_{node.name}"] = node.check_ping()
-                    self.datadict[f"ssh_{node.name}"] = node.check_ssh()
+
+                #
+                #
+
                 self.last_time = self.datadict['time']
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
 
-        logger.debug("NodeWorker.run() finished")
+        logger.debug("TamexWorker.run() finished")
 
     #==========================================================================
     def stop(self):
-        logger.debug("NodeWorker.stop()")
+        logger.debug("TamexWorker.stop()")
         self.is_running = False
 
 #==============================================================================
@@ -86,15 +88,13 @@ class MainWindow(QMainWindow,
     #==========================================================================
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("MBS Node Manager")
-
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
-        self.setup_mbs_menu()
+        self.setWindowTitle("MBS Node Manager")
 
         ## logger
-        self.test_log_file  = "logs/mbs_node_manager.log"
-        self.debug_log_file = "logs/debug_mbs_node_manager.log"
+        self.test_log_file  = "logs/tamex_manager.log"
+        self.debug_log_file = "logs/debug_tamex_manager.log"
         self.add_loggers()
 
         # node widget
@@ -104,29 +104,36 @@ class MainWindow(QMainWindow,
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        self.node_TOF = MBSNode("ToF", "x86l-132")
-        self.layout.addWidget(self.node_TOF)
+        self.tmx_ch = [None]*8
+        for i in range(len(self.tmx_ch)):
+            self.tmx_ch[i] = Ui_TamexChannel()
+            self.tmx_ch[i].setupUi(self)
+            self.tmx_ch[i].lbl_ch.setText(f"CH {i+1}")
+            self.layout.addWidget(self.tmx_ch[i].widget)
 
-        self.node_MUSIC = MBSNode("MUSIC", "x86l-170")
-        self.layout.addWidget(self.node_MUSIC)
+        # self.node_TOF = MBSNode("ToF", "x86l-132")
+        # self.layout.addWidget(self.node_TOF)
 
-        self.node_SIFI = MBSNode("SiFi", "x86l-253")
-        self.layout.addWidget(self.node_SIFI)
+        # self.node_MUSIC = MBSNode("MUSIC", "x86l-170")
+        # self.layout.addWidget(self.node_MUSIC)
 
-        # add node menus to the main menu bar
-        for node in MBSNode.list_of_nodes:
-            logger.debug(f"Added node: {node.name} with host {node.node_host} to main window menu")
-            node.menu = self.menubar.addMenu(f"{node.name}")
-            self.build_node_menu(node)
+        # self.node_SIFI = MBSNode("SiFi", "x86l-253")
+        # self.layout.addWidget(self.node_SIFI)
+
+        # # add node menus to the main menu bar
+        # for node in MBSNode.list_of_nodes:
+        #     logger.debug(f"Added node: {node.name} with host {node.node_host} to main window menu")
+        #     node.menu = self.menubar.addMenu(f"{node.name}")
+        #     self.build_node_menu(node)
 
         # -------------------------------------------------------------------------------------------
         # starting threads
         self.threadpool = QThreadPool()
         logger.debug(f"Multithreading with maximum {self.threadpool.maxThreadCount()} threads")
 
-        self.node_worker = NodeWorker(MBSNode.list_of_nodes)
-        self.node_worker.signals.data.connect(self.data_received)
-        self.threadpool.start(self.node_worker)
+        self.tamex_worker = TamexWorker(self)
+        self.tamex_worker.signals.data.connect(self.data_received)
+        self.threadpool.start(self.tamex_worker)
 
         ## -------------------------------------------------------------------------------------------
         ## read window position
@@ -159,36 +166,9 @@ class MainWindow(QMainWindow,
         logger.debug(f"Data received: {data_dict}")
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
-        for node in MBSNode.list_of_nodes:
-            if f"ssh_{node.name}" in data_dict:
-                if data_dict[f"ssh_{node.name}"] == True:
-                    if self.ping_toggling:
-                        node.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {node.radius}px;")
-                    else:
-                        node.status_ping.setStyleSheet(f"background-color: green; border-radius: {node.radius}px;")
-                else:
-                    if self.ping_toggling:
-                        node.status_ping.setStyleSheet(f"background-color: pink; border-radius: {node.radius}px;")
-                    else:
-                        node.status_ping.setStyleSheet(f"background-color: red; border-radius: {node.radius}px;")
-                del data_dict[f"ssh_{node.name}"] # remove the key to avoid processing it again
 
-    #==========================================================================
-    def open_external_browsers(self):
-
-        for node in MBSNode.list_of_nodes:
-            node_host = node.node_host
-            logger.info(f"Opening {node_host} dashboard...")
-            node.open_external_browser()
             
     
-    #==========================================================================
-    def show_all_dashboards(self):
-
-        for node in MBSNode.list_of_nodes:
-            logger.info(f"Showing {node.name} dashboard...")
-            node.show_window()
-
     #==========================================================================
     def add_loggers(self):
         ## logger loguru settings 
@@ -222,24 +202,6 @@ class MainWindow(QMainWindow,
                             "<yellow>{line}</yellow> - <level>{message}</level>")
 
 
-    #==========================================================================
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
-
-        # Draw lines between nodes
-        pen = QtGui.QPen(Qt.black, 2)
-        painter.setPen(pen)
-
-        # Get the center points of the nodes
-        node1_center = self.node_TOF.geometry().center()
-        node2_center = self.node_MUSIC.geometry().center()
-        node3_center = self.node_SIFI.geometry().center()
-
-        # Draw lines between nodes
-        painter.drawLine(node1_center, node2_center)
-        painter.drawLine(node2_center, node3_center)
 
     #==========================================================================
     def closeEvent(self, event):
@@ -247,13 +209,10 @@ class MainWindow(QMainWindow,
         logger.debug("closeEvent")
         self.save_window_data() # save window position and size on close
 
-        # close all node browser windows
-        for node in MBSNode.list_of_nodes:
-             node.browser_window.close() # close browser windows
 
         # stop the worker thread
-        self.node_worker.is_running = False  # Stop the worker loop
-        self.node_worker.stop()  # Stop the worker
+        self.tamex_worker.is_running = False  # Stop the worker loop
+        self.tamex_worker.stop()  # Stop the worker
         self.threadpool.waitForDone()
 
         # accept the close event to allow the window to close
