@@ -85,7 +85,6 @@ class MainWindow(QMainWindow,
     #==========================================================================
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("MBS Node Manager")
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
@@ -147,6 +146,8 @@ class MainWindow(QMainWindow,
                 screen.height_in_pixels = 1080
             self.move(  int(screen.width_in_pixels/2)+10,
                         int(0.01*screen.height_in_pixels))
+        
+        self.setWindowTitle("MBS Node Manager")
         self.show()
         self.raise_()
 

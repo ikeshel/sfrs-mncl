@@ -26,6 +26,7 @@ from menu_bar         import MenuBarManager
 sys.path.append('gui')
 from tamex_channel import Ui_TamexChannel
 from sfp_control   import Ui_SfpControl
+from PyQt6.QtWidgets import QGridLayout
 
 ###############################################################################
 class TamexWorkerSignals(QObject):
@@ -80,16 +81,16 @@ class TamexWorker(QRunnable):
 
 #==============================================================================
 ## MBS Node Manager Main Window
-class MainWindow(QMainWindow, 
+class TamexMainWindow(QMainWindow, 
                  WindowPositionManager, 
                  MenuBarManager):
 
     #==========================================================================
     def __init__(self):
         super().__init__()
+
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
-        self.setWindowTitle("MBS Node Manager")
 
         ## logger
         self.test_log_file  = "logs/tamex_manager.log"
@@ -105,17 +106,24 @@ class MainWindow(QMainWindow,
 
         self.sfp_control = Ui_SfpControl()
         self.sfp_control.setupUi(self)
+        self.sfp_control.layoutWidget.setObjectName("SfpControl")
+        self.sfp_control.layoutWidget.setFixedHeight(40)
         self.v_leyout.addWidget(self.sfp_control.layoutWidget)
 
         self.sfp_control.cob_sfp.currentIndexChanged.connect(self.sfp_selection_changed)
 
-        self.tmx_ch = [None]*8
+        # Create a grid layout for two columns and 8 rows
+
+        self.grid_layout = QGridLayout()
+        self.v_leyout.addLayout(self.grid_layout)
+
+        self.tmx_ch = [None]*16
         for i in range(len(self.tmx_ch)):
             self.tmx_ch[i] = Ui_TamexChannel()
             self.tmx_ch[i].setupUi(self)
             self.tmx_ch[i].layoutWidget.setObjectName(f"TamexChannel_{i+1}")
             self.tmx_ch[i].lbl_ch.setText(f"CH {i+1}")
-            self.v_leyout.addWidget(self.tmx_ch[i].layoutWidget)
+            self.grid_layout.addWidget(self.tmx_ch[i].layoutWidget, i // 2, i % 2) # add to grid layout
 
             self.tmx_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
             self.tmx_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
@@ -150,6 +158,8 @@ class MainWindow(QMainWindow,
                 screen.height_in_pixels = 1080
             self.move(  int(screen.width_in_pixels/2)+10,
                         int(0.01*screen.height_in_pixels))
+
+        self.setWindowTitle("TAMEX Manager")
         self.show()
         self.raise_()
 
@@ -250,7 +260,7 @@ if __name__ == "__main__":
     if check.CheckForAnotherInstance(sys.argv[0]) != None:
         sys.exit( 0 )
 
-    window = MainWindow()
+    window = TamexMainWindow()
 
     sys.exit(app.exec())
 
