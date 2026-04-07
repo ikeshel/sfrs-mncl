@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/irakli/mncl/tamex.py
+GenericName[en_US]=
+GenericName=
+Icon=/home/irakli/mncl/images/tamex.png
+MimeType=
+Name[en_US]=Tamex
+Name=Tamex
+Path=/home/irakli/mncl
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

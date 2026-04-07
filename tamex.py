@@ -253,6 +253,11 @@ class TamexMainWindow(QMainWindow,
 #******************************************************************************
 if __name__ == "__main__":
 
+    # Check if running in graphical mode
+    if not os.environ.get('DISPLAY'):
+        logger.error("No X11 display detected. Exiting.")
+        sys.exit(1)
+
     app = QApplication(sys.argv)
     # app.setStyle('Windows')
 
@@ -260,7 +265,14 @@ if __name__ == "__main__":
     if check.CheckForAnotherInstance(sys.argv[0]) != None:
         sys.exit( 0 )
 
-    window = TamexMainWindow()
 
-    sys.exit(app.exec())
-
+    try:
+        window = TamexMainWindow()
+        sys.exit(app.exec())
+    except Exception as e:
+        logger.exception("An error occurred: %s", e)
+    
+    except KeyboardInterrupt:
+        logger.info("KeyboardInterrupt received. Exiting...")
+        # window.close() # this will trigger closeEvent and stop the worker thread properly
+        sys.exit(app.exec())

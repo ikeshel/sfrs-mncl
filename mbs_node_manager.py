@@ -264,6 +264,11 @@ class MainWindow(QMainWindow,
 #******************************************************************************
 if __name__ == "__main__":
 
+    # Check if running in graphical mode
+    if not os.environ.get('DISPLAY'):
+        logger.error("No X11 display detected. Exiting.")
+        sys.exit(1)
+
     app = QApplication(sys.argv)
     # app.setStyle('Windows')
 
