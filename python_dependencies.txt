@@ -14,7 +14,7 @@ numpy
 pyserial
 opencv-python
 python-xlib
-PyQt5
+PyQt6
 pyqtgraph
 bs4
 pyyaml
