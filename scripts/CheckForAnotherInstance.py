@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 __author__     = "Irakli Keshelashvili"
-__copyright__  = "Copyright 2021, The CBM-STS Project"
-__version__    = "3.0.0"
+__copyright__  = "Copyright 2026, The Super FRS Project"
+__version__    = "0.0.1"
 __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 import sys, os
+
 from PyQt5 import QtWidgets
 
 #==========================================================================
@@ -31,8 +32,7 @@ def CheckForAnotherInstance(app_name, gui_warning=True):
 ###############################################################################
 if __name__ == '__main__':
 
-    app = QtWidgets.QApplication(sys.argv)
-    # app.setStyle('Oxygen')
+    app = QtWidgets.QApplication(sys.argv) # create the application instance needed for the message box
 
     app_name = sys.argv[1] if len(sys.argv)>1 else sys.argv[0]
     print( 'app_name:', app_name )

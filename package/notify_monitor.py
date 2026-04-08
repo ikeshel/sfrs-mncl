@@ -115,7 +115,9 @@ class Window(QWidget):
     def on_test(self, app, summary, val):
         self.label.setText(f"Matched test=\nApp: {app}\nSummary: {summary}\nValue: {val}")
 
-
+#******************************************************************************
+# M A I N
+#******************************************************************************
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = Window()

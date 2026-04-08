@@ -61,4 +61,11 @@ class YamlManager(): # manager for yaml files
             logger.warning(f'Key {key} not found in {self.yaml_file_name} file')
             logger.warning(f'Default value {default} will be set')
             return default
-        
+
+#******************************************************************************
+# M A I N
+#******************************************************************************
+if __name__ == '__main__':
+    yaml_manager = YamlManager("config.yaml")
+    mydict = yaml_manager.get_dict()
+    logger.debug(mydict)

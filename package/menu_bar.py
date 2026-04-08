@@ -6,9 +6,11 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
+import sys
+import subprocess
 from loguru import logger
 
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QApplication, QMessageBox
 
 #==============================================================================
 class MenuBarManager:
@@ -30,7 +32,10 @@ class MenuBarManager:
             self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
             self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
             self.node_menu.addSeparator()
-            self.node_menu.addAction("Configure All Nodes")
+            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py"]))
+            self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "close"]))
+            self.node_menu.addSeparator()
+            self.node_menu.addAction("Configure All Nodes").disabled = True
             self.node_menu.addSeparator()
             self.node_menu.addAction("Add Node").setDisabled(True)
             self.node_menu.addAction("Remove Node").setDisabled(True)
@@ -61,3 +66,12 @@ class MenuBarManager:
                                 f"Email: {__email__}\n"
                                 f"Copyright: {__copyright__}")
 
+#******************************************************************************
+# M A I N
+#******************************************************************************
+if __name__ == '__main__':
+    logger.info("This is a module, not a standalone application.")
+    app = QApplication(sys.argv)
+    menubar_manager = MenuBarManager()
+    menubar_manager.show()
+    sys.exit(app.exec())

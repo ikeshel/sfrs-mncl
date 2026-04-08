@@ -372,7 +372,9 @@ class ModuleScanner(QDialog, ModuleScanner.Ui_ModuleScanner):
         logger.info(self.module)
         logger.info(self.sensor)
 
-################################################################################
+#******************************************************************************
+# M A I N
+#******************************************************************************
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
