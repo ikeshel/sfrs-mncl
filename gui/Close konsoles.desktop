@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/irakli/mncl/scripts/open_konsoles.py close
+GenericName[en_US]=
+GenericName=
+Icon=/home/irakli/mncl/gui/close_konsoles.png
+MimeType=
+Name[en_US]=Close konsoles
+Name=Close konsoles
+Path=/home/irakli/mncl
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
