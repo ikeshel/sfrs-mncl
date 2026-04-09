@@ -11,24 +11,28 @@ __status__     = "Production"
 script to open konsole windows for each login and tab, and arrange them on the screen
 '''
 
+import sys
 import subprocess
 import time
 import shlex
 from loguru import logger
-import sys
 
+sys.path.append('package')
+from config_reader import ConfigReader
 
 USERNAME = "ikeshel"
-
-LOGINS = [
-    f"{USERNAME}@x86l-132",
-    f"{USERNAME}@x86l-170",
-    f"{USERNAME}@x86l-253",
-]
-
+LOGINS = []
 TABS = ["mbs", "web"]
-
 SLEEP_TIME = 0.3
+
+cfg = ConfigReader("config/list_of_nodes.conf")
+for raw in cfg:
+    try:
+        node, desc = ConfigReader.parse_entry(raw)
+        logger.success(f"{node!r:12} -> {desc}")
+        LOGINS.append(f"{USERNAME}@{node}")
+    except ValueError as exc:
+        logger.error(f"⚠️  {exc}")    
 
 #=============================================================================
 def run(cmd):
@@ -117,13 +121,14 @@ def close_all()->None:
             else:
                 logger.info(f"Window not found, cannot close: {title}")
 
+#=============================================================================
 def open_konsoles()->None:
-    
+
     xx, yy = get_screen_resolution()
-    logger.info(f"Screen resolution: {xx}x{yy}")
+    logger.debug(f"Screen resolution: {xx}x{yy}")
 
     monitors = get_monitor_count()
-    logger.info(f"Monitors detected: {monitors}")
+    logger.debug(f"Monitors detected: {monitors}")
 
     # debug_titles()
 

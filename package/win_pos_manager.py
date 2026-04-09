@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 __author__     = "Irakli Keshelashvili"
 __copyright__  = "Copyright 2021, The CBM-STS Project"

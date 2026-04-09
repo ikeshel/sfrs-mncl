@@ -82,7 +82,7 @@ class NotificationWatcher(QObject):
 
         return dbus.lowlevel.HANDLER_RESULT_NOT_YET_HANDLED
 
-
+#
 class Window(QWidget):
     def __init__(self):
         super().__init__()
