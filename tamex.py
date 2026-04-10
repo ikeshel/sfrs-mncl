@@ -13,8 +13,8 @@ from loguru import logger
 from Xlib.display import Display
 
 ##
-from PyQt6.QtCore import QThread, pyqtSlot, pyqtSignal
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
+from PyQt6.QtCore import QSignalBlocker, QThread, pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
 from PyQt6.QtCore import QThreadPool, QObject, QRunnable
 
 ##
@@ -26,7 +26,8 @@ from menu_bar         import MenuBarManager
 sys.path.append('gui')
 from tamex_channel import Ui_TamexChannel
 from sfp_control   import Ui_SfpControl
-from PyQt6.QtWidgets import QGridLayout
+from gui_tamex_trigger_tab import Ui_TamexTriggerTab
+
 
 ###############################################################################
 class TamexWorkerSignals(QObject):
@@ -81,6 +82,7 @@ class TamexWorker(QRunnable):
 
 #==============================================================================
 ## MBS Node Manager Main Window
+#==============================================================================
 class TamexMainWindow(QMainWindow, 
                  WindowPositionManager, 
                  MenuBarManager):
@@ -104,6 +106,7 @@ class TamexMainWindow(QMainWindow,
         self.v_leyout = QVBoxLayout()
         self.central_widget.setLayout(self.v_leyout)
 
+        # SFP control panel
         self.sfp_control = Ui_SfpControl()
         self.sfp_control.setupUi(self)
         self.sfp_control.layoutWidget.setObjectName("SfpControl")
@@ -112,10 +115,26 @@ class TamexMainWindow(QMainWindow,
 
         self.sfp_control.cob_sfp.currentIndexChanged.connect(self.sfp_selection_changed)
 
-        # Create a grid layout for two columns and 8 rows
+        # Create a tab widget
 
-        self.grid_layout = QGridLayout()
-        self.v_leyout.addLayout(self.grid_layout)
+        self.tab_widget = QTabWidget()
+        self.v_leyout.addWidget(self.tab_widget)
+
+        # Create tabs
+        self.tab_main = QWidget()
+        self.tab_thresholds = QWidget()
+        self.tab_pulses = QWidget()
+        self.tab_clock = QWidget()
+
+        #_/main\_____
+        self.tab_widget.addTab(self.tab_main, "Main")
+
+        #_/thresholds\_____
+        self.tab_widget.addTab(self.tab_thresholds, "Thresholds")
+        # Thresholds tab: create a grid layout and add 16 TamexChannel widgets
+        # Create a grid layout for two columns and 8 rows
+        self.gl_threshold = QGridLayout()
+        self.tab_thresholds.setLayout(self.gl_threshold)
 
         self.tmx_ch = [None]*16
         for i in range(len(self.tmx_ch)):
@@ -123,11 +142,26 @@ class TamexMainWindow(QMainWindow,
             self.tmx_ch[i].setupUi(self)
             self.tmx_ch[i].layoutWidget.setObjectName(f"TamexChannel_{i+1}")
             self.tmx_ch[i].lbl_ch.setText(f"CH {i+1}")
-            self.grid_layout.addWidget(self.tmx_ch[i].layoutWidget, i // 2, i % 2) # add to grid layout
+            self.gl_threshold.addWidget(self.tmx_ch[i].layoutWidget, i // 2, i % 2) # add to grid layout
 
             self.tmx_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
             self.tmx_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
             self.tmx_ch[i].dsb_mV .valueChanged.connect(lambda value, ch=i: self.on_mv_value_changed(ch, value))
+
+        #_/pulses\_____
+        self.tab_widget.addTab(self.tab_pulses, "Trigger")
+        self.tamex_trigger_tab = Ui_TamexTriggerTab()
+        self.tamex_trigger_tab.setupUi(self.tab_pulses)
+        # self.tab_pulses.setLayout(self.tamex_trigger_tab.verticalLayout)
+        # self.tab_pulses.setLayout(self.tamex_trigger_tab.layoutWidget.layout())
+        self.tamex_trigger_tab.ckbx_ch_all.stateChanged.connect(lambda state, ch=-1: self.on_ckbx_ch_state_changed(ch, state))
+        for i in range(8):
+            getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").stateChanged.connect(lambda state, ch=i: self.on_ckbx_ch_state_changed(ch, state))
+
+        #_/clock\_____
+        self.tab_widget.addTab(self.tab_clock, "Clock")
+
+        self.tab_widget.setCurrentIndex(2) # set default tab to 
 
         # -------------------------------------------------------------------------------------------
         # starting threads
@@ -164,11 +198,36 @@ class TamexMainWindow(QMainWindow,
         self.raise_()
 
     #==========================================================================
+    def on_ckbx_ch_state_changed(self, ch, state):
+        if ch == -1:
+            # Handle the "all channels" checkbox
+            for i in range(8):
+                with QSignalBlocker(getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}")):
+                    getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").setChecked(bool(state))
+        else:
+            # Handle individual channel checkbox
+            with QSignalBlocker(self.tamex_trigger_tab.ckbx_ch_all):
+                self.tamex_trigger_tab.ckbx_ch_all.setChecked(False) # uncheck "all channels" if any individual channel is changed
+
+            if all(getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").isChecked() for i in range(8)):
+                self.tamex_trigger_tab.ckbx_ch_all.setChecked(True) # check "all channels" if all individual channels are checked
+
+        self.list_of_trigger_channels = [i for i in range(8) if getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").isChecked()]
+        logger.debug(f"Current list of trigger channels: {self.list_of_trigger_channels}")
+
+        self.trigger_mask = sum(1 << i for i in self.list_of_trigger_channels) # create bitmask from list of channels
+        logger.debug(f"Current trigger mask: {self.trigger_mask:08b}")
+        logger.debug(f"Current trigger mask (hex): {self.trigger_mask:02x}")
+        self.goc_format = f"goc -w -x 0 0 0x330010 0x{self.trigger_mask:02x}" # format as hex string for GOC command
+        logger.debug(f"Current trigger mask (GOC format): {self.goc_format}")
+        
+
+    #==========================================================================
     @pyqtSlot(dict)
     def data_received (self, data_dict):
         ''' timer loop to HMP readout and status check '''
        
-        logger.debug(f"Data received: {data_dict}")
+        # logger.debug(f"Data received: {data_dict}")
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
 

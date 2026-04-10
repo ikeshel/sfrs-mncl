@@ -20,8 +20,9 @@ compiling:
 	@echo '---------------------'
 
 	## COMMON
-	${CC} sfp_control.ui        -o sfp_control.py
-	${CC} tamex_channel.ui      -o tamex_channel.py	
+	${CC} sfp_control.ui           -o sfp_control.py
+	${CC} tamex_channel.ui         -o tamex_channel.py	
+	${CC} gui_tamex_trigger_tab.ui -o gui_tamex_trigger_tab.py
 	@echo '---------------------'
 
 clean:
