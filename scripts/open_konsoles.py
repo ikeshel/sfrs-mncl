@@ -21,8 +21,8 @@ sys.path.append('package')
 from config_reader import ConfigReader
 
 USERNAME = "ikeshel"
-LOGINS = []
-TABS = ["mbs", "web"]
+LOGINS = [] #
+TABS = [] #["mbs", "web", "com"]
 SLEEP_TIME = 0.5
 
 cfg = ConfigReader("config/list_of_nodes.conf")
@@ -34,9 +34,37 @@ for raw in cfg:
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
 
+cfg = ConfigReader("config/list_of_screens.conf")
+for raw in cfg:
+    try:
+        screen, desc = ConfigReader.parse_entry(raw)
+        logger.success(f"{screen!r:12} -> {desc}")
+        TABS.append(f"{USERNAME}@{screen}")
+    except ValueError as exc:
+        logger.error(f"⚠️  {exc}")    
+
+
 #=============================================================================
 def run(cmd):
     return subprocess.run(cmd, text=True, capture_output=True)
+
+#=============================================================================
+def get_kde_panel_height(panel_index=0):
+    script = f'print(panelById(panelIds[{panel_index}]).height)'
+    
+    try:
+        result = subprocess.run(
+            ['qdbus6', 'org.kde.plasmashell', '/PlasmaShell',
+            'org.kde.PlasmaShell.evaluateScript', script],
+            capture_output=True, text=True
+        )
+    except:
+        return 50
+    
+    if result.returncode != 0:
+        raise RuntimeError(f"qdbus6 error: {result.stderr.strip()}")
+    
+    return int(result.stdout.strip())
 
 #=============================================================================
 def get_screen_resolution():
@@ -115,7 +143,7 @@ def check_konsoles()->None:
                 logger.warning(f"Window not found: {title}")
 
 #==============================================================================
-def close_all()->None:
+def close_konsoles()->None:
     for login in LOGINS:
         for tab in TABS:
             title = f"{login}_{tab}"
@@ -134,15 +162,16 @@ def open_konsoles()->None:
     monitors = get_monitor_count()
     logger.debug(f"Monitors detected: {monitors}")
 
+    KDE_menu_bar_height = get_kde_panel_height()
+    logger.debug(f"KDE menu bar height: {KDE_menu_bar_height}px")
+
     # debug_titles()
 
-    KDE_menu_bar_height = 40
-    KDE_top_bar_height = 30
     screen_w = xx // monitors
     screen_h = yy - KDE_menu_bar_height
 
-    win_w = screen_w // 2
-    win_h = screen_h // 2 - KDE_menu_bar_height
+    win_w = screen_w // len(LOGINS)
+    win_h = screen_h // len(TABS)
 
     for key, login in enumerate(LOGINS):
         pos_x = key*win_w
@@ -154,7 +183,7 @@ def open_konsoles()->None:
                 logger.info(f"Already running: {title}")
                 continue
             
-            pos_y = tab_key * screen_h // 2 + 30
+            pos_y = (len(TABS)-1-tab_key) * win_h + 1 # top space px
 
             logger.info(f"Opening {login} at x={pos_x} y={pos_y}")
             open_konsole(title, login, tab)
@@ -168,7 +197,7 @@ def open_konsoles()->None:
 if __name__ == "__main__":
 
     if "close" in sys.argv:
-        close_all()
+        close_konsoles()
 
     elif "check" in sys.argv:
         check_konsoles()

@@ -156,7 +156,7 @@ class MainWindow(QMainWindow,
     def data_received (self, data_dict):
         ''' timer loop to HMP readout and status check '''
        
-        logger.debug(f"Data received: {data_dict}")
+        # logger.debug(f"Data received: {data_dict}")
 
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
         for node in MBSNode.list_of_nodes:
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow,
         logger.remove() #remove the old handler.
 
         logger.add( sys.stdout, 
-                    level = "INFO",
+                    level = "WARNING",
                     format = "{time:HH:mm:ss}|{level: >8}| {message}")
 
         log_fmt =   "<green>{time:YY-MM-DD HH:mm:ss}</green> | "\
@@ -205,12 +205,13 @@ class MainWindow(QMainWindow,
 
         ## for quasi-permanent log file
         logger.add( self.debug_log_file,
-                    level       = "DEBUG",
                     mode        = "a", 
+                    level       = "DEBUG",
                     format      = log_fmt,
                     rotation    = "50 MB",   # rotate after
                     retention   = "3 month", # keep logs for
                     compression = "zip")     # compress rotated logs
+        logger.success(f"Logger {self.debug_log_file} initialized")
 
         ## for test log file
         logger.add( self.test_log_file,
@@ -220,6 +221,7 @@ class MainWindow(QMainWindow,
                             "<level>{level: <8}</level> | "\
                             "<magenta>{module}</magenta>:<cyan>{function}</cyan>:"\
                             "<yellow>{line}</yellow> - <level>{message}</level>")
+        logger.success(f"Logger {self.test_log_file} initialized")
 
 
     #==========================================================================
