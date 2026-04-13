@@ -22,7 +22,7 @@ from config_reader import ConfigReader
 
 USERNAME = "ikeshel"
 LOGINS = [] #
-TABS = [] #["mbs", "web", "com"]
+SCREENS = [] #["mbs", "web", "com"]
 SLEEP_TIME = 0.5
 
 cfg = ConfigReader("config/list_of_nodes.conf")
@@ -39,7 +39,7 @@ for raw in cfg:
     try:
         screen, desc = ConfigReader.parse_entry(raw)
         logger.success(f"{screen!r:12} -> {desc}")
-        TABS.append(f"{USERNAME}@{screen}")
+        SCREENS.append(f"{USERNAME}@{screen}")
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
 
@@ -135,7 +135,7 @@ def open_konsole(title:str, login:str, tab:str)->None:
 #==============================================================================
 def check_konsoles()->None:
     for login in LOGINS:
-        for tab in TABS:
+        for tab in SCREENS:
             title = f"{login}_{tab}"
             if window_exists(title):
                 logger.info(f"Found window: {title}")
@@ -145,7 +145,7 @@ def check_konsoles()->None:
 #==============================================================================
 def close_konsoles()->None:
     for login in LOGINS:
-        for tab in TABS:
+        for tab in SCREENS:
             title = f"{login}_{tab}"
             if window_exists(title):
                 logger.info(f"Closing {title}")
@@ -171,19 +171,19 @@ def open_konsoles()->None:
     screen_h = yy - KDE_menu_bar_height
 
     win_w = screen_w // len(LOGINS)
-    win_h = screen_h // len(TABS)
+    win_h = screen_h // len(SCREENS)
 
     for key, login in enumerate(LOGINS):
         pos_x = key*win_w
 
-        for tab_key, tab in enumerate(TABS):
+        for tab_key, tab in enumerate(SCREENS):
             title = f"{login}_{tab}"
 
             if window_exists(title):
                 logger.info(f"Already running: {title}")
                 continue
             
-            pos_y = (len(TABS)-1-tab_key) * win_h + 1 # top space px
+            pos_y = (len(SCREENS)-1-tab_key) * win_h + 1 # top space px
 
             logger.info(f"Opening {login} at x={pos_x} y={pos_y}")
             open_konsole(title, login, tab)
