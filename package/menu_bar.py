@@ -32,7 +32,7 @@ class MenuBarManager:
             self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
             self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
             self.node_menu.addSeparator()
-            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py"]))
+            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "open"]))
             self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "close"]))
             self.node_menu.addSeparator()
             self.node_menu.addAction("Configure All Nodes").disabled = True

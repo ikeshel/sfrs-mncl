@@ -8,7 +8,7 @@ __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 '''
-script to open konsole windows for each login and tab, and arrange them on the screen
+script to open konsole windows for each mbs_node and screen, and arrange them on the screen
 '''
 
 import sys
@@ -17,9 +17,11 @@ import time
 import shlex
 from loguru import logger
 
+##
 sys.path.append('package')
 from config_reader import ConfigReader
 
+##
 USERNAME = "ikeshel"
 LOGINS = [] #
 SCREENS = [] #["mbs", "web", "com"]
@@ -39,7 +41,7 @@ for raw in cfg:
     try:
         screen, desc = ConfigReader.parse_entry(raw)
         logger.success(f"{screen!r:12} -> {desc}")
-        SCREENS.append(f"{USERNAME}@{screen}")
+        SCREENS.append(f"{screen}")
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
 
@@ -51,18 +53,17 @@ def run(cmd):
 #=============================================================================
 def get_kde_panel_height(panel_index=0):
     script = f'print(panelById(panelIds[{panel_index}]).height)'
-    
+    cmd = ['qdbus6', 'org.kde.plasmashell', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript', script]
+    logger.debug(f"Command: {' '.join(cmd)}")
     try:
-        result = subprocess.run(
-            ['qdbus6', 'org.kde.plasmashell', '/PlasmaShell',
-            'org.kde.PlasmaShell.evaluateScript', script],
-            capture_output=True, text=True
-        )
-    except:
+        result = run(cmd)
+    except Exception as exc:
+        logger.error(f"Error running command: {exc}")
         return 50
     
     if result.returncode != 0:
-        raise RuntimeError(f"qdbus6 error: {result.stderr.strip()}")
+        logger.error(f"qdbus6 command failed: {result.stderr.strip()}")
+        return 50
     
     return int(result.stdout.strip())
 
@@ -106,7 +107,9 @@ def debug_titles():
 #=============================================================================
 def move_window(title:str, x:int, y:int, w:int, h:int)->None:
     for attempt in range(3):
-        ret = run(["wmctrl", "-r", title, "-e", f"0,{x},{y},{w},{h}"])
+        move_cmd = ["wmctrl", "-r", f"{title}", "-e", f"0,{x},{y},{w},{h}"]
+        ret = run(move_cmd)
+        logger.debug(f"Moving command: {' '.join(move_cmd)}")
         if ret.returncode == 0:
             return
         logger.error(f"Failed to move window {title} (attempt {attempt+1}/3): {ret.stderr.strip()}")
@@ -114,29 +117,32 @@ def move_window(title:str, x:int, y:int, w:int, h:int)->None:
 
 
 #=============================================================================
-def open_konsole(title:str, login:str, tab:str)->None:
+def open_konsol(title:str, mbs_node:str, screen:str)->None:
+
     remote_cmd = (
-        f"screen -dr {shlex.quote(tab)} "
-        f"|| screen -r {shlex.quote(tab)} "
-        f"|| echo 'screen session {tab} not found on {login}'"
+        f"screen -dr {shlex.quote(screen)} "
+        f"|| screen -r {shlex.quote(screen)} "
+        f"|| echo 'screen session {screen} not found on {mbs_node}'"
     )
 
-    local_cmd = f"ssh -Y {shlex.quote(login)} -t {shlex.quote(remote_cmd)}; exec bash"
+    local_cmd = f"ssh -Y {shlex.quote(mbs_node)} -t {shlex.quote(remote_cmd)};echo;"
 
-    subprocess.Popen([
+    ssh_cmd = [
         "konsole",
-        "--separate",
-        "--title", title,
         "-p", f"tabtitle={title}",
         "--hold",
-        "-e", "bash", "-lc", local_cmd,
-    ])
+        "-e", 
+        "bash", "-lc", local_cmd,
+    ]
+
+    logger.debug(f"SSH command: {' '.join(ssh_cmd)}")
+    subprocess.Popen(ssh_cmd)
 
 #==============================================================================
 def check_konsoles()->None:
-    for login in LOGINS:
-        for tab in SCREENS:
-            title = f"{login}_{tab}"
+    for mbs_node in LOGINS:
+        for screen in SCREENS:
+            title = f"{mbs_node}_{screen}"
             if window_exists(title):
                 logger.info(f"Found window: {title}")
             else:
@@ -144,12 +150,18 @@ def check_konsoles()->None:
 
 #==============================================================================
 def close_konsoles()->None:
-    for login in LOGINS:
-        for tab in SCREENS:
-            title = f"{login}_{tab}"
+    for mbs_node in LOGINS:
+        for screen in SCREENS:
+            title = f"{mbs_node}_{screen}"
             if window_exists(title):
+                try:
+                    result = run(["wmctrl", "-c", title])
+                    if result.returncode != 0:
+                        logger.error(f"Failed to close window {title}: {result.stderr.strip()}")
+                except Exception as exc: 
+                    logger.error(f"Error closing window {title}: {exc}")
+                result = run(["wmctrl", "-c", title])
                 logger.info(f"Closing {title}")
-                run(["wmctrl", "-c", title])
             else:
                 logger.info(f"Window not found, cannot close: {title}")
 
@@ -173,20 +185,25 @@ def open_konsoles()->None:
     win_w = screen_w // len(LOGINS)
     win_h = screen_h // len(SCREENS)
 
-    for key, login in enumerate(LOGINS):
-        pos_x = key*win_w
+    for key_login, mbs_node in enumerate(LOGINS):
+        pos_x = key_login*win_w
 
-        for tab_key, tab in enumerate(SCREENS):
-            title = f"{login}_{tab}"
+        for key_screen, screen in enumerate(SCREENS):
+            title = f"{mbs_node}_{screen}"
+
+            check_scrn = ["ssh", f"{mbs_node}", "cd ~/mncl;./bin/check_screens.csh"]
+            logger.debug(f"Checking screen: {check_scrn}")
+            result = run(check_scrn)
+            logger.debug(result.stdout)
 
             if window_exists(title):
                 logger.info(f"Already running: {title}")
                 continue
             
-            pos_y = (len(SCREENS)-1-tab_key) * win_h + 1 # top space px
+            pos_y = (len(SCREENS)-1-key_screen) * win_h + 1 # top space px
 
-            logger.info(f"Opening {login} at x={pos_x} y={pos_y}")
-            open_konsole(title, login, tab)
+            logger.info(f"Opening {mbs_node} at x={pos_x} y={pos_y}")
+            open_konsol(title, mbs_node, screen)
 
             time.sleep(SLEEP_TIME)
             move_window(title, pos_x, pos_y, win_w, win_h)
@@ -199,8 +216,12 @@ if __name__ == "__main__":
     if "close" in sys.argv:
         close_konsoles()
 
-    elif "check" in sys.argv:
+    if "check" in sys.argv:
         check_konsoles()
 
-    else:        
+    if "node" in sys.argv:
+        for index, mbs_node in enumerate(sys.argv):
+            print(f"{index}: {mbs_node}")
+
+    if "open" in sys.argv:
         open_konsoles()

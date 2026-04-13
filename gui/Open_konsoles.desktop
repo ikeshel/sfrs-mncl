@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/scripts/open_konsoles.py
+Exec=/home/irakli/mncl/scripts/open_konsoles.py open
 GenericName[en_US]=
 GenericName=
 Icon=/home/irakli/mncl/gui/open_konsoles.png
