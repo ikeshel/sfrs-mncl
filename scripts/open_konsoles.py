@@ -23,7 +23,7 @@ from config_reader import ConfigReader
 USERNAME = "ikeshel"
 LOGINS = []
 TABS = ["mbs", "web"]
-SLEEP_TIME = 0.3
+SLEEP_TIME = 0.5
 
 cfg = ConfigReader("config/list_of_nodes.conf")
 for raw in cfg:
@@ -77,9 +77,13 @@ def debug_titles():
 
 #=============================================================================
 def move_window(title:str, x:int, y:int, w:int, h:int)->None:
-    ret = run(["wmctrl", "-r", title, "-e", f"0,{x},{y},{w},{h}"])
-    if ret.returncode != 0:
-        logger.error(f"Failed to move window {title}: {ret.stderr.strip()}")
+    for attempt in range(3):
+        ret = run(["wmctrl", "-r", title, "-e", f"0,{x},{y},{w},{h}"])
+        if ret.returncode == 0:
+            return
+        logger.error(f"Failed to move window {title} (attempt {attempt+1}/3): {ret.stderr.strip()}")
+        time.sleep(SLEEP_TIME)
+
 
 #=============================================================================
 def open_konsole(title:str, login:str, tab:str)->None:
@@ -158,7 +162,9 @@ def open_konsoles()->None:
             time.sleep(SLEEP_TIME)
             move_window(title, pos_x, pos_y, win_w, win_h)
 
-#
+#=============================================================================
+# main entry point
+#=============================================================================
 if __name__ == "__main__":
 
     if "close" in sys.argv:
