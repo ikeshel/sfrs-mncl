@@ -9,8 +9,14 @@ __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 import sys, os
+from pathlib import Path
 
-from PyQt5 import QtWidgets
+sys.path.append(str(Path(__file__).resolve().parents[1] / 'package'))
+from gui_env import ensure_gui_environment
+
+ensure_gui_environment()
+
+from PyQt6 import QtWidgets
 
 #==========================================================================
 def CheckForAnotherInstance(app_name, gui_warning=True):
@@ -39,6 +45,6 @@ if __name__ == '__main__':
     error_msg=CheckForAnotherInstance( app_name )
     print( error_msg )
 
-    # app.exec_()
-    # sys.exit(app.exec_())
+    # app.exec()
+    # sys.exit(app.exec())
 

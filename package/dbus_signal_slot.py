@@ -9,9 +9,9 @@ __status__     = "Production"
 
 import sys
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Q_CLASSINFO
-from PyQt5.QtDBus import (QDBusConnection, QDBusMessage)
-from PyQt5.QtGui import QTextCursor
+from PyQt6.QtCore import pyqtSignal, pyqtSlot, Q_CLASSINFO
+from PyQt6.QtDBus import (QDBusConnection, QDBusMessage)
+from PyQt6.QtGui import QTextCursor
 
 # parts of ST3
 import dbus_chat_adaptor as chatlib

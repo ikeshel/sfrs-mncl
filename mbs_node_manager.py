@@ -12,6 +12,10 @@ import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
+sys.path.append('package')
+from gui_env import ensure_gui_environment
+
+ensure_gui_environment()
 os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
 
 # 
@@ -21,7 +25,6 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
 ##
-sys.path.append('package')
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from mbs_node         import MBSNode

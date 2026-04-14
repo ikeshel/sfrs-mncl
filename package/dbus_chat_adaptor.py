@@ -7,8 +7,8 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Q_CLASSINFO
-from PyQt5.QtDBus import (  QDBusAbstractAdaptor, 
+from PyQt6.QtCore import pyqtSignal, pyqtSlot, Q_CLASSINFO
+from PyQt6.QtDBus import (  QDBusAbstractAdaptor, 
                             QDBusAbstractInterface )
 
 ST3_DBUS_ADDRESS = 'ST3.communication.chat'

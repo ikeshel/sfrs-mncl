@@ -9,9 +9,9 @@ import dbus
 import dbus.mainloop.glib
 from gi.repository import GLib
 
-from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
-from PyQt5.QtWidgets import QPushButton
+from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QPushButton
 
 
 TEST_RE = re.compile(r"test=([^\s&]+)")

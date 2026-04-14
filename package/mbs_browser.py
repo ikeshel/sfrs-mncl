@@ -11,6 +11,10 @@ __status__     = "Production"
 import sys
 from loguru import logger
 
+from gui_env import ensure_gui_environment
+
+ensure_gui_environment()
+
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt6.QtWebEngineWidgets import QWebEngineView

@@ -17,9 +17,9 @@ import requests
 from bs4 import BeautifulSoup
 import webbrowser
 
-from PyQt5.QtWidgets import QApplication, QDialog
-from PyQt5.QtCore    import QProcess, Qt
-from PyQt5.QtGui     import QIntValidator
+from PyQt6.QtWidgets import QApplication, QDialog
+from PyQt6.QtCore    import QProcess, Qt
+from PyQt6.QtGui     import QIntValidator
 
 from loguru import logger
 

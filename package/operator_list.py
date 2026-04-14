@@ -26,9 +26,9 @@ from loguru import logger
 #logger.remove()
 #logger.add(sys.stderr, level="INFO", format="{time:mm:ss} | {level} | {message}")
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QCheckBox, QPushButton
-from PyQt5.QtCore import (Qt, pyqtSignal)
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QCheckBox, QPushButton
+from PyQt6.QtCore import (Qt, pyqtSignal)
 
 import constants as mycolor
 

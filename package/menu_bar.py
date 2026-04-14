@@ -54,7 +54,14 @@ class MenuBarManager:
         node.menu.addAction("Check screens").triggered.connect(node.check_screens)
         node.menu.addSeparator()
         node.menu.addAction("Kill screens").triggered.connect(node.kill_screens)
+        node.menu.addSeparator()
         node.menu.addAction("Restart MBS").triggered.connect(node.restart_mbs)
+        node.menu.addAction("Stop MBS").triggered.connect(node.stop_mbs)
+        node.menu.addAction("Start MBS").triggered.connect(node.start_mbs)
+        node.menu.addSeparator()
+        node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
+        node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)
+        node.menu.addAction("Start WEB-MBS").triggered.connect(node.start_webmbs)
 
     #==========================================================================
     def show_about(self):

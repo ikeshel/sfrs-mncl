@@ -31,7 +31,7 @@ log_hmp_worker.add( sys.stdout,
                     format=myformat) #add a new handler which has INFO as the default
 
 
-from PyQt5.QtCore import QObject, QRunnable, QThread, pyqtSignal
+from PyQt6.QtCore import QObject, QRunnable, QThread, pyqtSignal
 
 ###############################################################################
 class HmpWorkerSignals(QObject):
