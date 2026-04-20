@@ -56,14 +56,15 @@ class MBSNode(QtWidgets.QWidget, SSHCommander):
         svg_layout.addWidget(node_svg)
         self.setLayout(svg_layout)
         
+        # Create label-link for node name and set it up
         self.lbl_node_name = QtWidgets.QLabel(self)
         self.lbl_node_name.setObjectName(f"lbl_{self.name}")
         self.lbl_node_name.setText(f"{self.name}\n{self.node_host}")
         self.lbl_node_name.setCursor(Qt.CursorShape.PointingHandCursor)
         self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
-        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 90, 40))
+        self.lbl_node_name.setGeometry(QtCore.QRect(20, 10, 90, 40))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lbl_node_name.setFont(QFont("Times", 10, QFont.Weight.Bold))
+        # self.lbl_node_name.setFont(QFont("Times", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
 
@@ -182,8 +183,9 @@ class MBSNode(QtWidgets.QWidget, SSHCommander):
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             screen_name = "mbs"
             list_of_commands = [
+                'quit',
                 '\x03', # Ctrl+C to interrupt the running process
-                'quit'
+                'resl'
                 ]
             for cmd in list_of_commands:
                 try:
@@ -210,7 +212,7 @@ class MBSNode(QtWidgets.QWidget, SSHCommander):
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             screen_name = "mbs"
             list_of_commands = [
-                'cd ~/{self.name}', 
+                f'cd ~/{self.name}', 
                 'mbs -dabc', 
                 'help'
                 ]

@@ -136,7 +136,7 @@ class MainWindow(QMainWindow,
                          f"width={self.ww}, height={self.hh}")
             self.move(self.xx, self.yy)
             # self.resize(self.ww, self.hh)
-            self.setFixedWidth(600)
+            self.setFixedWidth(614)
 
         else:
             # screen = Display(os.environ['DISPLAY']).screen() 

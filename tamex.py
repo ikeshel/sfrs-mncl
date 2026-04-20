@@ -12,19 +12,19 @@ import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
-sys.path.append('package')
-from gui_env import ensure_gui_environment
-
-ensure_gui_environment()
-
 ##
 from PyQt6.QtCore import QSignalBlocker, QThread, pyqtSlot, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
 from PyQt6.QtCore import QThreadPool, QObject, QRunnable
 
 ##
+sys.path.append('package')
+# from gui_env import ensure_gui_environment
+# ensure_gui_environment()
+
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
+from ssh_commander    import SSHCommander
 
 # GUI
 sys.path.append('gui')

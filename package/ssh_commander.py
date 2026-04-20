@@ -7,23 +7,38 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-
 import subprocess
 from loguru import logger
+
+# /mbs/driv/mbspexV3_5.10-64_DEB/bin/gosipcmd -r -x 0 0 0x200004
+GOC_COMMAND = "/mbs/driv/mbspexV3_5.10-64_DEB/bin/gosipcmd"
 
 #==============================================================================
 class SSHCommander:
 
     #==========================================================================
-    def __init__(self, hostname: str, username: str = 'ikeshel', port: int = 22):
+    def __init__(self, hostname: str, username: str = 'ikeshel'):
         """Initialize SSH commander with host and user details."""
         self.hostname = hostname
         self.username = username
-        self.port = port
-        logger.info(f"SSHCommander initialized for {username}@{hostname}:{port}")
+        logger.info(f"SSHCommander initialized for {username}@{hostname}")
 
     #==========================================================================
-    def run_command(self, command: str) -> tuple[int, str, str]:
+    def goc_read(self, sfp: int=0, dev: int=0, address: hex=0x0) -> tuple[int, str, str]:
+        """Run a GOC command on the remote host."""
+        ssh_command = [
+            GOC_COMMAND,
+            "-r",
+            "-x",
+            f"{sfp}",
+            f"{dev}",
+            f"{hex(address)}"
+        ]
+        logger.info(f"goc read: {ssh_command}")
+        return self.run_command(ssh_command)
+
+    #==========================================================================
+    def run_command(self, command: list) -> tuple[int, str, str]:
         """
         Run a command on remote host via SSH.
         
@@ -32,22 +47,22 @@ class SSHCommander:
         """
         ssh_command = [
             "ssh",
-            "-p", str(self.port),
+            "-o", "ConnectTimeout=1",
             f"{self.username}@{self.hostname}",
-            command
         ]
-        
-        logger.debug(f"Running command: {command} on {self.username}@{self.hostname}")
+        ssh_command.extend(command)
+
+        logger.debug(f"Running command: {ssh_command}")
         
         try:
             result = subprocess.run(
                 ssh_command,
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=3
             )
             
-            logger.info(f"Command executed with return code {result.returncode}")
+            logger.success(f"Command executed with return code {result.returncode}")
             if result.returncode != 0:
                 logger.warning(f"Error output: {result.stderr}")
             
@@ -66,7 +81,7 @@ class SSHCommander:
         logger.info(f"Running script {script_path} on {self.hostname}")
         with open(script_path, 'r') as f:
             script_content = f.read()
-        return self.run_command(script_content)
+        return self.run_command([script_content])
 
     #==========================================================================
     def run_screen_command(self, screen_name: str, command: str) -> tuple[int, str, str]:
@@ -80,8 +95,14 @@ class SSHCommander:
         Returns:
             tuple: (return_code, stdout, stderr)
         """
-        screen_command = f"screen -S {screen_name} -X stuff '{command}\\n'"
-        logger.info(f"Running command in screen session '{screen_name}': {command}")
+        screen_command = [
+            "screen", 
+            "-S", 
+            f"{screen_name}", 
+            "-X", 
+            "stuff", 
+            f"'{command}\\n'"]
+        logger.info(f"Running screen command: {screen_command}")
         return self.run_command(screen_command)
 
 #==============================================================================
@@ -89,11 +110,11 @@ class SSHCommander:
 #==============================================================================
 def main():
     """Test the SSHCommander with a sample command."""
-    commander = SSHCommander(hostname='x86l-132')
+    commander = SSHCommander(hostname='x86l-170')
     screen_name = "mbs"
     list_of_commands = [
         '\x1A', # Ctrl+Z to suspend the screen session
-        'cd ~/ToF', 
+        'cd ~/MUSIC', 
         'quit', 
         'resl', 
         'mbs -dabc', 
@@ -110,16 +131,15 @@ def main():
         except Exception as e:
             logger.error(f"Test failed for command '{cmd}': {e}")
 
-    # try:
-    #     # return_code, stdout, stderr = commander.run_command("screen -S com -X stuff 'echo okay\n'")
-    #     # return_code, stdout, stderr = commander.run_command("whoami")
-    #     return_code, stdout, stderr = commander.run_screen_command("com", "echo okay")
-    #     print(f"Return code: {return_code}")
-    #     print(f"Output: {stdout}")
-    #     if stderr:
-    #         print(f"Error: {stderr}")
-    # except Exception as e:
-    #     logger.error(f"Test failed: {e}")
-
 if __name__ == "__main__":
-    main()
+
+    # main()
+
+    commander = SSHCommander(hostname='x86l-132')
+    return_code, stdout, stderr = commander.goc_read(sfp=0, dev=0, address=0x200004)
+
+    logger.info(f"GOC Read Return code: {return_code}")
+    logger.info(f"GOC Read Output: {stdout}")
+    if stderr:
+        logger.error(f"GOC Read Error: {stderr}")
+    
