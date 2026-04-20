@@ -7,26 +7,28 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-#
+##
 import sys, os, time
 from loguru import logger
 from Xlib.display import Display
 
-sys.path.append('package')
-from gui_env import ensure_gui_environment
-
-ensure_gui_environment()
-os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
-
-# 
+## 
 from PyQt6 import QtGui
 from PyQt6.QtGui import QPainter
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
 ##
+sys.path.append('package')
+
+from gui_env import ensure_gui_environment
+ensure_gui_environment()
+os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
+
+from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
+from ssh_commander    import SSHCommander
 from mbs_node         import MBSNode
 
 ###############################################################################
@@ -82,21 +84,22 @@ class NodeWorker(QRunnable):
 #==============================================================================
 ## MBS Node Manager Main Window
 class MainWindow(QMainWindow, 
+                 MnclLogger,
                  WindowPositionManager, 
                  MenuBarManager):
 
     #==========================================================================
     def __init__(self):
+
         super().__init__()
+
+        MnclLogger.__init__(self, "logs/mbs_node_manager.log", "logs/debug_mbs_node_manager.log")
+        time.sleep(0.5) # small delay to ensure logger is set up before any log messages are emitted
+        self.setup_logger()
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
-
-        ## logger
-        self.test_log_file  = "logs/mbs_node_manager.log"
-        self.debug_log_file = "logs/debug_mbs_node_manager.log"
-        self.add_loggers()
 
         # node widget
         self.central_widget = QWidget()
@@ -143,7 +146,7 @@ class MainWindow(QMainWindow,
             try:
                 screen = Display(os.environ['DISPLAY']).screen() 
             except Exception as e:
-                print(f"Cannot connect to X server. Exception: {e}")
+                logger.error(f"Cannot connect to X server. Exception: {e}\n")
                 screen = type('obj', (object,), {})()  # create empty object
                 screen.width_in_pixels = 1920
                 screen.height_in_pixels = 1080
@@ -193,41 +196,6 @@ class MainWindow(QMainWindow,
             node.show_window()
 
     #==========================================================================
-    def add_loggers(self):
-        ## logger loguru settings 
-        logger.remove() #remove the old handler.
-
-        logger.add( sys.stdout, 
-                    level = "WARNING",
-                    format = "{time:HH:mm:ss}|{level: >8}| {message}")
-
-        log_fmt =   "<green>{time:YY-MM-DD HH:mm:ss}</green> | "\
-                    "<level>{level: <8}</level> | "\
-                    "<magenta>{module}</magenta>:<cyan>{function}</cyan>:"\
-                    "<yellow>{line}</yellow> - <level>{message}</level>"
-
-        ## for quasi-permanent log file
-        logger.add( self.debug_log_file,
-                    mode        = "a", 
-                    level       = "DEBUG",
-                    format      = log_fmt,
-                    rotation    = "50 MB",   # rotate after
-                    retention   = "3 month", # keep logs for
-                    compression = "zip")     # compress rotated logs
-        logger.success(f"Logger {self.debug_log_file} initialized")
-
-        ## for test log file
-        logger.add( self.test_log_file,
-                    mode="w",
-                    level = "DEBUG",
-                    format = "<green>{time:YY-MM-DD HH:mm:ss}</green> | "\
-                            "<level>{level: <8}</level> | "\
-                            "<magenta>{module}</magenta>:<cyan>{function}</cyan>:"\
-                            "<yellow>{line}</yellow> - <level>{message}</level>")
-        logger.success(f"Logger {self.test_log_file} initialized")
-
-
-    #==========================================================================
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
@@ -271,7 +239,7 @@ if __name__ == "__main__":
 
     # Check if running in graphical mode
     if not os.environ.get('DISPLAY'):
-        logger.error("No X11 display detected. Exiting.")
+        sys.stderr.write("No X11 display detected. Exiting.\n")
         sys.exit(1)
 
     app = QApplication(sys.argv)

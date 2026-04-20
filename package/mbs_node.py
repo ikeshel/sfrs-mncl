@@ -29,7 +29,8 @@ from ssh_commander import SSHCommander
 #==============================================================================
 #==============================================================================
 # MBS Node Widget
-class MBSNode(QtWidgets.QWidget, SSHCommander):
+class MBSNode(QtWidgets.QWidget, 
+              SSHCommander):
 
     list_of_nodes = [] # class variable to keep track of all node instances
 

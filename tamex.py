@@ -22,6 +22,7 @@ sys.path.append('package')
 # from gui_env import ensure_gui_environment
 # ensure_gui_environment()
 
+from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from ssh_commander    import SSHCommander
@@ -50,7 +51,7 @@ class TamexWorker(QRunnable):
         self.is_running  = True
         self.datadict    = {}
 
-        logger.debug(f"{__class__.__module__} started")
+        logger.debug(f"{__class__.__name__} started")
 
         self.delay_ms = 1000 # milliseconds
         self.last_time = 0
@@ -69,10 +70,6 @@ class TamexWorker(QRunnable):
             
             self.datadict['time'] = time.time() # seconds
             if self.last_time < self.datadict['time']-1: # check every 1 second
-
-                #
-                #
-
                 self.last_time = self.datadict['time']
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
@@ -87,21 +84,31 @@ class TamexWorker(QRunnable):
 #==============================================================================
 ## MBS Node Manager Main Window
 #==============================================================================
-class TamexMainWindow(QMainWindow, 
-                 WindowPositionManager, 
-                 MenuBarManager):
+class TamexMainWindow(  QMainWindow, 
+                        MnclLogger,
+                        WindowPositionManager, 
+                        MenuBarManager,
+                        SSHCommander):
 
     #==========================================================================
     def __init__(self):
+
         super().__init__()
+
+        MnclLogger.__init__(self, test_log_file="logs/tamex_manager.log", debug_log_file="logs/debug_tamex_manager.log")
+        time.sleep(0.5) # small delay to ensure logger is set up before any log messages are emitted
+        self.setup_logger()
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
+        SSHCommander.__init__(self, hostname='x86l-132') # initialize SSHCommander with node_host
 
-        ## logger
-        self.test_log_file  = "logs/tamex_manager.log"
-        self.debug_log_file = "logs/debug_tamex_manager.log"
-        self.add_loggers()
+        return_code, stdout, stderr = self.goc_read(sfp=0, dev=0, address=0x200004)
+
+        logger.info(f"GOC Read Return code: {return_code}")
+        logger.info(f"GOC Read Output: {stdout}")
+        if stderr:
+            logger.error(f"GOC Read Error: {stderr}")
 
         # node widget
         self.central_widget = QWidget()
@@ -202,7 +209,7 @@ class TamexMainWindow(QMainWindow,
         self.raise_()
 
     #==========================================================================
-    def on_ckbx_ch_state_changed(self, ch, state):
+    def on_ckbx_ch_state_changed(self, ch: int, state: int):
         if ch == -1:
             # Handle the "all channels" checkbox
             for i in range(8):
@@ -263,40 +270,6 @@ class TamexMainWindow(QMainWindow,
         self.tmx_ch[ch].hsb_dac.setValue(dac_value) # update slider       
     
     #==========================================================================
-    def add_loggers(self):
-        ## logger loguru settings 
-        logger.remove() #remove the old handler.
-
-        logger.add( sys.stdout, 
-                    level = "INFO",
-                    format = "{time:HH:mm:ss}|{level: >8}| {message}")
-
-        log_fmt =   "<green>{time:YY-MM-DD HH:mm:ss}</green> | "\
-                    "<level>{level: <8}</level> | "\
-                    "<magenta>{module}</magenta>:<cyan>{function}</cyan>:"\
-                    "<yellow>{line}</yellow> - <level>{message}</level>"
-
-        ## for quasi-permanent log file
-        logger.add( self.debug_log_file,
-                    level       = "DEBUG",
-                    mode        = "a", 
-                    format      = log_fmt,
-                    rotation    = "50 MB",   # rotate after
-                    retention   = "3 month", # keep logs for
-                    compression = "zip")     # compress rotated logs
-
-        ## for test log file
-        logger.add( self.test_log_file,
-                    mode="w",
-                    level = "DEBUG",
-                    format = "<green>{time:YY-MM-DD HH:mm:ss}</green> | "\
-                            "<level>{level: <8}</level> | "\
-                            "<magenta>{module}</magenta>:<cyan>{function}</cyan>:"\
-                            "<yellow>{line}</yellow> - <level>{message}</level>")
-
-
-
-    #==========================================================================
     def closeEvent(self, event):
         '''Must stay with Main widget'''
         logger.debug("closeEvent")
@@ -318,7 +291,7 @@ if __name__ == "__main__":
 
     # Check if running in graphical mode
     if not os.environ.get('DISPLAY'):
-        logger.error("No X11 display detected. Exiting.")
+        sys.stderr.write("No X11 display detected. Exiting.\n")
         sys.exit(1)
 
     app = QApplication(sys.argv)
@@ -333,9 +306,9 @@ if __name__ == "__main__":
         window = TamexMainWindow()
         sys.exit(app.exec())
     except Exception as e:
-        logger.exception("An error occurred: %s", e)
+        sys.stderr.write(f"An error occurred: {e}\n")
     
     except KeyboardInterrupt:
-        logger.info("KeyboardInterrupt received. Exiting...")
+        sys.stderr.write("KeyboardInterrupt received. Exiting...\n")
         # window.close() # this will trigger closeEvent and stop the worker thread properly
         sys.exit(app.exec())
