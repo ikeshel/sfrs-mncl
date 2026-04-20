@@ -38,6 +38,21 @@ class SSHCommander:
         return self.run_command(ssh_command)
 
     #==========================================================================
+    def goc_write(self, sfp: int=0, dev: int=0, address: hex=0x0, value: int=0) -> tuple[int, str, str]:
+        """Run a GOC write command on the remote host."""
+        ssh_command = [
+            GOC_COMMAND,
+            "-w",
+            "-x",
+            f"{sfp}",
+            f"{dev}",
+            f"{hex(address)}",
+            f"{hex(value)}"
+        ]
+        logger.info(f"goc write: {ssh_command}")
+        return self.run_command(ssh_command)
+
+    #==========================================================================
     def run_command(self, command: list) -> tuple[int, str, str]:
         """
         Run a command on remote host via SSH.

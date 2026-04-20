@@ -22,8 +22,8 @@ sys.path.append('package')
 # from gui_env import ensure_gui_environment
 # ensure_gui_environment()
 
-# from mncl_logger      import MnclLogger
-import mncl_logger
+from mncl_logger      import MnclLogger
+# import mncl_logger
 
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
@@ -87,7 +87,7 @@ class TamexWorker(QRunnable):
 ## MBS Node Manager Main Window
 #==============================================================================
 class TamexMainWindow(  QMainWindow, 
-                        # MnclLogger,
+                        MnclLogger,
                         WindowPositionManager, 
                         MenuBarManager,
                         SSHCommander):
@@ -97,7 +97,8 @@ class TamexMainWindow(  QMainWindow,
 
         super().__init__()
 
-        mncl_logger.setup_logger("logs/tamex_manager.log", "logs/debug_tamex_manager.log")
+        # MnclLogger.__init__(self)
+        self.setup_logger()
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
@@ -222,9 +223,16 @@ class TamexMainWindow(  QMainWindow,
         self.trigger_mask = sum(1 << i for i in self.list_of_trigger_channels) # create bitmask from list of channels
         logger.debug(f"Current trigger mask: {self.trigger_mask:08b}")
         logger.debug(f"Current trigger mask (hex): {self.trigger_mask:02x}")
-        self.goc_format = f"goc -w -x 0 0 0x330010 0x{self.trigger_mask:02x}" # format as hex string for GOC command
-        logger.debug(f"Current trigger mask (GOC format): {self.goc_format}")
-        
+        # self.goc_format = f"goc -w -x 0 0 0x330010 0x{self.trigger_mask:02x}" # format as hex string for GOC command
+        # logger.debug(f"Current trigger mask (GOC format): {self.goc_format}")
+
+        return_code, stdout, stderr = self.goc_write(sfp=0, dev=0, address=0x330010, value=self.trigger_mask) # write the trigger mask to the TAMEX via GOC
+
+        logger.info(f"GOC Read Return code: {return_code}")
+        logger.info(f"GOC Read Output: {stdout}")
+        if stderr:
+            logger.error(f"GOC Read Error: {stderr}")
+
 
     #==========================================================================
     @pyqtSlot(dict)

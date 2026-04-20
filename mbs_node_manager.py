@@ -25,10 +25,9 @@ from gui_env import ensure_gui_environment
 ensure_gui_environment()
 os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
 
-import mncl_logger
+from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
-from ssh_commander    import SSHCommander
 from mbs_node         import MBSNode
 
 ###############################################################################
@@ -83,16 +82,18 @@ class NodeWorker(QRunnable):
 
 #==============================================================================
 ## MBS Node Manager Main Window
-class MbsNodeManager(QMainWindow, 
-                 WindowPositionManager, 
-                 MenuBarManager):
+class MbsNodeManager(   QMainWindow, 
+                        MnclLogger,
+                        WindowPositionManager, 
+                        MenuBarManager):
 
     #==========================================================================
     def __init__(self):
 
-        super().__init__()
+        super(MbsNodeManager, self).__init__()
 
-        mncl_logger.setup_logger("logs/mbs_node_manager.log", "logs/debug_mbs_node_manager.log")
+        super(MnclLogger, self).__init__()
+        self.setup_logger()
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
