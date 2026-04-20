@@ -21,7 +21,7 @@ class SSHCommander:
         """Initialize SSH commander with host and user details."""
         self.hostname = hostname
         self.username = username
-        logger.info(f"SSHCommander initialized for {username}@{hostname}")
+        # logger.debug(f"SSHCommander initialized for {username}@{hostname}")
 
     #==========================================================================
     def goc_read(self, sfp: int=0, dev: int=0, address: hex=0x0) -> tuple[int, str, str]:

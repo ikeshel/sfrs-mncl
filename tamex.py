@@ -22,7 +22,9 @@ sys.path.append('package')
 # from gui_env import ensure_gui_environment
 # ensure_gui_environment()
 
-from mncl_logger      import MnclLogger
+# from mncl_logger      import MnclLogger
+import mncl_logger
+
 from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from ssh_commander    import SSHCommander
@@ -85,7 +87,7 @@ class TamexWorker(QRunnable):
 ## MBS Node Manager Main Window
 #==============================================================================
 class TamexMainWindow(  QMainWindow, 
-                        MnclLogger,
+                        # MnclLogger,
                         WindowPositionManager, 
                         MenuBarManager,
                         SSHCommander):
@@ -95,20 +97,11 @@ class TamexMainWindow(  QMainWindow,
 
         super().__init__()
 
-        MnclLogger.__init__(self, test_log_file="logs/tamex_manager.log", debug_log_file="logs/debug_tamex_manager.log")
-        time.sleep(0.5) # small delay to ensure logger is set up before any log messages are emitted
-        self.setup_logger()
+        mncl_logger.setup_logger("logs/tamex_manager.log", "logs/debug_tamex_manager.log")
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
         SSHCommander.__init__(self, hostname='x86l-132') # initialize SSHCommander with node_host
-
-        return_code, stdout, stderr = self.goc_read(sfp=0, dev=0, address=0x200004)
-
-        logger.info(f"GOC Read Return code: {return_code}")
-        logger.info(f"GOC Read Output: {stdout}")
-        if stderr:
-            logger.error(f"GOC Read Error: {stderr}")
 
         # node widget
         self.central_widget = QWidget()
