@@ -94,7 +94,7 @@ class MbsNodeManager(   QMainWindow,
 
         super(MnclLogger, self).__init__()
         self.setup_logger()
-
+    
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
@@ -114,6 +114,9 @@ class MbsNodeManager(   QMainWindow,
 
         self.node_SIFI = MBSNode("SiFi", "x86l-253")
         self.layout.addWidget(self.node_SIFI)
+
+        self.node_TIMESORTER = MBSNode("TimeSorter", "x86l-157")
+        self.layout.addWidget(self.node_TIMESORTER)
 
         # add node menus to the main menu bar
         for node in MBSNode.list_of_nodes:
@@ -207,11 +210,13 @@ class MbsNodeManager(   QMainWindow,
         node1_center = self.node_TOF.geometry().center()
         node2_center = self.node_MUSIC.geometry().center()
         node3_center = self.node_SIFI.geometry().center()
-
+        node4_center = self.node_TIMESORTER.geometry().center()
         # Draw lines between nodes
         painter.drawLine(node1_center, node2_center)
         painter.drawLine(node2_center, node3_center)
-
+        painter.drawLine(node3_center, node4_center)
+        painter.drawLine(node4_center, node1_center)
+        
     #==========================================================================
     def closeEvent(self, event):
         '''Must stay with Main widget'''

@@ -220,7 +220,9 @@ class TamexMainWindow(  QMainWindow,
         self.list_of_trigger_channels = [i for i in range(8) if getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").isChecked()]
         logger.debug(f"Current list of trigger channels: {self.list_of_trigger_channels}")
 
-        self.trigger_mask = sum(1 << i for i in self.list_of_trigger_channels) # create bitmask from list of channels
+        # create bitmask from list of channels and write to TAMEX via GOC
+        # only every second channel works. 0, 2, ... 16
+        self.trigger_mask = sum(1 << (2*i) for i in self.list_of_trigger_channels) # create bitmask from list of channels
         logger.debug(f"Current trigger mask: {self.trigger_mask:08b}")
         logger.debug(f"Current trigger mask (hex): {self.trigger_mask:02x}")
         # self.goc_format = f"goc -w -x 0 0 0x330010 0x{self.trigger_mask:02x}" # format as hex string for GOC command

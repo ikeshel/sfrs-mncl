@@ -215,8 +215,9 @@ class MBSNode(QtWidgets.QWidget,
             list_of_commands = [
                 f'cd ~/{self.name}', 
                 'mbs -dabc', 
-                'help'
-                ]
+                '@startup',
+                '\n'
+                ]                    
             for cmd in list_of_commands:
                 try:
                     return_code, stdout, stderr = self.run_screen_command(screen_name, cmd)
@@ -247,7 +248,8 @@ class MBSNode(QtWidgets.QWidget,
                 'quit', 
                 'resl', 
                 'mbs -dabc', 
-                'help'
+                '@startup',
+                '\n'
                 ]
             for cmd in list_of_commands:
                 try:
@@ -274,6 +276,7 @@ class MBSNode(QtWidgets.QWidget,
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             screen_name = "web"
             list_of_commands = [
+                '\x03', # Ctrl+C to interrupt the running process
                 '\x03', # Ctrl+C to interrupt the running process
                 ]
             for cmd in list_of_commands:
@@ -328,6 +331,7 @@ class MBSNode(QtWidgets.QWidget,
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             screen_name = "web"
             list_of_commands = [
+                '\x03', # Ctrl+C to interrupt the running process
                 '\x03', # Ctrl+C to interrupt the running process
                 'webmbs 8899'
                 ]
