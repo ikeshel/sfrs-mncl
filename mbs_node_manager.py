@@ -13,9 +13,9 @@ from loguru import logger
 from Xlib.display import Display
 
 ## 
-from PyQt6 import QtGui
+from PyQt6 import QtGui, QtWidgets
 from PyQt6.QtGui import QPainter
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
 ##
@@ -195,6 +195,29 @@ class MbsNodeManager(   QMainWindow,
         for node in MBSNode.list_of_nodes:
             logger.info(f"Showing {node.name} dashboard...")
             node.show_window()
+
+    #==========================================================================
+    def check_for_updates(self):
+        logger.info("Checking for updates...")
+
+        command_list = ["cd ~/mncl", "git fetch", "git pull", "cd"]
+
+        # Here you would implement the logic to check for updates, e.g., by querying a server or checking a version file.
+        # For demonstration purposes, we'll just show a message box.
+
+        if QMessageBox.question(self, "Check for Updates", "Would you like to pull from git?") == QtWidgets.QMessageBox.StandardButton.Yes:           
+            for node in MBSNode.list_of_nodes:
+                for command in command_list:
+                    return_code, stdout, stderr = node.run_screen_command("com", command)
+                    if return_code == 0:
+                        logger.success(f"Update successful on {node.name}: {stdout}")
+                    else:
+                        logger.error(f"Update failed on {node.name}: {stderr}")
+                return
+        else:
+            logger.info("Update cancelled by user.")
+
+
 
     #==========================================================================
     def paintEvent(self, event):

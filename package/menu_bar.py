@@ -21,6 +21,10 @@ class MenuBarManager:
 
         # Help Menu
         self.help_menu = self.menubar.addMenu("Help")
+        
+        self.update_action = self.help_menu.addAction("Check for updates")
+        self.update_action.triggered.connect(self.check_for_updates)
+
         self.about_action = self.help_menu.addAction("About")
         self.about_action.triggered.connect(self.show_about)
 
