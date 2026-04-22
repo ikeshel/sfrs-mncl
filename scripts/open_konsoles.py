@@ -52,6 +52,7 @@ def run(cmd):
 
 #=============================================================================
 def get_kde_panel_height(panel_index=0):
+
     script = f'print(panelById(panelIds[{panel_index}]).height)'
     cmd = ['qdbus6', 'org.kde.plasmashell', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript', script]
     logger.debug(f"Command: {' '.join(cmd)}")
@@ -78,18 +79,18 @@ def get_screen_resolution():
     raise RuntimeError("Could not determine screen resolution")
 
 #=============================================================================
-def get_monitor_count():
+def get_monitor_count() -> int:
     cp = run(["xrandr", "--query"])
     count = sum(1 for line in cp.stdout.splitlines() if " connected" in line)
     return max(count, 1)
 
 #=============================================================================
-def get_wmctrl_lines():
+def get_wmctrl_lines() -> list[str]:
     cp = run(["wmctrl", "-l"])
     return cp.stdout.splitlines()
 
 #=============================================================================
-def window_exists(title:str)->bool:
+def window_exists(title:str) -> bool:
     lines = get_wmctrl_lines()
 
     for line in lines:
@@ -99,7 +100,7 @@ def window_exists(title:str)->bool:
     return False
 
 #=============================================================================
-def debug_titles():
+def debug_titles() -> None:
     print("Current wmctrl windows:")
     for line in get_wmctrl_lines():
         print(line)
@@ -182,7 +183,8 @@ def open_konsoles()->None:
     screen_w = xx // monitors
     screen_h = yy - KDE_menu_bar_height
 
-    win_w = screen_w // len(LOGINS)
+    win_w = xx // len(LOGINS)
+    # win_w = screen_w // len(LOGINS)
     win_h = screen_h // len(SCREENS)
 
     for key_login, mbs_node in enumerate(LOGINS):
