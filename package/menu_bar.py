@@ -90,6 +90,7 @@ class MenuBarManager(SSHCommander):
                         logger.success(f"Update successful on {node.name}: {stdout}")
                     else:
                         logger.error(f"Update failed on {node.name}: {stderr}")
+                        return
                 return
         else:
             logger.info("Update cancelled by user.")
