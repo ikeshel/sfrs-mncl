@@ -8,6 +8,7 @@ __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 ##
+import signal
 import sys, os, time
 from loguru import logger
 from Xlib.display import Display
@@ -21,9 +22,9 @@ from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot,
 ##
 sys.path.append('package')
 
-from gui_env import ensure_gui_environment
-ensure_gui_environment()
-os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
+# from gui_env import ensure_gui_environment
+# ensure_gui_environment()
+# os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
 
 from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
@@ -81,7 +82,9 @@ class NodeWorker(QRunnable):
         self.is_running = False
 
 #==============================================================================
-## MBS Node Manager Main Window
+#==============================================================================
+# MBS Node Manager Main Window
+#
 class MbsNodeManager(   QMainWindow, 
                         MnclLogger,
                         WindowPositionManager, 
@@ -117,6 +120,9 @@ class MbsNodeManager(   QMainWindow,
 
         self.node_TIMESORTER = MBSNode("TimeSorter", "x86l-157")
         self.layout.addWidget(self.node_TIMESORTER)
+
+        self.nodes = [] # initialize the nodes list in the main window instance
+        self.nodes = MBSNode.list_of_nodes.copy() # copy the list of nodes from MBSNode class to the main window instance for easier access    
 
         # add node menus to the main menu bar
         for node in MBSNode.list_of_nodes:
@@ -197,48 +203,25 @@ class MbsNodeManager(   QMainWindow,
             node.show_window()
 
     #==========================================================================
-    def check_for_updates(self):
-        logger.info("Checking for updates...")
-
-        command_list = ["cd ~/mncl", "git fetch", "git pull", "cd"]
-
-        # Here you would implement the logic to check for updates, e.g., by querying a server or checking a version file.
-        # For demonstration purposes, we'll just show a message box.
-
-        if QMessageBox.question(self, "Check for Updates", "Would you like to pull from git?") == QtWidgets.QMessageBox.StandardButton.Yes:           
-            for node in MBSNode.list_of_nodes:
-                for command in command_list:
-                    return_code, stdout, stderr = node.run_screen_command("com", command)
-                    if return_code == 0:
-                        logger.success(f"Update successful on {node.name}: {stdout}")
-                    else:
-                        logger.error(f"Update failed on {node.name}: {stderr}")
-                return
-        else:
-            logger.info("Update cancelled by user.")
-
-
-
-    #==========================================================================
     def paintEvent(self, event):
         super().paintEvent(event)
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        # painter = QPainter(self)
+        # painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        # Draw lines between nodes
-        pen = QtGui.QPen(Qt.GlobalColor.white, 2)
-        painter.setPen(pen)
+        # # Draw lines between nodes
+        # pen = QtGui.QPen(Qt.GlobalColor.red, 2)
+        # painter.setPen(pen)
 
-        # Get the center points of the nodes
-        node1_center = self.node_TOF.geometry().center()
-        node2_center = self.node_MUSIC.geometry().center()
-        node3_center = self.node_SIFI.geometry().center()
-        node4_center = self.node_TIMESORTER.geometry().center()
-        # Draw lines between nodes
-        painter.drawLine(node1_center, node2_center)
-        painter.drawLine(node2_center, node3_center)
-        painter.drawLine(node3_center, node4_center)
-        painter.drawLine(node4_center, node1_center)
+        # # Get the center points of the nodes
+        # node1_center = self.node_TOF.geometry().center()
+        # node2_center = self.node_MUSIC.geometry().center()
+        # node3_center = self.node_SIFI.geometry().center()
+        # node4_center = self.node_TIMESORTER.geometry().center()
+        # # Draw lines between nodes
+        # painter.drawLine(node1_center, node2_center)
+        # painter.drawLine(node2_center, node3_center)
+        # painter.drawLine(node3_center, node4_center)
+        # painter.drawLine(node4_center, node1_center)
         
     #==========================================================================
     def closeEvent(self, event):
@@ -271,6 +254,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     # app.setStyle('Windows')
 
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
+    
     import scripts.CheckForAnotherInstance as check
     if check.CheckForAnotherInstance(sys.argv[0]) != None:
         sys.exit( 0 )

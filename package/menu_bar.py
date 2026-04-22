@@ -6,14 +6,18 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-import sys
+import sys, time
 import subprocess
 from loguru import logger
 
 from PyQt6.QtWidgets import QApplication, QMessageBox
 
+##
+sys.path.append('package')
+from ssh_commander import SSHCommander
+
 #==============================================================================
-class MenuBarManager:
+class MenuBarManager(SSHCommander):
 
     #==========================================================================
     def __init__(self):
@@ -29,6 +33,10 @@ class MenuBarManager:
         self.about_action.triggered.connect(self.show_about)
 
     #==========================================================================
+    def menuBar(self):
+        pass
+
+    #==========================================================================
     def setup_mbs_menu(self):
 
             # Node Menu
@@ -36,8 +44,8 @@ class MenuBarManager:
             self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
             self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
             self.node_menu.addSeparator()
-            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "open"]))
-            self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "close"]))
+            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "node", "all", "screen", "all", "open"]))
+            self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "node", "all", "screen", "all", "close"]))
             self.node_menu.addSeparator()
             self.node_menu.addAction("Configure All Nodes").disabled = True
             self.node_menu.addSeparator()
@@ -66,6 +74,26 @@ class MenuBarManager:
         node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
         node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)
         node.menu.addAction("Start WEB-MBS").triggered.connect(node.start_webmbs)
+
+    #==========================================================================
+    def check_for_updates(self)-> None:
+        logger.info("Checking for updates...")
+
+        command_list = ["cd ~/mncl", "git fetch", "git pull", "cd"]
+
+        if QMessageBox.question(self, "Check for Updates", "Would you like to pull from git?") == QMessageBox.StandardButton.Yes:           
+            for node in self.nodes:
+                for command in command_list:
+                    return_code, stdout, stderr = node.run_screen_command("com", command)
+                    time.sleep(1)  # Wait 1 second between commands
+                    if return_code == 0:
+                        logger.success(f"Update successful on {node.name}: {stdout}")
+                    else:
+                        logger.error(f"Update failed on {node.name}: {stderr}")
+                return
+        else:
+            logger.info("Update cancelled by user.")
+        logger.info("Update process completed.")
 
     #==========================================================================
     def show_about(self):

@@ -22,6 +22,7 @@ sys.path.append('package')
 # from gui_env import ensure_gui_environment
 # ensure_gui_environment()
 
+from mbs_node         import MBSNode
 from mncl_logger      import MnclLogger
 # import mncl_logger
 
@@ -99,6 +100,9 @@ class TamexMainWindow(  QMainWindow,
 
         # MnclLogger.__init__(self)
         self.setup_logger()
+
+        self.nodes = []
+        self.nodes.append(MBSNode("ToF", "x86l-132"))
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
@@ -300,18 +304,12 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     # app.setStyle('Windows')
 
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
+
     import scripts.CheckForAnotherInstance as check
     if check.CheckForAnotherInstance(sys.argv[0]) != None:
         sys.exit( 0 )
 
-
-    try:
-        window = TamexMainWindow()
-        sys.exit(app.exec())
-    except Exception as e:
-        sys.stderr.write(f"An error occurred: {e}\n")
-    
-    except KeyboardInterrupt:
-        sys.stderr.write("KeyboardInterrupt received. Exiting...\n")
-        # window.close() # this will trigger closeEvent and stop the worker thread properly
-        sys.exit(app.exec())
+    window = TamexMainWindow()
+    sys.exit(app.exec())

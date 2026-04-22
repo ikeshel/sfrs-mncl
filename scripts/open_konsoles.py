@@ -16,15 +16,17 @@ import subprocess
 import time
 import shlex
 from loguru import logger
+from matplotlib.pyplot import title
 
 ##
 sys.path.append('package')
 from config_reader import ConfigReader
 
-##
+## constants
 USERNAME = "ikeshel"
-LOGINS = [] #
-SCREENS = [] #["mbs", "web", "com"]
+NODES    = [] # ['x86l-132', 'x86l-170', 'x86l-253', 'x86l-157']
+LOGINS   = [] # ['ikeshel@x86l-132', 'ikeshel@x86l-170', 'ikeshel@x86l-253', 'ikeshel@x86l-157']
+SCREENS  = [] # ["mbs", "web", "com"]
 SLEEP_TIME = 0.5
 
 cfg = ConfigReader("config/list_of_nodes.conf")
@@ -32,6 +34,7 @@ for raw in cfg:
     try:
         node, desc = ConfigReader.parse_entry(raw)
         logger.success(f"{node!r:12} -> {desc}")
+        NODES.append(node)
         LOGINS.append(f"{USERNAME}@{node}")
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
@@ -190,13 +193,14 @@ def open_konsoles()->None:
     for key_login, mbs_node in enumerate(LOGINS):
         pos_x = key_login*win_w
 
+        check_scrn = ["ssh", f"{mbs_node}", "cd ~/mncl;./bin/check_screens.csh"]
+        logger.debug(f"Checking screen: {check_scrn}")
+        result = run(check_scrn)
+        logger.debug(result.stdout)
+
         for key_screen, screen in enumerate(SCREENS):
             title = f"{mbs_node}_{screen}"
 
-            check_scrn = ["ssh", f"{mbs_node}", "cd ~/mncl;./bin/check_screens.csh"]
-            logger.debug(f"Checking screen: {check_scrn}")
-            result = run(check_scrn)
-            logger.debug(result.stdout)
 
             if window_exists(title):
                 logger.info(f"Already running: {title}")
@@ -208,22 +212,77 @@ def open_konsoles()->None:
             open_konsol(title, mbs_node, screen)
 
             time.sleep(SLEEP_TIME)
-            move_window(title, pos_x, pos_y, win_w, win_h)
+            move_window(title, int(pos_x+0.1*win_w), pos_y, int(0.8*win_w), win_h)
 
 #=============================================================================
 # main entry point
 #=============================================================================
 if __name__ == "__main__":
 
-    if "close" in sys.argv:
-        close_konsoles()
+    # this is help message if no arguments are provided
+    if len(sys.argv) == 1:
+        print("\033[93m PLEASE NOTE ARGUMENT SEQUENCE: node <node_name> screen <screen_name> [open|close|check]\033[0m")
+        print(f" Usage: python {sys.argv[0]} [node all|<node_name>] [screen all|<screen_name>] [open|close|check]")
+        print(f"   node all screen all open  - Open konsole windows for all nodes and screens")
+        print(f"   node all screen all close - Close all konsole windows")
+        print(f"   node all screen all check - Check if konsole windows exist")
+        print(f"   node node <node_name> screen <screen_name> - open specific node")
+        print(f"\033[92m    (e.g. '{sys.argv[0]} node x86l-XXX screen com open')\033[0m")
+        sys.exit(0)
 
-    if "check" in sys.argv:
-        check_konsoles()
+    # Parse command line arguments
+    node_arg = "all"
+    screen_arg = "all"
+    action = "check"
 
     if "node" in sys.argv:
-        for index, mbs_node in enumerate(sys.argv):
-            print(f"{index}: {mbs_node}")
+        idx = sys.argv.index("node")
+        if idx + 1 < len(sys.argv):
+            node_arg = sys.argv[idx + 1]
 
-    if "open" in sys.argv:
-        open_konsoles()
+    if "screen" in sys.argv:
+        idx = sys.argv.index("screen")
+        if idx + 1 < len(sys.argv):
+            screen_arg = sys.argv[idx + 1]
+
+    if "close" in sys.argv:
+        action = "close"
+    elif "check" in sys.argv:
+        action = "check"
+    elif "open" in sys.argv:
+        action = "open"
+
+    print(f"Node argument: {node_arg} | Screen argument: {screen_arg} | Action: {action}")
+
+    if node_arg == "all" and screen_arg == "all":
+        if action == "close":
+            close_konsoles()
+        elif action == "check":
+            check_konsoles()
+        elif action == "open":
+            open_konsoles()
+
+    # if "close" in sys.argv:
+    #     close_konsoles()
+
+    # if "check" in sys.argv:
+    #     check_konsoles()
+
+    # if "open" in sys.argv:
+    #     open_konsoles()
+
+    # # node-specific logic
+    # if "node" in sys.argv:
+    #     for index, mbs_node in enumerate(sys.argv):
+    #         if mbs_node in NODES:
+    #             print(f"{index}: {mbs_node}")
+    #             login=f"{USERNAME}@{mbs_node}"
+    #             for key_screen, screen in enumerate(SCREENS):
+    #                 title = f"{login}_{screen}"
+    #                 open_konsol(title, login, screen)
+    #             break
+    #     else:
+    #         sys.stderr.write(f"Node {mbs_node} not found in {NODES}\n")
+
+    #     # open_konsoles()
+

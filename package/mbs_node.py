@@ -7,21 +7,19 @@ __maintainer__ = "Irakli Keshelashvili"
 __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
-#
+##
 import sys
+import signal
 import subprocess
 from loguru import logger
 
-# from gui_env import ensure_gui_environment
-# ensure_gui_environment()
-
-# 
+## 
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtWidgets import QLabel
 
-#
+##
 sys.path.append('package')
 from mbs_browser import MBSBrowser
 from ssh_commander import SSHCommander
@@ -352,3 +350,16 @@ class MBSNode(QtWidgets.QWidget,
         self.browser_window.close() #if hasattr(self, 'browser_window') else None
         MBSNode.list_of_nodes.remove(self) # remove instance from the class variable list
         return super().closeEvent(a0)
+
+
+#==============================================================================
+#==============================================================================
+if __name__ == "__main__":
+
+    app = QtWidgets.QApplication(sys.argv)
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
+    
+    node1 = MBSNode(name="TimeSorter", node_host="x86l-152")
+    node1.show()
+    sys.exit(app.exec())
