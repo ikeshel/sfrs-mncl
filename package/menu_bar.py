@@ -70,6 +70,7 @@ class MenuBarManager(SSHCommander):
         node.menu.addAction("Restart MBS").triggered.connect(node.restart_mbs)
         node.menu.addAction("Stop MBS").triggered.connect(node.stop_mbs)
         node.menu.addAction("Start MBS").triggered.connect(node.start_mbs)
+        node.menu.addAction("Toggle Konsole").triggered.connect(lambda: node.toggle_konsole("mbs"))
         node.menu.addSeparator()
         node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
         node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)

@@ -109,6 +109,13 @@ class MBSNode(QtWidgets.QWidget,
         except Exception:
             return False
 
+    #==========================================================================
+    def toggle_konsole(self, screen_name: str):
+
+        logger.info(screen_name)
+        command = f"./scripts/konsole_manager.py --nodes \"{self.node_host}\" --screens \"{screen_name}\" --open"
+        subprocess.run(command.split())
+
     #===========================================================================
     def check_ping(self, timeout: int = 1) -> bool:
 
