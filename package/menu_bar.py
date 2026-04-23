@@ -44,8 +44,13 @@ class MenuBarManager(SSHCommander):
             self.node_menu.addAction("Open all Dashboards").triggered.connect(self.show_all_dashboards)
             self.node_menu.addAction("Open all dashboards in external browser").triggered.connect(self.open_external_browsers)
             self.node_menu.addSeparator()
-            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "node", "all", "screen", "all", "open"]))
-            self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(["scripts/open_konsoles.py", "node", "all", "screen", "all", "close"]))
+
+            open_command = ['./scripts/konsole_manager.py', '--nodes', 'x86l-132,x86l-157,x86l-170,x86l-253', '--screens', 'com,web,mbs', '--open']
+            self.node_menu.addAction("Open all the konsoles").triggered.connect(lambda: subprocess.run(open_command))
+
+            konsole_manager_command = ['./scripts/konsole_manager.py', '--nodes', 'x86l-132,x86l-157,x86l-170,x86l-253', '--screens', 'com,web,mbs', '--close']
+            self.node_menu.addAction("Close all the konsoles").triggered.connect(lambda: subprocess.run(konsole_manager_command))
+
             self.node_menu.addSeparator()
             self.node_menu.addAction("Configure All Nodes").disabled = True
             self.node_menu.addSeparator()
@@ -63,18 +68,24 @@ class MenuBarManager(SSHCommander):
         node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_window)
         node.menu.addAction("Open Dashboard in external browser").triggered.connect(node.open_external_browser)
         node.menu.addSeparator()
-        node.menu.addAction("Check screens").triggered.connect(node.check_screens)
-        node.menu.addSeparator()
+        node.menu.addAction("Open screens").triggered.connect(node.check_screens)
         node.menu.addAction("Kill screens").triggered.connect(node.kill_screens)
         node.menu.addSeparator()
         node.menu.addAction("Restart MBS").triggered.connect(node.restart_mbs)
         node.menu.addAction("Stop MBS").triggered.connect(node.stop_mbs)
         node.menu.addAction("Start MBS").triggered.connect(node.start_mbs)
-        node.menu.addAction("Toggle Konsole").triggered.connect(lambda: node.toggle_konsole("mbs"))
+        node.menu.addAction("Open Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "open"))
+        node.menu.addAction("Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "close"))
         node.menu.addSeparator()
         node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
         node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)
         node.menu.addAction("Start WEB-MBS").triggered.connect(node.start_webmbs)
+        node.menu.addAction("Open WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "open"))
+        node.menu.addAction("Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "close"))
+        node.menu.addSeparator()
+        node.menu.addAction("Open COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "open"))
+        node.menu.addAction("Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "close"))
+
 
     #==========================================================================
     def check_for_updates(self)-> None:

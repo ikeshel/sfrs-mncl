@@ -13,13 +13,13 @@ script to open konsole windows for each mbs_node and screen, and arrange them on
 NOTE: screens are here meant as a screen session name, not a physical monitor screen
 '''
 
+## standard library imports
 import argparse
 import sys
 import subprocess
 import time
 import shlex
 from loguru import logger
-from matplotlib.pyplot import title
 
 ##
 sys.path.append('package')
@@ -32,6 +32,7 @@ LOGINS   = [] # ['ikeshel@x86l-132', 'ikeshel@x86l-170', 'ikeshel@x86l-253', 'ik
 SCREENS  = [] # ["mbs", "web", "com"]
 SLEEP_TIME = 0.5
 
+##
 cfg = ConfigReader("config/list_of_nodes.conf")
 for raw in cfg:
     try:
@@ -42,6 +43,7 @@ for raw in cfg:
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
 
+##
 cfg = ConfigReader("config/list_of_screens.conf")
 for raw in cfg:
     try:
@@ -53,8 +55,14 @@ for raw in cfg:
 
 
 #=============================================================================
-def run(cmd):
-    return subprocess.run(cmd, text=True, capture_output=True)
+def get_screen_resolution():
+    cp = subprocess.run(["xdpyinfo"], text=True, capture_output=True)
+    for line in cp.stdout.splitlines():
+        if "dimensions:" in line:
+            res = line.split()[1]
+            x_str, y_str = res.split("x", 1)
+            return int(x_str), int(y_str)
+    raise RuntimeError("Could not determine screen resolution")
 
 #=============================================================================
 def get_kde_panel_height(panel_index=0):
@@ -63,7 +71,7 @@ def get_kde_panel_height(panel_index=0):
     cmd = ['qdbus6', 'org.kde.plasmashell', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript', script]
     # logger.debug(f"Command: {' '.join(cmd)}")
     try:
-        result = run(cmd)
+        result = subprocess.run(cmd, text=True, capture_output=True, timeout=3)
     except Exception as exc:
         logger.error(f"Error running command: {exc}")
         return 50
@@ -75,20 +83,54 @@ def get_kde_panel_height(panel_index=0):
     return int(result.stdout.strip())
 
 #=============================================================================
-def get_screen_resolution():
-    cp = run(["xdpyinfo"])
-    for line in cp.stdout.splitlines():
-        if "dimensions:" in line:
-            res = line.split()[1]
-            x_str, y_str = res.split("x", 1)
-            return int(x_str), int(y_str)
-    raise RuntimeError("Could not determine screen resolution")
-
-#=============================================================================
 def get_monitor_count() -> int:
-    cp = run(["xrandr", "--query"])
+    cp = subprocess.run(["xrandr", "--query"], text=True, capture_output=True)
     count = sum(1 for line in cp.stdout.splitlines() if " connected" in line)
     return max(count, 1)
+
+#==============================================================================
+def init_konsole_positioning():
+
+    global win_w, win_h, node_screens
+    ##
+    full_width, full_height = get_screen_resolution()
+    # logger.debug(f"Screen resolution: {full_width}x{full_height}")
+
+    monitor_count = get_monitor_count()
+    # logger.debug(f"monitor_count detected: {monitor_count}")
+
+    KDE_menu_bar_height = get_kde_panel_height()
+    # logger.debug(f"KDE menu bar height: {KDE_menu_bar_height}px")
+
+    # debug_titles()
+
+    screen_w = full_width // monitor_count
+    screen_h = full_height - KDE_menu_bar_height
+
+    win_w = full_width // len(NODES)
+    # win_w = screen_w // len(NODES)
+
+    win_h = screen_h // len(SCREENS)
+
+    from collections import namedtuple
+    global Rect
+    Rect = namedtuple('Rect', ['x', 'y', 'w', 'h'])
+
+    logger.info(f"Screen resolution: {win_w}x{win_h} (monitors: {monitor_count}, panel height: {KDE_menu_bar_height}px)")
+
+    node_screens = {}
+
+    for i, node in enumerate(NODES):
+        for j, screen in enumerate(SCREENS):
+            x = i * win_w +10
+            y = j * win_h
+            node_screens[(node, screen)] = Rect(x, y, int(0.9*win_w), int(1.0*win_h)) # 10% margin for better visibility
+
+    logger.debug(f"Calculated window positions: {node_screens}")
+
+#=============================================================================
+def run(cmd):
+    return subprocess.run(cmd, text=True, capture_output=True)
 
 #=============================================================================
 def get_wmctrl_lines() -> list[str]:
@@ -98,11 +140,9 @@ def get_wmctrl_lines() -> list[str]:
 #=============================================================================
 def window_exists(title:str) -> bool:
     lines = get_wmctrl_lines()
-
     for line in lines:
         if title in line:
             return True
-
     return False
 
 #=============================================================================
@@ -110,7 +150,6 @@ def debug_titles() -> None:
     logger.info("Current wmctrl windows:")
     for line in get_wmctrl_lines():
         logger.info(line)
-
 
 #==============================================================================
 def check_konsoles()->None:
@@ -145,8 +184,6 @@ def close_konsoles()->None:
 
 #=============================================================================
 def open_konsoles()->None:
-
-
     for key_login, mbs_node in enumerate(LOGINS):
         pos_x = key_login*win_w
 
@@ -172,6 +209,10 @@ def open_konsoles()->None:
 #=============================================================================
 def open_konsol(title:str, mbs_node:str, screen:str)->None:
 
+    if window_exists(title):
+        logger.info(f"Already running: {title}")
+        return
+
     remote_cmd = (
         f"screen -dr {shlex.quote(screen)} "
         f"|| screen -r {shlex.quote(screen)} "
@@ -193,20 +234,21 @@ def open_konsol(title:str, mbs_node:str, screen:str)->None:
 
 #=============================================================================
 def move_window(title:str, x:int, y:int, w:int, h:int)->None:
-    for attempt in range(3):
+    niter = 3
+    for attempt in range(niter):
         move_cmd = ["wmctrl", "-r", f"{title}", "-e", f"0,{x},{y},{w},{h}"]
         ret = run(move_cmd)
         logger.debug(f"Moving command: {' '.join(move_cmd)}")
         if ret.returncode == 0:
             return
-        logger.error(f"Failed to move window {title} (attempt {attempt+1}/3): {ret.stderr.strip()}")
-        time.sleep(SLEEP_TIME)
-
+        logger.error(f"Failed to move window {title} (attempt {attempt+1}/{niter}): {ret.stderr.strip()}")
 
 #=============================================================================
 # main entry point
 #=============================================================================
 if __name__ == "__main__":
+
+    init_konsole_positioning()
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--nodes', required=True, help='Comma-separated list of nodes')
@@ -238,28 +280,10 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(0)
 
-    full_width, full_height = get_screen_resolution()
-    # logger.debug(f"Screen resolution: {full_width}x{full_height}")
-
-    monitor_count = get_monitor_count()
-    # logger.debug(f"monitor_count detected: {monitor_count}")
-
-    KDE_menu_bar_height = get_kde_panel_height()
-    # logger.debug(f"KDE menu bar height: {KDE_menu_bar_height}px")
-
-    # debug_titles()
-
-    screen_w = full_width // monitor_count
-    screen_h = full_height - KDE_menu_bar_height
-
-    win_w = full_width // len(nodes)
-    win_h = screen_h // len(screens)
-
-
+    # main loop
     for index_node, mbs_node in enumerate(nodes):
     
         if mbs_node in NODES:
-            pos_x = index_node*win_w
             logger.debug(f"{index_node}: {mbs_node}")
             login=f"{USERNAME}@{mbs_node}"
 
@@ -278,11 +302,11 @@ if __name__ == "__main__":
                             logger.warning(f"Window not found: {title}")
                     
                     elif args.open:            
-                        pos_y = (len(screens)-1-index_screen) * win_h + 1 # top space px
-
                         open_konsol(title, login, screen)
                         time.sleep(SLEEP_TIME)
-                        move_window(title, int(pos_x+0.1*win_w), pos_y, int(0.8*win_w), win_h)
+
+                        xywh = node_screens.get((f'{mbs_node}', f'{screen}'), Rect(50, 50, 640, 480))
+                        move_window(title, xywh.x, xywh.y, xywh.w, xywh.h)
                 else:
                     logger.error(f"Screen {screen} not found in {SCREENS}")
         else:

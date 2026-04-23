@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/scripts/open_konsoles.py node all screen all close
+Exec=/home/irakli/mncl/scripts/konsole_manager.py --nodes "x86l-132,x86l-253,x86l-170,x86l-157" --screens "com,web,mbs" --close
 GenericName[en_US]=
 GenericName=
 Icon=/home/irakli/mncl/gui/close_konsoles.png
