@@ -126,7 +126,7 @@ def init_konsole_positioning():
             y = j * win_h
             node_screens[(node, screen)] = Rect(x, y, int(0.9*win_w), int(1.0*win_h)) # 10% margin for better visibility
 
-    logger.debug(f"Calculated window positions: {node_screens}")
+    # logger.debug(f"Calculated window positions: {node_screens}")
 
 #=============================================================================
 def run(cmd):
@@ -208,29 +208,57 @@ def open_konsoles()->None:
 
 #=============================================================================
 def open_konsol(title:str, mbs_node:str, screen:str)->None:
+    """
+    Open a remote screen session in a new Konsole terminal window.
+
+    Args:
+        title (str): The title for the Konsole tab.
+        mbs_node (str): The remote host to connect to via SSH.
+        screen (str): The name of the screen session to attach to on the remote host.
+
+    Returns:
+        None
+
+    Raises:
+        None (logs warning if window with given title already exists)
+
+    Notes:
+        - The function checks if a window with the given title already exists before proceeding.
+        - Executes 'screen -dr' to detach and reattach to an existing screen session.
+        - Establishes SSH connection with X11 forwarding enabled (-X flag).
+        - Opens the remote session in a new Konsole tab with the specified title.
+        - The -lc flag in bash means: login shell (-l) with command (-c).
+          This ensures bash loads user's shell configuration files and executes the provided command.
+    """
 
     if window_exists(title):
-        logger.info(f"Already running: {title}")
+        logger.warning(f"Already running: {title}")
         return
 
     remote_cmd = (
-        f"screen -dr {shlex.quote(screen)} "
-        f"|| screen -r {shlex.quote(screen)} "
-        f"|| echo 'screen session {screen} not found on {mbs_node}'"
+        f"screen -dr {shlex.quote(screen)} "      # Detach and reattach if already running
+        f"|| screen -r {shlex.quote(screen)} "    # Reattach if running
+        f"|| screen -S {shlex.quote(screen)} "    # Create new session if doesn't exist
+        f"|| echo 'screen session {screen} not found on {mbs_node}'"  # Fallback error message
     )
 
-    local_cmd = f"ssh -Y {shlex.quote(mbs_node)} -t {shlex.quote(remote_cmd)};echo;"
+    local_cmd = f"ssh -X {shlex.quote(mbs_node)} -t {shlex.quote(remote_cmd)};bash -lc 'echo Session ended; exec bash'"
 
     ssh_cmd = [
         "konsole",
-        "-p", f"tabtitle={title}",
+        "-p", 
+        f"tabtitle={title}",
         "--hold",
         "-e", 
-        "bash", "-lc", local_cmd,
+        "bash", 
+        "-lc",
+        local_cmd
     ]
+    # ssh_cmd.extend(local_cmd.split())
+    print(local_cmd.split())
 
     logger.debug(f"SSH command: {' '.join(ssh_cmd)}")
-    subprocess.Popen(ssh_cmd)
+    results = subprocess.Popen(ssh_cmd)
 
 #=============================================================================
 def move_window(title:str, x:int, y:int, w:int, h:int)->None:
@@ -284,7 +312,7 @@ if __name__ == "__main__":
     for index_node, mbs_node in enumerate(nodes):
     
         if mbs_node in NODES:
-            logger.debug(f"{index_node}: {mbs_node}")
+            # logger.debug(f"{index_node}: {mbs_node}")
             login=f"{USERNAME}@{mbs_node}"
 
             for index_screen, screen in enumerate(screens):
