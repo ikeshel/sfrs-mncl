@@ -11,6 +11,7 @@ __status__     = "Production"
 import sys
 import signal
 import subprocess
+import re
 from loguru import logger
 
 ## 
@@ -39,11 +40,16 @@ class MBSNode(QtWidgets.QWidget,
         self.name = name
         self.node_host = node_host
         self.menu = None
+        self.WR_SUBSYSTEM_ID = '0x000' # example subsystem ID for MBS node, replace with actual value if needed            
+
         self.setObjectName(f"node_{name}")
         self.setStyleSheet("background-color: white; border: 1px solid black;")
+
+        self.read_node_murx_config() # read the MURX config to get the subsystem ID for this node
+
         self.init_ui()
         MBSNode.list_of_nodes.append(self) # add instance to the class variable list
-        
+
 
     #=========================================================================
     def init_ui(self):
@@ -63,9 +69,17 @@ class MBSNode(QtWidgets.QWidget,
         self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
         self.lbl_node_name.setGeometry(QtCore.QRect(20, 10, 90, 40))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.lbl_node_name.setFont(QFont("Times", 10, QFont.Weight.Bold))
+        self.lbl_node_name.setFont(QFont("Courier", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
+
+        self.lbl_subsystem_id = QtWidgets.QLabel(self)
+        self.lbl_subsystem_id.setObjectName(f"lbl_{self.name}_subsystem_id")
+        self.lbl_subsystem_id.setFont(QFont("Times", 10, QFont.Weight.Bold))
+        self.lbl_subsystem_id.setText(f"Eve ID: {self.WR_SUBSYSTEM_ID}")
+        self.lbl_subsystem_id.setToolTip(f"Subsystem event ID")
+        self.lbl_subsystem_id.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_subsystem_id.setGeometry(QtCore.QRect(120, 50, 90, 25))
 
         # Create red circle widget for status indicator
         self.status_ping = QtWidgets.QWidget(self)
@@ -76,6 +90,40 @@ class MBSNode(QtWidgets.QWidget,
         self.status_ping.setStyleSheet(f"background-color: red; border-radius: {self.radius}px;")
         self.status_ping.raise_()
 
+    #=========================================================================
+    def extract_subsystem_id(self, murx_content: str) -> str:
+
+        # Extract value after '='
+        match = re.search(r'WR_SUBSYSTEM_ID\s*=\s*(\S+?)[\s,]', murx_content)
+        if match:
+            wr_subsystem_id = match.group(1)
+            print("WR_SUBSYSTEM_ID:", wr_subsystem_id)  # -> 0x200
+            return wr_subsystem_id
+        else:
+            print("WR_SUBSYSTEM_ID not found")
+            return "0x000"
+
+    #==========================================================================
+    def read_node_murx_config(self):
+        # Here you would add the actual logic to read the MURX config and set the WR_SUBSYSTEM_ID for this node
+        # For demonstration, we will just set a dummy value
+        
+        results = subprocess.Popen(
+            f'ssh ikeshel@{self.node_host} "cat ~/{self.name}/murx.usf"',
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )   
+        stdout, stderr = results.communicate()
+        if results.returncode == 0:
+            logger.success(f"Successfully read MURX config for {self.name} node")
+            self.murx_file_content = stdout.strip() # store the content of the murx config file for later use
+            self.WR_SUBSYSTEM_ID = self.extract_subsystem_id(self.murx_file_content)
+            logger.debug(f"Set WR_SUBSYSTEM_ID for {self.name} node: {self.WR_SUBSYSTEM_ID}")        
+        else:
+            logger.error(f"Failed to read MURX config for {self.name} node: {stderr}")
+            self.WR_SUBSYSTEM_ID = "0x000" # set default value if reading config fails
 
     #==========================================================================
     def show_window(self):
@@ -101,7 +149,7 @@ class MBSNode(QtWidgets.QWidget,
 
         try:
             result = subprocess.run(
-                ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo alive"],
+                ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo", "alive"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -367,6 +415,6 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
     
-    node1 = MBSNode(name="TimeSorter", node_host="x86l-152")
+    node1 = MBSNode(name="ToF", node_host="x86l-132")
     node1.show()
     sys.exit(app.exec())

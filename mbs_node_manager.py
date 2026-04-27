@@ -109,6 +109,9 @@ class MbsNodeManager(   QMainWindow,
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
+        self.node_TIMESORTER = MBSNode("TimeSorter", "x86l-157")
+        self.layout.addWidget(self.node_TIMESORTER)
+
         self.node_TOF = MBSNode("ToF", "x86l-132")
         self.layout.addWidget(self.node_TOF)
 
@@ -117,9 +120,6 @@ class MbsNodeManager(   QMainWindow,
 
         self.node_SIFI = MBSNode("SiFi", "x86l-253")
         self.layout.addWidget(self.node_SIFI)
-
-        self.node_TIMESORTER = MBSNode("TimeSorter", "x86l-157")
-        self.layout.addWidget(self.node_TIMESORTER)
 
         self.nodes = [] # initialize the nodes list in the main window instance
         self.nodes = MBSNode.list_of_nodes.copy() # copy the list of nodes from MBSNode class to the main window instance for easier access    

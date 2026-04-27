@@ -142,8 +142,8 @@ class SSHCommander:
         screen_command.extend(command_list)
         screen_command.append("\\n")
         screen_command.append("'")
-        print(f"Screen command list: {screen_command}")
-        logger.info(f"Running screen command: {screen_command}")
+        logger.debug(f"Screen command list: {screen_command}")
+        logger.debug(f"Running screen command: {screen_command}")
         return self.run_command(screen_command)
 
 #==============================================================================
