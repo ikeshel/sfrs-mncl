@@ -105,8 +105,6 @@ class MBSNode(QtWidgets.QWidget,
 
     #==========================================================================
     def read_node_murx_config(self):
-        # Here you would add the actual logic to read the MURX config and set the WR_SUBSYSTEM_ID for this node
-        # For demonstration, we will just set a dummy value
         
         results = subprocess.Popen(
             f'ssh ikeshel@{self.node_host} "cat ~/{self.name}/murx.usf"',

@@ -16,12 +16,13 @@ from Xlib.display import Display
 ##
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QMainWindow, QWidget, 
-                             QVBoxLayout, QHBoxLayout,
+                             QVBoxLayout, QHBoxLayout, 
                              QLabel, QSpinBox, QPushButton, QComboBox)
 # from PyQt6.QtWidgets import 
 
 ##
 sys.path.append('package')
+from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
 from ssh_commander    import SSHCommander
 
@@ -32,19 +33,27 @@ PULSER_NODE = "x86l-132"  # Where the pulser is connected, for now hardcoded, ca
 PULSER_COMMAND_TEMPLATE = "/frs/usr/ikeshel/Pulser10Hz/clk-gen-standalone {device} IO3 {freq} {high_phase} {phase_shift}"
 
 #==============================================================================
-class PulserWindow(QMainWindow, 
-                   WindowPositionManager,
-                   SSHCommander):
+class PulserWindow( QMainWindow, 
+                    MnclLogger,
+                    WindowPositionManager,
+                    SSHCommander):
     
     #==========================================================================
     def __init__(self):
+
         super().__init__()
+
         WindowPositionManager.__init__(self)
+
         SSHCommander.__init__(self, PULSER_NODE)  # Where the pulser is connected, for now hardcoded, can be made dynamic later
+
+        MnclLogger.__init__(self)
+        self.setup_logger() 
+
         self.init_ui()
     
     #==========================================================================
-    def init_ui(self):
+    def init_ui(self) -> None:
         widget = QWidget()
         main_layout = QVBoxLayout()
         
@@ -114,13 +123,8 @@ class PulserWindow(QMainWindow,
         main_layout.addStretch()
         widget.setLayout(main_layout)
         self.setCentralWidget(widget)
-        layout = QVBoxLayout()
-                        
-        layout.addStretch()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
 
-                ## -------------------------------------------------------------------------------------------
+        ## -------------------------------------------------------------------------------------------
         ## read window position
         if self.read_window_data():
             logger.debug(f"Window position: x={self.xx}, y={self.yy}, "
@@ -145,12 +149,12 @@ class PulserWindow(QMainWindow,
         self.raise_()
 
     #==========================================================================
-    def populate_usb_devices(self):
+    def populate_usb_devices(self) -> None:
 
         self.device_combo.addItem(f"/dev/ttyUSB0")
     
     #==========================================================================
-    def on_set_clicked(self):
+    def on_set_clicked(self) -> None:
         val1 = self.spbx_freq.value()
         val2 = self.spbx_highPhase.value()
         val3 = self.spbx_phaseShift.value()
@@ -167,22 +171,22 @@ class PulserWindow(QMainWindow,
             high_phase=val2/1000, # convert ns to µs
             phase_shift=val3/1000 # convert µs to µs (no change, but keeping the template consistent)
         )
-        logger.debug(f"Node {PULSER_NODE} Executing command: {command}")
-        # self.run_screen_command("com", command)
-        results = self.run_screen_list("com", command.split()) # list
-        logger.debug(f"Command results: {results}")
+        self.run_screen_command("com", command)
 
     #==========================================================================
-    def closeEvent(self, event):
-        '''Must stay with Main widget'''
-        logger.debug("closeEvent")
+    def closeEvent(self, event) -> None:
         self.save_window_data() # save window position and size on close
 
+
+#==============================================================================
+##
+#==============================================================================
 if __name__ == "__main__":
+
     app = QApplication(sys.argv)
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
 
     window = PulserWindow()
-    window.show()
+    
     sys.exit(app.exec())

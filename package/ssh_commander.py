@@ -120,31 +120,7 @@ class SSHCommander:
         logger.info(f"Running screen command: {screen_command}")
         return self.run_command(screen_command)
 
-    #==========================================================================
-    def run_screen_list(self, screen_name: str, command_list: list) -> tuple[int, str, str]:
-        """
-        Run a command in a named screen session.
-        
-        Args:
-            screen_name: Name of the screen session
-            command_list: List of commands to execute in the screen session
-        
-        Returns:
-            tuple: (return_code, stdout, stderr)
-        """
-        screen_command = [
-            f"screen", 
-            f"-S", 
-            f"{screen_name}", 
-            f"-X", 
-            f"stuff",
-            f"'"]
-        screen_command.extend(command_list)
-        screen_command.append("\\n")
-        screen_command.append("'")
-        logger.debug(f"Screen command list: {screen_command}")
-        logger.debug(f"Running screen command: {screen_command}")
-        return self.run_command(screen_command)
+
 
 #==============================================================================
 # Test the SSHCommander class

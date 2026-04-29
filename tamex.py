@@ -84,6 +84,9 @@ class TamexWorker(QRunnable):
         logger.debug("TamexWorker.stop()")
         self.is_running = False
 
+
+
+
 #==============================================================================
 ## MBS Node Manager Main Window
 #==============================================================================
@@ -98,7 +101,7 @@ class TamexMainWindow(  QMainWindow,
 
         super().__init__()
 
-        # MnclLogger.__init__(self)
+        MnclLogger.__init__(self)
         self.setup_logger()
 
         self.nodes = []
@@ -107,6 +110,7 @@ class TamexMainWindow(  QMainWindow,
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
         SSHCommander.__init__(self, hostname='x86l-132') # initialize SSHCommander with node_host
+
 
         # node widget
         self.central_widget = QWidget()
