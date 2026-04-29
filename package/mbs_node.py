@@ -34,15 +34,16 @@ class MBSNode(QtWidgets.QWidget,
     list_of_nodes = [] # class variable to keep track of all node instances
 
     #=========================================================================
-    def __init__(self, name="Node", node_host="localhost"):
+    def __init__(self, node_dict: dict):
 
-        super().__init__(hostname=node_host) # initialize SSHCommander with node_host
-        self.name = name
-        self.node_host = node_host
+        super().__init__(hostname=node_dict['host_name']) # initialize SSHCommander with node_host
+        self.name = node_dict['node_name']
+        self.node_host = node_dict['host_name']
+        self.directory = node_dict['directory']
         self.menu = None
         self.WR_SUBSYSTEM_ID = '0x000' # example subsystem ID for MBS node, replace with actual value if needed            
 
-        self.setObjectName(f"node_{name}")
+        self.setObjectName(f"node_{self.directory}")
         self.setStyleSheet("background-color: white; border: 1px solid black;")
 
         self.read_node_murx_config() # read the MURX config to get the subsystem ID for this node
@@ -63,18 +64,19 @@ class MBSNode(QtWidgets.QWidget,
         
         # Create label-link for node name and set it up
         self.lbl_node_name = QtWidgets.QLabel(self)
-        self.lbl_node_name.setObjectName(f"lbl_{self.name}")
-        self.lbl_node_name.setText(f"{self.name}\n{self.node_host}")
+        self.lbl_node_name.setObjectName(f"lbl_{self.directory}")
+        self.lbl_node_name.setText(f"{self.directory}\n{self.node_host}")
         self.lbl_node_name.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.lbl_node_name.setToolTip(f"Click to open {self.name} Dashboard")
+        self.lbl_node_name.setToolTip(f"Click to open {self.directory} Dashboard")
         self.lbl_node_name.setGeometry(QtCore.QRect(20, 10, 90, 40))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_node_name.setFont(QFont("Courier", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
 
+        # Create label for subsystem ID and set it up
         self.lbl_subsystem_id = QtWidgets.QLabel(self)
-        self.lbl_subsystem_id.setObjectName(f"lbl_{self.name}_subsystem_id")
+        self.lbl_subsystem_id.setObjectName(f"lbl_{self.directory}_subsystem_id")
         self.lbl_subsystem_id.setFont(QFont("Times", 10, QFont.Weight.Bold))
         self.lbl_subsystem_id.setText(f"Eve ID: {self.WR_SUBSYSTEM_ID}")
         self.lbl_subsystem_id.setToolTip(f"Subsystem event ID")
@@ -83,7 +85,7 @@ class MBSNode(QtWidgets.QWidget,
 
         # Create red circle widget for status indicator
         self.status_ping = QtWidgets.QWidget(self)
-        self.status_ping.setToolTip(f"Ping for {self.name} node")
+        self.status_ping.setToolTip(f"Ping for {self.directory} node")
         diameter = 13
         self.radius = diameter // 2
         self.status_ping.setGeometry(90-self.radius, 145-self.radius, diameter, diameter)
@@ -107,7 +109,7 @@ class MBSNode(QtWidgets.QWidget,
     def read_node_murx_config(self):
         
         results = subprocess.Popen(
-            f'ssh ikeshel@{self.node_host} "cat ~/{self.name}/murx.usf"',
+            f'ssh ikeshel@{self.node_host} "cat ~/{self.directory}/murx.usf"',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -127,7 +129,7 @@ class MBSNode(QtWidgets.QWidget,
     def show_window(self):
 
         if self.browser_window.isVisible():
-            logger.debug(f"{self.name} dashboard is already open. Bringing it to front...")
+            logger.debug(f"{self.directory} dashboard is already open. Bringing it to front...")
             self.browser_window.close() # close the existing window before opening a new one
         else:
             self.browser_window.show()
@@ -264,7 +266,7 @@ class MBSNode(QtWidgets.QWidget,
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             screen_name = "mbs"
             list_of_commands = [
-                f'cd ~/{self.name}', 
+                f'cd ~/{self.directory}', 
                 'mbs -dabc', 
                 '@startup',
                 '\n'
@@ -295,7 +297,7 @@ class MBSNode(QtWidgets.QWidget,
             screen_name = "mbs"
             list_of_commands = [
                 '\x03', # Ctrl+C to interrupt the running process
-                f'cd ~/{self.name}', 
+                f'cd ~/{self.directory}', 
                 'quit', 
                 'resl', 
                 'mbs -dabc', 
@@ -413,6 +415,10 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
     
-    node1 = MBSNode(name="ToF", node_host="x86l-132")
+    node1 = MBSNode({
+        'node_name': 'Node1',
+        'host_name': 'x86l-132',
+        'directory': 'MBS_Node1'
+    })
     node1.show()
     sys.exit(app.exec())

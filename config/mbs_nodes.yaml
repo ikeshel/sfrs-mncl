@@ -1,0 +1,18 @@
+## List of nodes
+## comment line starts with # and is ignored; empty lines are also ignored
+nodes:
+    - host_name: x86l-157
+      node_name: 'Time Sorter'
+      directory: TimeSorter
+
+    - host_name: x86l-132
+      node_name: 'Time of Flight'
+      directory: ToF
+
+    - host_name: x86l-170
+      node_name: 'MUSIC'
+      directory: MUSIC
+
+    - host_name: x86l-253
+      node_name: 'Scintillating Fibers'
+      directory: SciFi

@@ -20,7 +20,7 @@ from loguru import logger
 class YamlManager(): # manager for yaml files
 
     #==========================================================================
-    def __init__(self, inFile):
+    def __init__(self, inFile: str = "config.yaml"):
 
         self.yaml_file_name = inFile
 
@@ -48,7 +48,7 @@ class YamlManager(): # manager for yaml files
             # raise FileNotFoundError(f"Can't write {self.yaml_file_name} yaml file!!!")
        
     #==========================================================================
-    def get_dict(self):
+    def get_dict(self) -> dict:
         ''' return dictionary from yaml file '''
         return self.mydict
     
@@ -66,6 +66,6 @@ class YamlManager(): # manager for yaml files
 # M A I N
 #******************************************************************************
 if __name__ == '__main__':
-    yaml_manager = YamlManager("config.yaml")
+    yaml_manager = YamlManager("config/mbs_nodes.yaml")
     mydict = yaml_manager.get_dict()
     logger.debug(mydict)

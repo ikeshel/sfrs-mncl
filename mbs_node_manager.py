@@ -15,7 +15,7 @@ from Xlib.display import Display
 
 ## 
 from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtGui import QPainter
+from PyQt6.QtGui import QAction, QPainter
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
@@ -26,10 +26,11 @@ sys.path.append('package')
 # ensure_gui_environment()
 # os.environ["QT_LOGGING_RULES"] = "qt.webenginecontext=false" # supressing the webengine GUI info
 
-from mncl_logger      import MnclLogger
-from win_pos_manager  import WindowPositionManager
-from menu_bar         import MenuBarManager
-from mbs_node         import MBSNode
+from mncl_logger        import MnclLogger
+from win_pos_manager    import WindowPositionManager
+from menu_bar           import MenuBarManager
+from mbs_node           import MBSNode
+from yaml_manager       import YamlManager
 
 ###############################################################################
 class NodeWorkerSignals(QObject):
@@ -102,6 +103,14 @@ class MbsNodeManager(   QMainWindow,
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
 
+        # yaml manager for mbs nodes configuration
+        try:
+            self.node_yaml = YamlManager("config/mbs_nodes.yaml") # yaml manager for mbs nodes configuration
+        except FileNotFoundError as e:
+            logger.error(f"Error loading YAML file: {e}")
+            QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
+            sys.exit(1)
+        
         # node widget
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -109,26 +118,27 @@ class MbsNodeManager(   QMainWindow,
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        self.node_TIMESORTER = MBSNode("TimeSorter", "x86l-157")
-        self.layout.addWidget(self.node_TIMESORTER)
+        self.toolbar = self.addToolBar("Toolbar")
+        self.toolbar.setMovable(False)
+        self.toolbar.setFloatable(False)
+        self.toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
 
-        self.node_TOF = MBSNode("ToF", "x86l-132")
-        self.layout.addWidget(self.node_TOF)
+        # add toolbar buttons
+        self.btn_show_dashboards = QAction("Show Dashboards", self)
+        self.btn_show_dashboards.triggered.connect(self.show_all_dashboards)
+        self.toolbar.addAction(self.btn_show_dashboards)
 
-        self.node_MUSIC = MBSNode("MUSIC", "x86l-170")
-        self.layout.addWidget(self.node_MUSIC)
+        for node_dict in self.node_yaml.get_dict()['nodes']:
+            MBSNode(node_dict)
+            self.layout.addWidget(MBSNode.list_of_nodes[-1]) # add the last created node to the layout
+            MBSNode.list_of_nodes[-1].menu = self.menubar.addMenu(f"{MBSNode.list_of_nodes[-1].name}")
+            self.build_node_menu(MBSNode.list_of_nodes[-1]) # build the menu for the last created node
+            logger.debug(f"Added Node from YAML: {node_dict}")
 
-        self.node_SIFI = MBSNode("SiFi", "x86l-253")
-        self.layout.addWidget(self.node_SIFI)
 
         self.nodes = [] # initialize the nodes list in the main window instance
         self.nodes = MBSNode.list_of_nodes.copy() # copy the list of nodes from MBSNode class to the main window instance for easier access    
 
-        # add node menus to the main menu bar
-        for node in MBSNode.list_of_nodes:
-            logger.debug(f"Added node: {node.name} with host {node.node_host} to main window menu")
-            node.menu = self.menubar.addMenu(f"{node.name}")
-            self.build_node_menu(node)
 
         # -------------------------------------------------------------------------------------------
         # starting threads
