@@ -52,7 +52,7 @@ class Hmp4040(UsbManager):
                          '0','0','0','0']
 
         try:
-            self.hmp_yaml = YamlManager( yaml ).mydict
+            self.hmp_yaml = YamlManager( yaml ).yaml_dict
         except:
             logger.error(f"No '{yaml}' file found")
             raise FileNotFoundError('No yaml file found')

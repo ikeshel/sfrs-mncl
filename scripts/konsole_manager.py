@@ -287,6 +287,7 @@ if __name__ == "__main__":
     action.add_argument('--open', '-o', action='store_true')
     action.add_argument('--check', '-c', action='store_true')
     action.add_argument('--close', '-x', action='store_true')
+    action.add_argument('--toggle', '-t', action='store_true')
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -304,6 +305,8 @@ if __name__ == "__main__":
         logger.info(f"Checking {nodes} on {screens}")
     elif args.close:
         logger.info(f"Closing {nodes} on {screens}")
+    elif args.toggle:
+        logger.info(f"Toggling {nodes} on {screens}")
     elif args.help:
         parser.print_help()
         sys.exit(0)
@@ -335,6 +338,16 @@ if __name__ == "__main__":
 
                         xywh = node_screens.get((f'{mbs_node}', f'{screen}'), Rect(50, 50, 640, 480))
                         move_window(title, xywh.x, xywh.y, xywh.w, xywh.h)
+                    
+                    elif args.toggle:
+                        if window_exists(title):
+                            close_konsole(title)
+                        else:
+                            open_konsol(title, login, screen)
+                            time.sleep(SLEEP_TIME)
+
+                            xywh = node_screens.get((f'{mbs_node}', f'{screen}'), Rect(50, 50, 640, 480))
+                            move_window(title, xywh.x, xywh.y, xywh.w, xywh.h)
                 else:
                     logger.error(f"Screen {screen} not found in {SCREENS}")
         else:

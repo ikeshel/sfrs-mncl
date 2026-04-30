@@ -77,7 +77,7 @@ class Hmp4040_Sim():
                          '0','0','0','0']
 
         try:
-            self.hmp_yaml = YamlManager( yaml ).mydict
+            self.hmp_yaml = YamlManager( yaml ).yaml_dict
             logger.debug(f'yaml file {self.hmp_yaml}')
         except:
             logger.error(f"No '{yaml}' file found")

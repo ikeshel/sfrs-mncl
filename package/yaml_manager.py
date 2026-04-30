@@ -27,21 +27,21 @@ class YamlManager(): # manager for yaml files
         self.read_yaml()
     
     #==========================================================================
-    def read_yaml(self):        
+    def read_yaml(self) -> None:
         try:
             with open(self.yaml_file_name, 'r') as fin:
                 logger.debug( f'Config file {self.yaml_file_name} found!')
-                self.mydict = yaml.load(fin, Loader=yaml.FullLoader)
+                self.yaml_dict = yaml.load(fin, Loader=yaml.FullLoader)
         except:
             logger.error( f"Config file {self.yaml_file_name} is not found!!!")
             raise FileNotFoundError(f"Config file {self.yaml_file_name} is not found!!!")
 
     #==========================================================================
-    def save_yaml(self):
+    def save_yaml(self) -> None:
        ''' if the status of the buttons are changed, new yaml is saved '''
        try:
             with open(self.yaml_file_name, 'w') as fout:
-                yaml.dump(self.mydict, fout, sort_keys=False, allow_unicode=True)
+                yaml.dump(self.yaml_dict, fout, sort_keys=False, allow_unicode=True)
                 logger.debug(f'New config {self.yaml_file_name} file saved')
        except:
             logger.error(f"Can't write {self.yaml_file_name} yaml file!!!")
@@ -50,13 +50,13 @@ class YamlManager(): # manager for yaml files
     #==========================================================================
     def get_dict(self) -> dict:
         ''' return dictionary from yaml file '''
-        return self.mydict
+        return self.yaml_dict
     
     #==========================================================================
     def get_key_or_set(self, key, default):
         ''' get value from yaml file or return default value '''
         try:
-            return self.mydict[key]
+            return self.yaml_dict[key]
         except:
             logger.warning(f'Key {key} not found in {self.yaml_file_name} file')
             logger.warning(f'Default value {default} will be set')
@@ -67,5 +67,5 @@ class YamlManager(): # manager for yaml files
 #******************************************************************************
 if __name__ == '__main__':
     yaml_manager = YamlManager("config/mbs_nodes.yaml")
-    mydict = yaml_manager.get_dict()
-    logger.debug(mydict)
+    yaml_dict = yaml_manager.get_dict()
+    logger.debug(yaml_dict)

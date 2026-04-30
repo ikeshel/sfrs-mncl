@@ -58,9 +58,9 @@ class MenuBarManager(SSHCommander):
             self.node_menu.addAction("Remove Node").setDisabled(True)
             self.node_menu.addSeparator()
 
-            # Settings Menu
-            self.settings_menu = self.menubar.addMenu("Settings")
-            self.settings_menu.addAction("Configure Nodes")
+            # # Settings Menu
+            # self.settings_menu = self.menubar.addMenu("Settings")
+            # self.settings_menu.addAction("Configure Nodes")
 
     #==========================================================================
     def build_node_menu(self, node):
@@ -74,17 +74,17 @@ class MenuBarManager(SSHCommander):
         node.menu.addAction("Restart MBS").triggered.connect(node.restart_mbs)
         node.menu.addAction("Stop MBS").triggered.connect(node.stop_mbs)
         node.menu.addAction("Start MBS").triggered.connect(node.start_mbs)
-        node.menu.addAction("Open Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "open"))
-        node.menu.addAction("Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "close"))
+        node.menu.addAction("Open/Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "toggle"))
+        # node.menu.addAction("Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "close"))
         node.menu.addSeparator()
         node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
         node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)
         node.menu.addAction("Start WEB-MBS").triggered.connect(node.start_webmbs)
-        node.menu.addAction("Open WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "open"))
-        node.menu.addAction("Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "close"))
+        node.menu.addAction("Open/Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "toggle"))
+        # node.menu.addAction("Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "close"))
         node.menu.addSeparator()
-        node.menu.addAction("Open COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "open"))
-        node.menu.addAction("Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "close"))
+        node.menu.addAction("Open/Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "toggle"))
+        # node.menu.addAction("Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "close"))
 
 
     #==========================================================================

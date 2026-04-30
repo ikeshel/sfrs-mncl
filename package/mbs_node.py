@@ -40,8 +40,10 @@ class MBSNode(QtWidgets.QWidget,
         self.name = node_dict['node_name']
         self.node_host = node_dict['host_name']
         self.directory = node_dict['directory']
+        self.active = node_dict.get('active', True) # get active status from config, default to True if not specified
+        self.pc_type = node_dict.get('pc_type', 'intel_x86') # get PC type from config, default to 'intel_x86' if not specified
         self.menu = None
-        self.WR_SUBSYSTEM_ID = '0x000' # example subsystem ID for MBS node, replace with actual value if needed            
+        self.WR_SUBSYSTEM_ID = None # example subsystem ID for MBS node, replace with actual value if needed            
 
         self.setObjectName(f"node_{self.directory}")
         self.setStyleSheet("background-color: white; border: 1px solid black;")
@@ -49,13 +51,16 @@ class MBSNode(QtWidgets.QWidget,
         self.read_node_murx_config() # read the MURX config to get the subsystem ID for this node
 
         self.init_ui()
+        if not self.active:
+            self.setDisabled(True) # disable the widget if the node is not active
+
         MBSNode.list_of_nodes.append(self) # add instance to the class variable list
 
 
     #=========================================================================
     def init_ui(self):
         node_svg = QLabel()
-        node_svg.setPixmap(QPixmap("images/node.svg"))
+        node_svg.setPixmap(QPixmap(f"images/{self.pc_type}.svg"))
         
         svg_layout = QtWidgets.QVBoxLayout()
         svg_layout.setContentsMargins(0, 0, 0, 0)
