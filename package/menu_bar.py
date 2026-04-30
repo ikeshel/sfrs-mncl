@@ -68,6 +68,8 @@ class MenuBarManager(SSHCommander):
         node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_window)
         node.menu.addAction("Open Dashboard in external browser").triggered.connect(node.open_external_browser)
         node.menu.addSeparator()
+        node.menu.addAction("Open/Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "toggle"))
+        node.menu.addSeparator()
         node.menu.addAction("Open screens").triggered.connect(node.check_screens)
         node.menu.addAction("Kill screens").triggered.connect(node.kill_screens)
         node.menu.addSeparator()
@@ -75,16 +77,11 @@ class MenuBarManager(SSHCommander):
         node.menu.addAction("Stop MBS").triggered.connect(node.stop_mbs)
         node.menu.addAction("Start MBS").triggered.connect(node.start_mbs)
         node.menu.addAction("Open/Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "toggle"))
-        # node.menu.addAction("Close Konsole").triggered.connect(lambda: node.konsole_manager("mbs", "close"))
         node.menu.addSeparator()
         node.menu.addAction("Restart WEB-MBS").triggered.connect(node.restart_webmbs)
         node.menu.addAction("Stop WEB-MBS").triggered.connect(node.stop_webmbs)
         node.menu.addAction("Start WEB-MBS").triggered.connect(node.start_webmbs)
         node.menu.addAction("Open/Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "toggle"))
-        # node.menu.addAction("Close WEB-MBS Konsole").triggered.connect(lambda: node.konsole_manager("web", "close"))
-        node.menu.addSeparator()
-        node.menu.addAction("Open/Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "toggle"))
-        # node.menu.addAction("Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "close"))
 
 
     #==========================================================================
@@ -98,9 +95,7 @@ class MenuBarManager(SSHCommander):
                 for command in command_list:
                     return_code, stdout, stderr = node.run_screen_command("com", command)
                     time.sleep(1)  # Wait 1 second between commands
-                    if return_code == 0:
-                        logger.success(f"Update successful on {node.name}: {stdout}")
-                    else:
+                    if not return_code:
                         logger.error(f"Update failed on {node.name}: {stderr}")
                         return
                 return

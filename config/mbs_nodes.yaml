@@ -21,6 +21,6 @@ nodes:
 
     - host_name:  x86l-253
       node_name:  'Scintillating Fibers'
-      directory:  SciFi
+      directory:  SiFi
       active:     true
       pc_type:    'intel_x86'

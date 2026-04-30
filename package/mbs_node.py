@@ -311,10 +311,7 @@ class MBSNode(QtWidgets.QWidget,
                 ]
             for cmd in list_of_commands:
                 try:
-                    return_code, stdout, stderr = self.run_screen_command(screen_name, cmd)
-                    logger.info(f"Command: {cmd}")
-                    logger.info(f"Return code: {return_code}")
-                    logger.info(f"Output: {stdout}")
+                    _, _, stderr = self.run_screen_command(screen_name, cmd)
                     if stderr:
                         logger.error(f"{stderr}")
                 except Exception as e:
@@ -340,9 +337,6 @@ class MBSNode(QtWidgets.QWidget,
             for cmd in list_of_commands:
                 try:
                     return_code, stdout, stderr = self.run_screen_command(screen_name, cmd)
-                    logger.info(f"Command: {cmd}")
-                    logger.info(f"Return code: {return_code}")
-                    logger.info(f"Output: {stdout}")
                     if stderr:
                         logger.error(f"{stderr}")
                 except Exception as e:
