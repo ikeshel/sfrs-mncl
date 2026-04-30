@@ -135,7 +135,7 @@ class MbsNodeManager(   QMainWindow,
             self.build_node_menu(MBSNode.list_of_nodes[-1]) # build the menu for the last created node
             logger.debug(f"Added Node from YAML: {node_dict}")
 
-        self.nodes = MBSNode.list_of_nodes # list of node objects for the worker thread
+        self.nodes = MBSNode.list_of_nodes.copy() # list of node objects for the worker thread
 
         # -------------------------------------------------------------------------------------------
         # starting threads

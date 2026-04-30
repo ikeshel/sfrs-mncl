@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import QApplication, QMessageBox
 
 ##
 sys.path.append('package')
+from package.mbs_node import MBSNode
 from ssh_commander import SSHCommander
 
 #==============================================================================
@@ -89,19 +90,24 @@ class MenuBarManager(SSHCommander):
         logger.info("Checking for updates...")
 
         command_list = ["cd ~/mncl", "git fetch", "git pull", "cd"]
+        success_flag = True
 
         if QMessageBox.question(self, "Check for Updates", "Would you like to pull from git?") == QMessageBox.StandardButton.Yes:           
             for node in self.nodes:
                 for command in command_list:
-                    return_code, stdout, stderr = node.run_screen_command("com", command)
+                    return_code, _, stderr = node.run_screen_command("com", command)
                     time.sleep(1)  # Wait 1 second between commands
-                    if not return_code:
-                        logger.error(f"Update failed on {node.name}: {stderr}")
-                        return
-                return
+                    if return_code:
+                        logger.error(f"Command failed on {node.name}: {stderr}")
+                        success_flag = False
+                        break
+                if success_flag:
+                    logger.info("Update process completed.")
+                    return
+                else:
+                    logger.error(f"Update process failed for {node.name}.")
         else:
             logger.info("Update cancelled by user.")
-        logger.info("Update process completed.")
 
     #==========================================================================
     def show_about(self):
