@@ -201,7 +201,6 @@ class MbsNodeManager(   QMainWindow,
             logger.info(f"Opening {node_host} dashboard...")
             node.open_external_browser()
             
-    
     #==========================================================================
     def show_all_dashboards(self):
 

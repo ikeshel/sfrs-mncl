@@ -113,6 +113,13 @@ class MBSNode(QtWidgets.QWidget,
             return "0x000"
 
     #==========================================================================
+    def konsole_manager(self, screen_name: str, command: str)-> tuple[int, str, str]:
+
+        logger.info(screen_name)
+        command = f"./scripts/konsole_manager.py --nodes {self.node_host} --screens {screen_name} --{command}"
+        return subprocess.run(command.split(), capture_output=False, text=False)
+
+    #==========================================================================
     def read_node_murx_config(self):
         
         results = subprocess.Popen(
@@ -166,13 +173,6 @@ class MBSNode(QtWidgets.QWidget,
         except Exception:
             return False
 
-    #==========================================================================
-    def konsole_manager(self, screen_name: str, command: str)-> tuple[int, str, str]:
-
-        logger.info(screen_name)
-        command = f"./scripts/konsole_manager.py --nodes {self.node_host} --screens {screen_name} --{command}"
-        return subprocess.run(command.split(), capture_output=False, text=False)
-
     #===========================================================================
     def check_ping(self, timeout: int = 1) -> bool:
 
@@ -199,10 +199,8 @@ class MBSNode(QtWidgets.QWidget,
             logger.success(f"Check screens output for {self.name}: {result.stdout}")
             if result.stderr:
                 logger.warning(f"Check screens error for {self.name}: {result.stderr}")
-        except subprocess.TimeoutExpired:
-            logger.error(f"Check screens command timed out for {self.name}")
-        except Exception as e:
-            logger.error(f"Check screens failed for {self.name}: {e}")
+        finally:
+            logger.info(f"Check screens process for {self.name} node completed.")
 
     #==========================================================================
     def kill_screens(self):
@@ -227,10 +225,8 @@ class MBSNode(QtWidgets.QWidget,
                 logger.success(f"Kill screens output for {self.name}: {result.stdout}")
                 if result.stderr:
                     logger.warning(f"Kill screens error for {self.name}: {result.stderr}")
-            except subprocess.TimeoutExpired:
-                logger.error(f"Kill screens command timed out for {self.name}")
-            except Exception as e:
-                logger.error(f"Kill screens failed for {self.name}: {e}")
+            finally:
+                logger.info(f"Kill screens process for {self.name} node completed.")
 
     #==========================================================================
     def stop_mbs(self):
