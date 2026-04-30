@@ -136,7 +136,7 @@ class MbsNodeManager(   QMainWindow,
             logger.debug(f"Added Node from YAML: {node_dict}")
 
         self.nodes = MBSNode.list_of_nodes # list of node objects for the worker thread
-        
+
         # -------------------------------------------------------------------------------------------
         # starting threads
         self.threadpool = QThreadPool()
@@ -207,7 +207,7 @@ class MbsNodeManager(   QMainWindow,
 
         for node in MBSNode.list_of_nodes:
             logger.info(f"Showing {node.name} dashboard...")
-            node.show_window()
+            node.show_hide_dashboard()
 
     #==========================================================================
     def paintEvent(self, event):

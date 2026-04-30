@@ -32,11 +32,12 @@ class MBSNode(QtWidgets.QWidget,
               SSHCommander):
 
     list_of_nodes = [] # class variable to keep track of all node instances
-
+    
     #=========================================================================
     def __init__(self, node_dict: dict):
 
         super().__init__(hostname=node_dict['host_name']) # initialize SSHCommander with node_host
+
         self.name = node_dict['node_name']
         self.node_host = node_dict['host_name']
         self.directory = node_dict['directory']
@@ -55,6 +56,7 @@ class MBSNode(QtWidgets.QWidget,
             self.setDisabled(True) # disable the widget if the node is not active
 
         MBSNode.list_of_nodes.append(self) # add instance to the class variable list
+        self.node_id = len(MBSNode.list_of_nodes) # assign a unique ID based on the current number of nodes in the list
 
 
     #=========================================================================
@@ -77,7 +79,7 @@ class MBSNode(QtWidgets.QWidget,
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_node_name.setFont(QFont("Courier", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
-        self.lbl_node_name.mousePressEvent = lambda event: self.show_window()      
+        self.lbl_node_name.mousePressEvent = lambda event: self.show_hide_dashboard()      
 
         # Create label for subsystem ID and set it up
         self.lbl_subsystem_id = QtWidgets.QLabel(self)
@@ -131,12 +133,14 @@ class MBSNode(QtWidgets.QWidget,
             self.WR_SUBSYSTEM_ID = "0x000" # set default value if reading config fails
 
     #==========================================================================
-    def show_window(self):
+    def show_hide_dashboard(self):
 
         if self.browser_window.isVisible():
             logger.debug(f"{self.directory} dashboard is already open. Bringing it to front...")
             self.browser_window.close() # close the existing window before opening a new one
         else:
+            self.browser_window.move(200+self.node_id*20, self.node_id*20) # move the window to a specific position on the screen
+            self.browser_window.resize(1800, 1300) # resize the window to a specific size
             self.browser_window.show()
             self.browser_window.raise_()
             self.browser_window.activateWindow()

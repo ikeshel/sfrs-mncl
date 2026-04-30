@@ -65,7 +65,7 @@ class MenuBarManager(SSHCommander):
     #==========================================================================
     def build_node_menu(self, node):
 
-        node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_window)
+        node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_hide_dashboard)
         node.menu.addAction("Open Dashboard in external browser").triggered.connect(node.open_external_browser)
         node.menu.addSeparator()
         node.menu.addAction("Open/Close COM Konsole").triggered.connect(lambda: node.konsole_manager("com", "toggle"))
