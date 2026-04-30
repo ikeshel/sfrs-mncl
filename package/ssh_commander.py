@@ -117,7 +117,7 @@ class SSHCommander:
             "-X", 
             "stuff", 
             f"'{command} \\n'"]
-        logger.info(f"Running screen command: {screen_command}")
+        logger.debug(f"Running screen command: {screen_command}")
         return self.run_command(screen_command)
 
 
