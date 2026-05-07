@@ -16,7 +16,7 @@ nodes:
     - host_name:  x86l-170
       node_name:  'MUSIC'
       directory:  MUSIC
-      active:     false
+      active:     true
       pc_type:    'intel_nuc'
 
     - host_name:  x86l-253
