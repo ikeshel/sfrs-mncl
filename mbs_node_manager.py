@@ -95,6 +95,23 @@ class MbsNodeManager(   QMainWindow,
     def __init__(self):
 
         super(MbsNodeManager, self).__init__()
+        # yaml manager for mbs nodes configuration
+        try:
+            self.node_yaml = YamlManager("config/mbs_nodes.yaml") # yaml manager for mbs nodes configuration
+        except FileNotFoundError as e:
+            logger.error(f"Error loading YAML file: {e}")
+            QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
+            sys.exit(1)
+        logger.debug(f"Loaded MBS nodes configuration from YAML: {self.node_yaml.get_dict()}")
+        
+        # yaml manager for mbs screens configuration
+        try:
+            self.screen_yaml = YamlManager("config/node_screens.yaml") # yaml manager for mbs screens configuration
+        except FileNotFoundError as e:
+            logger.error(f"Error loading YAML file: {e}")
+            QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
+            sys.exit(1)
+        logger.debug(f"Loaded node screens configuration from YAML: {self.screen_yaml.get_dict()}")
 
         super(MnclLogger, self).__init__()
         self.setup_logger()
@@ -103,13 +120,6 @@ class MbsNodeManager(   QMainWindow,
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
 
-        # yaml manager for mbs nodes configuration
-        try:
-            self.node_yaml = YamlManager("config/mbs_nodes.yaml") # yaml manager for mbs nodes configuration
-        except FileNotFoundError as e:
-            logger.error(f"Error loading YAML file: {e}")
-            QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
-            sys.exit(1)
         
         # node widget
         self.central_widget = QWidget()
@@ -129,7 +139,7 @@ class MbsNodeManager(   QMainWindow,
         self.toolbar.addAction(self.btn_show_dashboards)
 
         for node_dict in self.node_yaml.get_dict()['nodes']:
-            MBSNode(node_dict)
+            MBSNode(node_dict) # MBSNode.list_of_nodes is updated in the constructor of MBSNode
             self.layout.addWidget(MBSNode.list_of_nodes[-1]) # add the last created node to the layout
             MBSNode.list_of_nodes[-1].menu = self.menubar.addMenu(f"{MBSNode.list_of_nodes[-1].name}")
             self.build_node_menu(MBSNode.list_of_nodes[-1]) # build the menu for the last created node

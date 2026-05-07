@@ -55,7 +55,7 @@ class MBSNode(QtWidgets.QWidget,
         if not self.active:
             self.setDisabled(True) # disable the widget if the node is not active
 
-        MBSNode.list_of_nodes.append(self) # add instance to the class variable list
+        MBSNode.list_of_nodes.append(self)        # add instance to the class variable list
         self.node_id = len(MBSNode.list_of_nodes) # assign a unique ID based on the current number of nodes in the list
 
 
