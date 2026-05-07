@@ -165,6 +165,7 @@ class MBSNode(QtWidgets.QWidget,
 
         try:
             result = subprocess.run(
+                # ssh -o ConnectTimeout=3 ikeshel@x86l-157 echo alive
                 ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo", "alive"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
@@ -220,7 +221,7 @@ class MBSNode(QtWidgets.QWidget,
                     shell=True,
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=3 # set a timeout to prevent hanging if the command takes too long
                 )
                 logger.success(f"Kill screens output for {self.name}: {result.stdout}")
                 if result.stderr:
