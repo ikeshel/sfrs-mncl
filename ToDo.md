@@ -1,9 +1,11 @@
 
 # priority
 
-add threading
+ssh-copy-id ikeshel@x86l-157
 
-if node dead, disable menu otherwise enable menu
+done-add threading
+
+done-if node dead, disable menu otherwise enable menu
 
 
 --- Register Dump ---:
