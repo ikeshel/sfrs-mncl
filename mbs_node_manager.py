@@ -103,7 +103,8 @@ class MbsNodeManager(   QMainWindow,
             QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
             sys.exit(1)
         logger.debug(f"Loaded MBS nodes configuration from YAML: {self.node_yaml.get_dict()}")
-        
+        self.list_node_hosts = [node["host_name"] for node in self.node_yaml.get_dict()["nodes"]]
+
         # yaml manager for mbs screens configuration
         try:
             self.screen_yaml = YamlManager("config/node_screens.yaml") # yaml manager for mbs screens configuration
@@ -112,11 +113,14 @@ class MbsNodeManager(   QMainWindow,
             QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
             sys.exit(1)
         logger.debug(f"Loaded node screens configuration from YAML: {self.screen_yaml.get_dict()}")
+        self.list_screens = list(self.screen_yaml.get_dict()['screens'].keys())
 
+        ## intialize the parent classes
         super(MnclLogger, self).__init__()
         self.setup_logger()
     
         WindowPositionManager.__init__(self)
+
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
 
@@ -128,18 +132,25 @@ class MbsNodeManager(   QMainWindow,
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        self.toolbar = self.addToolBar("Toolbar")
-        self.toolbar.setMovable(False)
-        self.toolbar.setFloatable(False)
-        self.toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        # self.toolbar = self.addToolBar("Toolbar")
+        # self.toolbar.setMovable(False)
+        # self.toolbar.setFloatable(False)
+        # self.toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
 
-        # add toolbar buttons
-        self.btn_show_dashboards = QAction("Show Dashboards", self)
-        self.btn_show_dashboards.triggered.connect(self.show_all_dashboards)
-        self.toolbar.addAction(self.btn_show_dashboards)
+        # # add toolbar buttons
+        # self.btn_show_dashboards = QAction("Show Dashboards", self)
+        # self.btn_show_dashboards.triggered.connect(self.show_all_dashboards)
+        # self.toolbar.addAction(self.btn_show_dashboards)
 
         for node_dict in self.node_yaml.get_dict()['nodes']:
-            MBSNode(node_dict) # MBSNode.list_of_nodes is updated in the constructor of MBSNode
+            try:
+                logger.debug(f"Creating MBSNode from YAML: {node_dict}")
+                MBSNode(node_dict) # MBSNode.list_of_nodes is updated in the constructor of MBSNode
+            except Exception as e:
+                logger.error(f"Error creating MBSNode from YAML: {e}\nYAML content: {node_dict}")
+                QMessageBox.critical(self, "Error", f"Error creating MBSNode from YAML: {e}\nYAML content: {node_dict}")
+                continue
+
             self.layout.addWidget(MBSNode.list_of_nodes[-1]) # add the last created node to the layout
             MBSNode.list_of_nodes[-1].menu = self.menubar.addMenu(f"{MBSNode.list_of_nodes[-1].name}")
             self.build_node_menu(MBSNode.list_of_nodes[-1]) # build the menu for the last created node

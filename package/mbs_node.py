@@ -12,6 +12,7 @@ import sys
 import signal
 import subprocess
 import re
+from enum import Enum
 from loguru import logger
 
 ## 
@@ -27,6 +28,14 @@ from ssh_commander import SSHCommander
 
 #==============================================================================
 #==============================================================================
+# Status Enum for MBS Node
+class NodeStatus(Enum):
+    UNKNOWN = "UNKNOWN"
+    ALIVE = "ALIVE"
+    DEAD = "DEAD"
+
+#==============================================================================
+#==============================================================================
 # MBS Node Widget
 class MBSNode(QtWidgets.QWidget, 
               SSHCommander):
@@ -38,21 +47,29 @@ class MBSNode(QtWidgets.QWidget,
 
         super().__init__(hostname=node_dict['host_name']) # initialize SSHCommander with node_host
 
-        self.name = node_dict['node_name']
-        self.node_host = node_dict['host_name']
-        self.directory = node_dict['directory']
-        self.active = node_dict.get('active', True) # get active status from config, default to True if not specified
-        self.pc_type = node_dict.get('pc_type', 'intel_x86') # get PC type from config, default to 'intel_x86' if not specified
-        self.menu = None
-        self.WR_SUBSYSTEM_ID = None # example subsystem ID for MBS node, replace with actual value if needed            
+        self.name               = node_dict['node_name']
+        self.node_host          = node_dict['host_name']
+        self.directory          = node_dict['directory']
+        self.active             = node_dict.get('active', True) # get active status from config, default to True if not specified
+        self.pc_type            = node_dict.get('pc_type', 'intel_x86') # get PC type from config, default to 'intel_x86' if not specified
+        self.status             = NodeStatus.UNKNOWN # initialize status to UNKNOWN, will be updated later based on checks
+        self.menu               = None
+        self.WR_SUBSYSTEM_ID    = -1 # example subsystem ID for MBS node, replace with actual value if needed            
 
         self.setObjectName(f"node_{self.directory}")
         self.setStyleSheet("background-color: white; border: 1px solid black;")
 
+        if self.check_ssh():
+            logger.success(f"SSH connection to {self.name} node ({self.node_host}) is successful.")
+            self.status = NodeStatus.ALIVE
+        else:
+            logger.error(f"SSH connection to {self.name} node ({self.node_host}) failed.")
+            self.status = NodeStatus.DEAD
+
         self.read_node_murx_config() # read the MURX config to get the subsystem ID for this node
 
         self.init_ui()
-        if not self.active:
+        if not self.active or self.status == NodeStatus.DEAD:
             self.setDisabled(True) # disable the widget if the node is not active
 
         MBSNode.list_of_nodes.append(self)        # add instance to the class variable list
@@ -115,7 +132,7 @@ class MBSNode(QtWidgets.QWidget,
     #==========================================================================
     def konsole_manager(self, screen_name: str, command: str)-> tuple[int, str, str]:
 
-        logger.info(screen_name)
+        logger.info(f"Konsole manager called with screen_name: {screen_name} and command: {command}")
         command = f"./scripts/konsole_manager.py --nodes {self.node_host} --screens {screen_name} --{command}"
         return subprocess.run(command.split(), capture_output=False, text=False)
 
@@ -123,7 +140,7 @@ class MBSNode(QtWidgets.QWidget,
     def read_node_murx_config(self):
         
         results = subprocess.Popen(
-            f'ssh ikeshel@{self.node_host} "cat ~/{self.directory}/murx.usf"',
+            f'ssh -o ConnectTimeout=3 ikeshel@{self.node_host} "cat ~/{self.directory}/murx.usf"',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -191,7 +208,7 @@ class MBSNode(QtWidgets.QWidget,
         # For demonstration, we will just show a message box
         try:
             result = subprocess.run(
-                f'ssh ikeshel@{self.node_host} "~/mncl/bin/check_screens.csh"',
+                f'ssh -o ConnectTimeout=3 ikeshel@{self.node_host} "~/mncl/bin/check_screens.csh"',
                 shell=True,
                 capture_output=True,
                 text=True,
