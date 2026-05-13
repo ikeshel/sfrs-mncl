@@ -104,8 +104,10 @@ class TamexMainWindow(  QMainWindow,
         MnclLogger.__init__(self)
         self.setup_logger()
 
+        node = {'host_name': 'x86l-132', 'node_name': 'Time of Flight', 'directory': 'ToF', 'active': True, 'pc_type': 'intel_x86'}
+
         self.nodes = []
-        self.nodes.append(MBSNode("ToF", "x86l-132"))
+        self.nodes.append(MBSNode(node))
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
