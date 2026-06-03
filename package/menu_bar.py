@@ -53,8 +53,11 @@ class MenuBarManager(SSHCommander):
         self.toggle_all_konsoles.triggered.connect(lambda checked: self.konsole_action(MBSNode.list_of_nodes, self.list_screens, checked))
 
         self.node_menu.addSeparator() #---------------------------------------------
-        self.node_menu.addAction("Configure All Nodes").disabled = True
-        self.node_menu.addSeparator()
+        self.node_menu.addAction("Start all processes").triggered.connect(self.start_all_processes)
+        self.node_menu.addAction("Stop all processes").triggered.connect(self.stop_all_processes)
+        self.node_menu.addAction("Reconfigure all processes").triggered.connect(self.restarting_all_processes)
+
+        self.node_menu.addSeparator() #---------------------------------------------
         self.node_menu.addAction("Add Node").setDisabled(True)
         self.node_menu.addAction("Remove Node").setDisabled(True)
         self.node_menu.addSeparator()
@@ -64,27 +67,49 @@ class MenuBarManager(SSHCommander):
         # self.settings_menu.addAction("Configure Nodes")
 
     #==========================================================================
+    def start_all_processes(self):
+        logger.info("Starting all processes on all nodes...")
+
+        for node in reversed(self.nodes):
+            logger.debug(f"Starting MBS processes on node: {node.name}")
+            node.start_mbs("force")
+
+        for node in reversed(self.nodes):
+            logger.debug(f"Starting WEB-MBS processes on node: {node.name}")
+            node.start_webmbs("force")
+
+    #=========================================================================
+    def stop_all_processes(self):
+        logger.info("Stopping all processes on all nodes...")
+
+        for node in self.nodes:
+            logger.debug(f"Stopping processes on node: {node.name}")
+            node.stop_webmbs("force")
+            node.stop_mbs("force")
+
+    #==========================================================================
+    def restarting_all_processes(self):
+        logger.info("Reconfiguring all processes on all nodes...")
+
+        for node in reversed(self.nodes):
+            logger.debug(f"restarting MBS processes on node: {node.name}")
+            node.check_screens()
+            node.restart_mbs("force")
+
+        for node in reversed(self.nodes):
+            logger.debug(f"restarting WEB-MBS processes on node: {node.name}")
+            node.restart_webmbs("force")
+
+    #==========================================================================
     def build_node_menu(self, node):
 
         node.menu.addAction("Show/hide Dashboard").triggered.connect(node.show_hide_dashboard)
         node.menu.addAction("Open Dashboard in external browser").triggered.connect(node.open_external_browser)
 
         node.menu.addSeparator() #---------------------------------------------
-        open_command = ['./scripts/konsole_manager.py', '--nodes', f'{node.node_host}', '--screens', 'mbs,web,com', '--open']
-        close_command = ['./scripts/konsole_manager.py', '--nodes', f'{node.node_host}', '--screens', 'mbs,web,com', '--close']
         self.toggle_node_konsoles = node.menu.addAction("Open/Close node konsoles")
         self.toggle_node_konsoles.setCheckable(True)
         self.toggle_node_konsoles.triggered.connect(lambda checked: self.konsole_action([node], self.list_screens, checked))
-
-        # self.toggle_node_konsoles.triggered.connect(lambda checked: self.toggle_com_konsole.setChecked(True) or \
-        #                                                             self.toggle_web_konsole.setChecked(True) or \
-        #                                                             self.toggle_mbs_konsole.setChecked(True) or \
-        #                                                             subprocess.run(open_command)
-        #                                                         if checked
-        #                                                         else    self.toggle_com_konsole.setChecked(False) or \
-        #                                                                 self.toggle_web_konsole.setChecked(False) or \
-        #                                                                 self.toggle_mbs_konsole.setChecked(False) or \
-        #                                                                 subprocess.run(close_command))
 
         node.menu.addSeparator() #---------------------------------------------
         self.toggle_com_konsole = node.menu.addAction("Open/Close COM Konsole")
@@ -133,9 +158,6 @@ class MenuBarManager(SSHCommander):
             self.toggle_com_konsole.setChecked(checked)
             self.toggle_web_konsole.setChecked(checked)
             self.toggle_mbs_konsole.setChecked(checked)
-
-
-
 
     #==========================================================================
     def check_for_updates(self)-> None:
