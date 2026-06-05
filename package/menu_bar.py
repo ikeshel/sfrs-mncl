@@ -38,7 +38,6 @@ class MenuBarManager(SSHCommander):
     def menuBar(self):
         pass
 
-
     #==========================================================================
     def setup_mbs_menu(self):
 
@@ -53,9 +52,20 @@ class MenuBarManager(SSHCommander):
         self.toggle_all_konsoles.triggered.connect(lambda checked: self.konsole_action(MBSNode.list_of_nodes, self.list_screens, checked))
 
         self.node_menu.addSeparator() #---------------------------------------------
-        self.node_menu.addAction("Start all processes").triggered.connect(self.start_all_processes)
+        self.node_menu.addAction("Check all screens").triggered.connect(self.check_all_screens)
+
+        self.node_menu.addSeparator() #---------------------------------------------
+        self.node_menu.addAction("Restart all processes").triggered.connect(self.restart_all_processes)
         self.node_menu.addAction("Stop all processes").triggered.connect(self.stop_all_processes)
-        self.node_menu.addAction("Reconfigure all processes").triggered.connect(self.restarting_all_processes)
+        self.node_menu.addAction("Start all processes").triggered.connect(self.start_all_processes)
+
+        self.node_menu.addSeparator() #---------------------------------------------
+        self.node_menu.addAction("Stop all WEB-MBS processes").triggered.connect(self.stop_webmbs_processes)
+        self.node_menu.addAction("Start all WEB-MBS processes").triggered.connect(self.start_webmbs_processes)
+
+        self.node_menu.addSeparator() #---------------------------------------------
+        self.node_menu.addAction("Stop all MBS processes").triggered.connect(self.stop_mbs_processes)
+        self.node_menu.addAction("Start all MBS processes").triggered.connect(self.start_mbs_processes)
 
         self.node_menu.addSeparator() #---------------------------------------------
         self.node_menu.addAction("Add Node").setDisabled(True)
@@ -67,38 +77,80 @@ class MenuBarManager(SSHCommander):
         # self.settings_menu.addAction("Configure Nodes")
 
     #==========================================================================
-    def start_all_processes(self):
-        logger.info("Starting all processes on all nodes...")
+    def check_all_screens(self):
+        logger.debug("Checking all screens on all nodes...")
 
         for node in reversed(self.nodes):
+            node.check_screens()
+        logger.success("All screens checked on all nodes.") 
+
+    #==========================================================================
+    def start_mbs_processes(self):
+        logger.debug("Starting MBS processes on all nodes...")
+
+        self.check_all_screens()
+        for node in reversed(self.nodes[1:]):
             logger.debug(f"Starting MBS processes on node: {node.name}")
             node.start_mbs("force")
+        
+        time.sleep(10)
+        logger.debug(f"Starting MBS processes on node: {self.nodes[0].name}")
+        self.nodes[0].start_mbs("force")
+        logger.success("MBS processes started on all nodes.")
 
+    #=========================================================================
+    def start_webmbs_processes(self):
+        logger.debug("Starting WEB-MBS processes on all nodes...")
+
+        self.check_all_screens()
         for node in reversed(self.nodes):
             logger.debug(f"Starting WEB-MBS processes on node: {node.name}")
             node.start_webmbs("force")
+        logger.success("WEB-MBS processes started on all nodes.")
+
+    #==========================================================================
+    def stop_mbs_processes(self):
+        logger.debug("Stopping MBS processes on all nodes...")
+
+        for node in self.nodes:
+            logger.debug(f"Stopping MBS processes on node: {node.name}")
+            node.stop_mbs("force")
+        logger.success("MBS processes stopped on all nodes.")
+    
+    #=========================================================================
+    def stop_webmbs_processes(self):
+        logger.debug("Stopping WEB-MBS processes on all nodes...")
+
+        for node in self.nodes:
+            logger.debug(f"Stopping WEB-MBS processes on node: {node.name}")
+            node.stop_webmbs("force")
+        logger.success("WEB-MBS processes stopped on all nodes.")
+
+    #==========================================================================
+    # Restarting all processes is a two-step process: first we stop all processes on all nodes, then we start them again. 
+    # This ensures that we don't have any conflicts or issues with processes that are still running while we try to start new ones.
+    #==========================================================================
+    def restart_all_processes(self):
+        logger.debug("Restarting all processes on all nodes...")
+        self.check_all_screens()
+        self.stop_all_processes()
+        self.start_all_processes()
+        logger.success("All processes restarted on all nodes.")
 
     #=========================================================================
     def stop_all_processes(self):
-        logger.info("Stopping all processes on all nodes...")
-
-        for node in self.nodes:
-            logger.debug(f"Stopping processes on node: {node.name}")
-            node.stop_webmbs("force")
-            node.stop_mbs("force")
+        logger.debug("Stopping all processes on all nodes...")
+        self.stop_webmbs_processes()
+        self.stop_mbs_processes()
+        logger.success("All processes stopped on all nodes.")
 
     #==========================================================================
-    def restarting_all_processes(self):
-        logger.info("Reconfiguring all processes on all nodes...")
-
-        for node in reversed(self.nodes):
-            logger.debug(f"restarting MBS processes on node: {node.name}")
-            node.check_screens()
-            node.restart_mbs("force")
-
-        for node in reversed(self.nodes):
-            logger.debug(f"restarting WEB-MBS processes on node: {node.name}")
-            node.restart_webmbs("force")
+    def start_all_processes(self):
+        logger.debug("Starting all processes on all nodes...")
+        self.check_all_screens()
+        self.start_mbs_processes()
+        self.start_webmbs_processes()
+        logger.success("All processes started on all nodes.")
 
     #==========================================================================
     def build_node_menu(self, node):

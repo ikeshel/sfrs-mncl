@@ -266,7 +266,8 @@ class MBSNode(QtWidgets.QWidget,
         list_of_commands = [
             'quit',
             '\x03', # Ctrl+C to interrupt the running process
-            'resl'
+            'resl',
+            'clear'
             ]
         for cmd in list_of_commands:
             try:
@@ -307,40 +308,6 @@ class MBSNode(QtWidgets.QWidget,
                 logger.error(f"Test failed for command '{cmd}': {e}")
 
     #==========================================================================
-    def restart_mbs(self, question: str = "verbose"):
-        logger.debug(f"Restarting {self.name} node...")
-
-        if question != "force":
-            logger.debug(f"Force restarting {self.name} node without confirmation...")
-            if QtWidgets.QMessageBox.question(
-                self,
-                "Restart Node",
-                f"Are you sure you want to restart the MBS on {self.name} node?",
-                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
-                QtWidgets.QMessageBox.StandardButton.No,
-            ) == QtWidgets.QMessageBox.StandardButton.No:
-                logger.info(f"Restart cancelled for {self.name} node.")
-                return
-
-        screen_name = "mbs"
-        list_of_commands = [
-            '\x03', # Ctrl+C to interrupt the running process
-            f'cd ~/{self.directory}', 
-            'quit', 
-            'resl', 
-            'mbs -dabc', 
-            '@startup',
-            '\n'
-            ]
-        for cmd in list_of_commands:
-            try:
-                _, _, stderr = self.run_screen_command(screen_name, cmd)
-                if stderr:
-                    logger.error(f"{stderr}")
-            except Exception as e:
-                logger.error(f"Test failed for command '{cmd}': {e}")
-
-    #==========================================================================
     def stop_webmbs(self, question: str = "verbose"):
         logger.debug(f"Stopping WebMBS on {self.name} node...")
 
@@ -360,6 +327,7 @@ class MBSNode(QtWidgets.QWidget,
         list_of_commands = [
             '\x03', # Ctrl+C to interrupt the running process
             '\x03', # Ctrl+C to interrupt the running process
+            'clear'
             ]
         for cmd in list_of_commands:
             try:
@@ -368,6 +336,26 @@ class MBSNode(QtWidgets.QWidget,
                     logger.error(f"{stderr}")
             except Exception as e:
                 logger.error(f"Test failed for command '{cmd}': {e}")
+
+    #==========================================================================
+    def restart_mbs(self, question: str = "verbose"):
+        logger.debug(f"Restarting {self.name} node...")
+
+        if question != "force":
+            logger.debug(f"Force restarting {self.name} node without confirmation...")
+            if QtWidgets.QMessageBox.question(
+                self,
+                "Restart Node",
+                f"Are you sure you want to restart the MBS on {self.name} node?",
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No,
+            ) == QtWidgets.QMessageBox.StandardButton.No:
+                logger.info(f"Restart cancelled for {self.name} node.")
+                return
+
+        self.stop_mbs(question="force") # stop MBS without confirmation
+        self.start_mbs(question="force") # start MBS without confirmation
+
 
     #==========================================================================
     def start_webmbs(self, question: str = "verbose"):
@@ -410,20 +398,9 @@ class MBSNode(QtWidgets.QWidget,
             ) == QtWidgets.QMessageBox.StandardButton.No:
                 logger.info(f"Restart cancelled for {self.name} node.")
                 return
-        
-        screen_name = "web"
-        list_of_commands = [
-            '\x03', # Ctrl+C to interrupt the running process
-            '\x03', # Ctrl+C to interrupt the running process
-            'webmbs 8899'
-                ]
-        for cmd in list_of_commands:
-            try:
-                _, _, stderr = self.run_screen_command(screen_name, cmd)
-                if stderr:
-                    logger.error(f"{stderr}")
-            except Exception as e:
-                logger.error(f"Test failed for command '{cmd}': {e}")
+
+        self.stop_webmbs(question="force") # stop WebMBS without confirmation
+        self.start_webmbs(question="force") # start WebMBS without confirmation        
 
     #==========================================================================    
     def closeEvent(self, a0):
