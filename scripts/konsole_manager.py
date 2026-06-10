@@ -20,6 +20,8 @@ import subprocess
 import time
 import shlex
 from loguru import logger
+logger.remove()  # Remove default logger
+logger.level("INFO")  # Set default log level to INFO for detailed output
 
 ##
 sys.path.append('package')
@@ -37,7 +39,7 @@ cfg = ConfigReader("config/list_of_nodes.conf")
 for raw in cfg:
     try:
         node, desc = ConfigReader.parse_entry(raw)
-        logger.success(f"{node!r:12} -> {desc}")
+        logger.debug(f"{node!r:12} -> {desc}")
         NODES.append(node)
         LOGINS.append(f"{USERNAME}@{node}")
     except ValueError as exc:
@@ -48,7 +50,7 @@ cfg = ConfigReader("config/list_of_screens.conf")
 for raw in cfg:
     try:
         screen, desc = ConfigReader.parse_entry(raw)
-        logger.success(f"{screen!r:12} -> {desc}")
+        logger.debug(f"{screen!r:12} -> {desc}")
         SCREENS.append(f"{screen}")
     except ValueError as exc:
         logger.error(f"⚠️  {exc}")    
@@ -255,7 +257,7 @@ def open_konsol(title:str, mbs_node:str, screen:str)->None:
         local_cmd
     ]
     # ssh_cmd.extend(local_cmd.split())
-    print(local_cmd.split())
+    logger.debug(local_cmd.split())
 
     logger.debug(f"SSH command: {' '.join(ssh_cmd)}")
     results = subprocess.Popen(ssh_cmd)
