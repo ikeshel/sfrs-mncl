@@ -9,13 +9,15 @@ __status__     = "Production"
 
 ##
 import sys, os, time
+from PyQt6 import QtWidgets
 from loguru import logger
 from Xlib.display import Display
 
 ##
-from PyQt6.QtCore import QSignalBlocker, QThread, pyqtSlot, pyqtSignal
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
+from PyQt6.QtCore import QSignalBlocker, QThread, Qt, pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
 from PyQt6.QtCore import QThreadPool, QObject, QRunnable
+from PyQt6.QtGui import QFont, QPixmap
 
 ##
 sys.path.append('package')
@@ -137,12 +139,30 @@ class MdppMainWindow(  QMainWindow,
         #_/main\_____
         self.tab_widget.addTab(self.tab_main, "Main")
 
+        self.tab_main_layout = QVBoxLayout()
+        self.tab_main_layout.setContentsMargins(0, 0, 0, 0)
+
+        mdpp_svg = QLabel()
+        mdpp_svg.setPixmap(QPixmap(f"images/mdpp16.svg"))
+        mdpp_svg.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        
+        self.tab_main_layout.addWidget(mdpp_svg)
+
+        self.tab_main.setLayout(self.tab_main_layout)
+       
+
         #_/thresholds\_____
         self.tab_widget.addTab(self.tab_thresholds, "Thresholds")
         # Thresholds tab: create a grid layout and add 16 TamexChannel widgets
         # Create a grid layout for two columns and 8 rows
+        self.tab_thresholds_layout = QVBoxLayout()
+        self.tab_thresholds.setLayout(self.tab_thresholds_layout)
+               
+        # self.tab_thresholds_layout.addWidget(mdpp_svg)
+        
         self.gl_threshold = QGridLayout()
-        self.tab_thresholds.setLayout(self.gl_threshold)
+        self.tab_thresholds_layout.addLayout(self.gl_threshold)
+
 
         self.tmx_ch = [None]*MUSIC_CHANNEL_NUMBER # create a list to hold the TamexChannel widgets
         for i in range(len(self.tmx_ch)):
@@ -166,7 +186,7 @@ class MdppMainWindow(  QMainWindow,
         # for i in range(8):
         #     getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").stateChanged.connect(lambda state, ch=i: self.on_ckbx_ch_state_changed(ch, state))
 
-        self.tab_widget.setCurrentIndex(1) # set default tab to 
+        self.tab_widget.setCurrentIndex(0) # set default tab to 
 
         # -------------------------------------------------------------------------------------------
         # starting threads
@@ -198,7 +218,7 @@ class MdppMainWindow(  QMainWindow,
             self.move(  int(screen.width_in_pixels/2)+10,
                         int(0.01*screen.height_in_pixels))
 
-        self.setWindowTitle("TAMEX Manager")
+        self.setWindowTitle("MDPP Manager")
         self.show()
         self.raise_()
 
