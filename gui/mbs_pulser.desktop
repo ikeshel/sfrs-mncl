@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/mbs_pulser.py
+Exec=/home/irakli/mncl/pulser.py
 GenericName[en_US]=
 GenericName=
 Icon=/home/irakli/mncl/gui/mbs_pulser_icon.png

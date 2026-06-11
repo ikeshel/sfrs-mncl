@@ -1,6 +1,9 @@
 
 #!/bin/bash
 
+# i.keshelashvili@gsi.de
+# This script demonstrates how to create new tabs in Konsole using D-Bus.
+
 konsole --title "mbs" -p tabtitle="mbs" -e bash &
 PID=$!
 
