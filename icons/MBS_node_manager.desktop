@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/home/irakli/mncl/mbs_node_manager.py
+GenericName[en_US]=
+GenericName=
+Icon=/home/irakli/mncl/icons/MBS_Node_Manager.png
+MimeType=
+Name[en_US]=MBS Node Manager
+Name=MBS Node Manager
+Path=/home/irakli/mncl
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

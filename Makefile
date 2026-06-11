@@ -5,8 +5,8 @@ all:
 
 install:
 	@echo "Installing Desktop icons..."
-# 	@cp -v gui/*.desktop ${HOME}/.local/share/applications/
-	@cp -vf gui/*.desktop ${HOME}/Desktop/
+# 	@cp -v icons/*.desktop ${HOME}/.local/share/applications/
+	@cp -vf icons/*.desktop ${HOME}/Desktop/
 
 clean:
 	@echo "Cleaning the project..."
