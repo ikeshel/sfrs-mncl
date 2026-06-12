@@ -10,6 +10,8 @@ __status__     = "Production"
 ##
 import sys, os, time
 from PyQt6 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui
 from loguru import logger
 from Xlib.display import Display
 
@@ -34,9 +36,6 @@ from ssh_commander    import SSHCommander
 
 # GUI
 sys.path.append('gui')
-from tamex_channel import Ui_TamexChannel
-from sfp_control   import Ui_SfpControl
-from gui_tamex_trigger_tab import Ui_TamexTriggerTab
 
 # Constants
 MUSIC_CHANNEL_NUMBER = 16
@@ -88,6 +87,55 @@ class MdppWorker(QRunnable):
         logger.debug("MdppWorker.stop()")
         self.is_running = False
 
+
+#==============================================================================
+## MBS Node Manager Main Window
+#==============================================================================
+class Ui_MdppChannel(object):
+
+    def __init__(self, channel: int):
+        self.channel = channel
+
+    def setupUi(self, MdppChannel):
+        MdppChannel.setObjectName(f"MdppChannel_{self.channel}")
+        MdppChannel.resize(393, 53)
+
+        self.layoutWidget = QtWidgets.QWidget(parent=MdppChannel)
+        self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 381, 31))
+        self.layoutWidget.setObjectName(f"layoutWidget_{self.channel}")
+
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName(f"horizontalLayout_{self.channel}")
+
+        self.lbl_ch = QtWidgets.QLabel(parent=self.layoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.lbl_ch.setFont(font)
+        self.lbl_ch.setObjectName(f"lbl_ch_{self.channel}")
+        self.setText = f"CH {self.channel+1}"
+        self.horizontalLayout.addWidget(self.lbl_ch)
+
+        self.isb_dac = QtWidgets.QSpinBox(parent=self.layoutWidget)
+        self.isb_dac.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.isb_dac.setMaximum(1023)
+        self.isb_dac.setProperty("value", 0)
+        self.isb_dac.setObjectName(f"isb_dac_{self.channel}")
+        self.horizontalLayout.addWidget(self.isb_dac)
+
+        self.hsb_dac = QtWidgets.QSlider(parent=self.layoutWidget)
+        self.hsb_dac.setMaximum(1023)
+        self.hsb_dac.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        self.hsb_dac.setObjectName(f"hsb_dac_{self.channel}")
+        self.horizontalLayout.addWidget(self.hsb_dac)
+
+        self.retranslateUi(MdppChannel)
+        QtCore.QMetaObject.connectSlotsByName(MdppChannel)
+
+    def retranslateUi(self, MdppChannel):
+        _translate = QtCore.QCoreApplication.translate
+        MdppChannel.setWindowTitle(_translate("MdppChannel", "Form"))
+        self.lbl_ch.setText(_translate("MdppChannel", f"CH {self.channel+1}"))
 
 
 
@@ -153,7 +201,7 @@ class MdppMainWindow(  QMainWindow,
 
         #_/thresholds\_____
         self.tab_widget.addTab(self.tab_thresholds, "Thresholds")
-        # Thresholds tab: create a grid layout and add 16 TamexChannel widgets
+        # Thresholds tab: create a grid layout and add 16 MdppChannel widgets
         # Create a grid layout for two columns and 8 rows
         self.tab_thresholds_layout = QVBoxLayout()
         self.tab_thresholds.setLayout(self.tab_thresholds_layout)
@@ -164,17 +212,14 @@ class MdppMainWindow(  QMainWindow,
         self.tab_thresholds_layout.addLayout(self.gl_threshold)
 
 
-        self.tmx_ch = [None]*MUSIC_CHANNEL_NUMBER # create a list to hold the TamexChannel widgets
+        self.tmx_ch = [None]*MUSIC_CHANNEL_NUMBER # create a list to hold the MdppChannel widgets
         for i in range(len(self.tmx_ch)):
-            self.tmx_ch[i] = Ui_TamexChannel()
+            self.tmx_ch[i] = Ui_MdppChannel(i)
             self.tmx_ch[i].setupUi(self)
-            self.tmx_ch[i].layoutWidget.setObjectName(f"MDPP Ch. {i+1}")
-            self.tmx_ch[i].lbl_ch.setText(f"CH {i+1}")
             self.gl_threshold.addWidget(self.tmx_ch[i].layoutWidget, i, 1) # add to grid layout
 
             self.tmx_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
             self.tmx_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
-            self.tmx_ch[i].dsb_mV .valueChanged.connect(lambda value, ch=i: self.on_mv_value_changed(ch, value))
 
         #_/pulses\_____
         self.tab_widget.addTab(self.tab_pulses, "Trigger")
@@ -186,7 +231,7 @@ class MdppMainWindow(  QMainWindow,
         # for i in range(8):
         #     getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").stateChanged.connect(lambda state, ch=i: self.on_ckbx_ch_state_changed(ch, state))
 
-        self.tab_widget.setCurrentIndex(0) # set default tab to 
+        self.tab_widget.setCurrentIndex(1) # set default tab to 
 
         # -------------------------------------------------------------------------------------------
         # starting threads
@@ -275,14 +320,12 @@ class MdppMainWindow(  QMainWindow,
     def on_dac_value_changed(self, ch, value):
         logger.debug(f"Channel {ch+1} DAC value changed to {value}")
         self.tmx_ch[ch].hsb_dac.setValue(value) # update slider
-        self.tmx_ch[ch].dsb_mV.setValue(value * 1000.0 / 1023.0) # update mV
 
     #==========================================================================
     # DAC value changed by slider
     def on_dac_slider_changed(self, ch, value):
         logger.debug(f"Channel {ch+1} DAC slider changed to {value}")
         self.tmx_ch[ch].isb_dac.setValue(value) # update spinbox
-        self.tmx_ch[ch].dsb_mV.setValue(value * 1000.0 / 1023.0) # update mV     
 
     #==========================================================================
     # mV value changed by double spinbox
