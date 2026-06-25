@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# author: i.keshelashvili@gsi.de
+# This script automates the process of running the thresholdfinder.py script for multiple SFPs in separate screen sessions.
+
 import subprocess
 import os
 from pathlib import Path
@@ -7,7 +10,7 @@ from pathlib import Path
 #                                [sfp] [start value] [cpunts / sec]
 #  ~/SiFi > ./thresholdfinder.py 0 5       0x9800       100 
 
-SCRIPT_NAME = "~/SiFi/thresholdfinder.py"
+SCRIPT_NAME = "~/SiFi/thresholdfinder.py" # from m.heil@gsi.de
 
 START_THRESHOLD = 0x9800
 DESIRED_COUNTS_PER_SECOND = 100
