@@ -1,4 +1,5 @@
 ## List of nodes
+## i.keshelashvili@gsi.de
 ## comment line starts with # and is ignored; empty lines are also ignored
 nodes:
     - host_name:  x86l-157
