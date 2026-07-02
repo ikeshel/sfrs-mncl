@@ -37,22 +37,28 @@ from ssh_commander    import SSHCommander
 sys.path.append('gui')
 
 # Constants
-MUSIC_CHANNEL_NUMBER = 16
+BOARD_CHANNEL_NUMBER = 128
+BOARDS_UP = 6
+BOARDS_DOWN = 6
+BOARDS_RIGHT = 2
+BOARDS_LEFT = 2
+BOARDS_TOTAL = BOARDS_UP + BOARDS_DOWN + BOARDS_RIGHT + BOARDS_LEFT
+CHANNEL_TOTAL = BOARD_CHANNEL_NUMBER * BOARDS_TOTAL
 
 ###############################################################################
-class MdppWorkerSignals(QObject):
+class SciFiWorkerSignals(QObject):
     """ Signals to be emitted from the worker thread """
     data = pyqtSignal(dict)
 
 ###############################################################################
-class MdppWorker(QRunnable):
+class SciFiWorker(QRunnable):
     """ Worker thread that performs a task in the background. """
 
     def __init__(self, nodes=None):
-        super(MdppWorker, self).__init__()
+        super(SciFiWorker, self).__init__()
 
         self.nodes       = nodes
-        self.signals     = MdppWorkerSignals()
+        self.signals     = SciFiWorkerSignals()
         self.is_running  = True
         self.datadict    = {}
 
@@ -64,11 +70,11 @@ class MdppWorker(QRunnable):
     #==========================================================================
     def run(self):
 
-        logger.debug("MdppWorker.run()")
+        logger.debug("SciFiWorker.run()")
 
         while True:
             if self.is_running == False:
-                logger.debug("MdppWorker.run() break")
+                logger.debug("SciFiWorker.run() break")
                 break
 
             QThread.msleep(self.delay_ms)
@@ -79,69 +85,59 @@ class MdppWorker(QRunnable):
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
 
-        logger.debug("MdppWorker.run() finished")
+        logger.debug("SciFiWorker.run() finished")
 
     #==========================================================================
     def stop(self):
-        logger.debug("MdppWorker.stop()")
+        logger.debug("SciFiWorker.stop()")
         self.is_running = False
 
 
 #==============================================================================
 ## MBS Node Manager Main Window
 #==============================================================================
-class Ui_MdppChannel(object):
+class Ui_SciFiChannel(object):
 
     def __init__(self, channel: int):
         self.channel = channel
 
-    def setupUi(self, MdppChannel):
-        MdppChannel.setObjectName(f"MdppChannel_{self.channel}")
-        MdppChannel.resize(393, 53)
+    def setupUi(self, SciFiChannel):
+        SciFiChannel.setObjectName(f"SciFiChannel_{self.channel}")
+        # SciFiChannel.resize(10, 10)
 
-        self.layoutWidget = QtWidgets.QWidget(parent=MdppChannel)
-        self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 381, 31))
-        self.layoutWidget.setObjectName(f"layoutWidget_{self.channel}")
+        self.layoutWidget = QtWidgets.QWidget(parent=SciFiChannel)
+        # self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
 
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setObjectName(f"horizontalLayout_{self.channel}")
+        # self.horizontalLayout.setContentsMargins(2,2,2,2)
 
-        self.lbl_ch = QtWidgets.QLabel(parent=self.layoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.lbl_ch.setFont(font)
-        self.lbl_ch.setObjectName(f"lbl_ch_{self.channel}")
-        self.setText = f"CH {self.channel+1}"
-        self.horizontalLayout.addWidget(self.lbl_ch)
+        self.groupBox = QtWidgets.QGroupBox(parent=self.layoutWidget)
+        self.groupBox.setTitle(f"CH {self.channel+1}")
+        self.horizontalLayout.addWidget(self.groupBox)
 
-        self.isb_dac = QtWidgets.QSpinBox(parent=self.layoutWidget)
+        self.groupBoxLayout = QtWidgets.QHBoxLayout(self.groupBox)
+        # self.groupBoxLayout.setContentsMargins(2,2,2,2)
+
+        self.isb_dac = QtWidgets.QSpinBox(parent=self.groupBox)
         self.isb_dac.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.isb_dac.setMaximum(1023)
         self.isb_dac.setProperty("value", 0)
-        self.isb_dac.setObjectName(f"isb_dac_{self.channel}")
-        self.horizontalLayout.addWidget(self.isb_dac)
+        self.groupBoxLayout.addWidget(self.isb_dac)
 
-        self.hsb_dac = QtWidgets.QSlider(parent=self.layoutWidget)
-        self.hsb_dac.setMaximum(1023)
-        self.hsb_dac.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.hsb_dac.setObjectName(f"hsb_dac_{self.channel}")
-        self.horizontalLayout.addWidget(self.hsb_dac)
 
-        self.retranslateUi(MdppChannel)
-        QtCore.QMetaObject.connectSlotsByName(MdppChannel)
+        self.retranslateUi(SciFiChannel)
+        QtCore.QMetaObject.connectSlotsByName(SciFiChannel)
 
-    def retranslateUi(self, MdppChannel):
+    def retranslateUi(self, SciFiChannel):
         _translate = QtCore.QCoreApplication.translate
-        MdppChannel.setWindowTitle(_translate("MdppChannel", "Form"))
-        self.lbl_ch.setText(_translate("MdppChannel", f"CH {self.channel+1}"))
+        SciFiChannel.setWindowTitle(_translate("SciFiChannel", "Form"))
 
 
 
 #==============================================================================
 ## MBS Node Manager Main Window
 #==============================================================================
-class MdppMainWindow(  QMainWindow, 
+class SciFiMainWindow(  QMainWindow, 
                         MnclLogger,
                         WindowPositionManager, 
                         MenuBarManager,
@@ -155,14 +151,14 @@ class MdppMainWindow(  QMainWindow,
         MnclLogger.__init__(self)
         self.setup_logger()
 
-        node = {'host_name': 'x86l-170', 'node_name': 'MUSIC', 'directory': 'MUSIC', 'active': True, 'pc_type': 'intel_nuc'}
+        node = {'host_name': 'x86l-253', 'node_name': 'SciFi', 'directory': 'SiFi', 'active': True, 'pc_type': 'intel_pc'}
 
         self.nodes = []
         self.nodes.append(MBSNode(node))
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
-        SSHCommander.__init__(self, hostname='x86l-170') # initialize SSHCommander with node_host
+        SSHCommander.__init__(self, hostname='x86l-253') # initialize SSHCommander with node_host
 
 
         # node widget
@@ -189,55 +185,48 @@ class MdppMainWindow(  QMainWindow,
         self.tab_main_layout = QVBoxLayout()
         self.tab_main_layout.setContentsMargins(0, 0, 0, 0)
 
-        mdpp_svg = QLabel()
-        mdpp_svg.setPixmap(QPixmap(f"images/mdpp16.svg"))
-        mdpp_svg.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        SciFi_svg = QLabel()
+        SciFi_svg.setPixmap(QPixmap(f"images/det_scifi.svg"))
+        SciFi_svg.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         
-        self.tab_main_layout.addWidget(mdpp_svg)
+        self.tab_main_layout.addWidget(SciFi_svg)
 
         self.tab_main.setLayout(self.tab_main_layout)
        
 
         #_/thresholds\_____
         self.tab_widget.addTab(self.tab_thresholds, "Thresholds")
-        # Thresholds tab: create a grid layout and add 16 MdppChannel widgets
+        # Thresholds tab: create a grid layout and add 16 SciFiChannel widgets
         # Create a grid layout for two columns and 8 rows
         self.tab_thresholds_layout = QVBoxLayout()
         self.tab_thresholds.setLayout(self.tab_thresholds_layout)
                
-        # self.tab_thresholds_layout.addWidget(mdpp_svg)
+        # self.tab_thresholds_layout.addWidget(SciFi_svg)
         
         self.gl_threshold = QGridLayout()
         self.tab_thresholds_layout.addLayout(self.gl_threshold)
 
 
-        self.tmx_ch = [None]*MUSIC_CHANNEL_NUMBER # create a list to hold the MdppChannel widgets
-        for i in range(len(self.tmx_ch)):
-            self.tmx_ch[i] = Ui_MdppChannel(i)
-            self.tmx_ch[i].setupUi(self)
-            self.gl_threshold.addWidget(self.tmx_ch[i].layoutWidget, i, 1) # add to grid layout
+        self.scifi_ch = [None]*BOARD_CHANNEL_NUMBER # create a list to hold the SciFiChannel widgets
+        for i in range(len(self.scifi_ch)):
+            self.scifi_ch[i] = Ui_SciFiChannel(i)
+            self.scifi_ch[i].setupUi(self)
+            self.gl_threshold.addWidget(self.scifi_ch[i].layoutWidget, i//16, i%16) # add to grid layout
 
-            self.tmx_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
-            self.tmx_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
+            self.scifi_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
+            # self.scifi_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
 
-        #_/pulses\_____
-        self.tab_widget.addTab(self.tab_pulses, "Trigger")
-        # self.tamex_trigger_tab = Ui_TamexTriggerTab()
-        # self.tamex_trigger_tab.setupUi(self.tab_pulses)
-        # # self.tab_pulses.setLayout(self.tamex_trigger_tab.verticalLayout)
-        # # self.tab_pulses.setLayout(self.tamex_trigger_tab.layoutWidget.layout())
-        # self.tamex_trigger_tab.ckbx_ch_all.stateChanged.connect(lambda state, ch=-1: self.on_ckbx_ch_state_changed(ch, state))
-        # for i in range(8):
-        #     getattr(self.tamex_trigger_tab, f"ckbx_ch_{i}").stateChanged.connect(lambda state, ch=i: self.on_ckbx_ch_state_changed(ch, state))
 
         self.tab_widget.setCurrentIndex(1) # set default tab to 
 
+        # -------------------------------------------------------------------------------------------
+        # -------------------------------------------------------------------------------------------
         # -------------------------------------------------------------------------------------------
         # starting threads
         self.threadpool = QThreadPool()
         logger.debug(f"Multithreading with maximum {self.threadpool.maxThreadCount()} threads")
 
-        self.tamex_worker = MdppWorker(self)
+        self.tamex_worker = SciFiWorker(self)
         self.tamex_worker.signals.data.connect(self.data_received)
         self.threadpool.start(self.tamex_worker)
 
@@ -262,7 +251,7 @@ class MdppMainWindow(  QMainWindow,
             self.move(  int(screen.width_in_pixels/2)+10,
                         int(0.01*screen.height_in_pixels))
 
-        self.setWindowTitle("MDPP Manager")
+        self.setWindowTitle("SciFi Manager")
         self.show()
         self.raise_()
 
@@ -318,21 +307,21 @@ class MdppMainWindow(  QMainWindow,
     # DAC value changed by spinbox
     def on_dac_value_changed(self, ch, value):
         logger.debug(f"Channel {ch+1} DAC value changed to {value}")
-        self.tmx_ch[ch].hsb_dac.setValue(value) # update slider
+        self.scifi_ch[ch].hsb_dac.setValue(value) # update slider
 
     #==========================================================================
     # DAC value changed by slider
     def on_dac_slider_changed(self, ch, value):
         logger.debug(f"Channel {ch+1} DAC slider changed to {value}")
-        self.tmx_ch[ch].isb_dac.setValue(value) # update spinbox
+        self.scifi_ch[ch].isb_dac.setValue(value) # update spinbox
 
     #==========================================================================
     # mV value changed by double spinbox
     def on_mv_value_changed(self, ch, value):
         logger.debug(f"Channel {ch+1} mV value changed to {value}")
         dac_value = int(value * 1023.0 / 1000.0) # convert mV to DAC value
-        self.tmx_ch[ch].isb_dac.setValue(dac_value) # update spinbox
-        self.tmx_ch[ch].hsb_dac.setValue(dac_value) # update slider       
+        self.scifi_ch[ch].isb_dac.setValue(dac_value) # update spinbox
+        self.scifi_ch[ch].hsb_dac.setValue(dac_value) # update slider       
     
     #==========================================================================
     def closeEvent(self, event):
@@ -369,5 +358,5 @@ if __name__ == "__main__":
     if check.CheckForAnotherInstance(sys.argv[0]) != None:
         sys.exit( 0 )
 
-    window = MdppMainWindow()
+    window = SciFiMainWindow()
     sys.exit(app.exec())
