@@ -94,7 +94,7 @@ class SciFiWorker(QRunnable):
 
 
 #==============================================================================
-## MBS Node Manager Main Window
+## Threshold Channel Widget
 #==============================================================================
 class Ui_SciFiChannel(object):
 
@@ -131,6 +131,45 @@ class Ui_SciFiChannel(object):
     def retranslateUi(self, SciFiChannel):
         _translate = QtCore.QCoreApplication.translate
         SciFiChannel.setWindowTitle(_translate("SciFiChannel", "Form"))
+
+#==============================================================================
+## Threshold Channel Widget
+#==============================================================================
+class Ui_BoardInfo(object):
+
+    def __init__(self, board: int):
+        self.board = board
+
+    def setupUi(self, BoardInfo):
+        BoardInfo.setObjectName(f"BoardInfo_{self.board}")
+        # BoardInfo.resize(10, 10)
+
+        self.layoutWidget = QtWidgets.QWidget(parent=BoardInfo)
+        # self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
+
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        # self.horizontalLayout.setContentsMargins(2,2,2,2)
+
+        self.groupBox = QtWidgets.QGroupBox(parent=self.layoutWidget)
+        self.groupBox.setTitle(f"Board {self.board+1}")
+        self.horizontalLayout.addWidget(self.groupBox)
+
+        self.groupBoxLayout = QtWidgets.QHBoxLayout(self.groupBox)
+        # self.groupBoxLayout.setContentsMargins(2,2,2,2)
+
+        self.isb_dac = QtWidgets.QSpinBox(parent=self.groupBox)
+        self.isb_dac.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.isb_dac.setMaximum(1023)
+        self.isb_dac.setProperty("value", 0)
+        self.groupBoxLayout.addWidget(self.isb_dac)
+
+
+        self.retranslateUi(BoardInfo)
+        QtCore.QMetaObject.connectSlotsByName(BoardInfo)
+
+    def retranslateUi(self, BoardInfo):
+        _translate = QtCore.QCoreApplication.translate
+        BoardInfo.setWindowTitle(_translate("BoardInfo", "Form"))
 
 
 
@@ -187,9 +226,16 @@ class SciFiMainWindow(  QMainWindow,
 
         SciFi_svg = QLabel()
         SciFi_svg.setPixmap(QPixmap(f"images/det_scifi.svg"))
-        SciFi_svg.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        SciFi_svg.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         
         self.tab_main_layout.addWidget(SciFi_svg)
+
+        # self.board = [None]*BOARDS_TOTAL # 
+        self.board = [None]*2 # 
+        for i in range(len(self.board)):
+            self.board[i] = Ui_BoardInfo(i)
+            self.board[i].setupUi(self)
+            self.tab_main_layout.addWidget(self.board[i].layoutWidget) # add to main layout
 
         self.tab_main.setLayout(self.tab_main_layout)
        
@@ -217,7 +263,8 @@ class SciFiMainWindow(  QMainWindow,
             # self.scifi_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
 
 
-        self.tab_widget.setCurrentIndex(1) # set default tab to 
+        #_/default\_____
+        self.tab_widget.setCurrentIndex(0) # set default tab to 
 
         # -------------------------------------------------------------------------------------------
         # -------------------------------------------------------------------------------------------
