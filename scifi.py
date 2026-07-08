@@ -125,13 +125,6 @@ class Ui_SciFiChannel(object):
         self.groupBoxLayout.addWidget(self.isb_dac)
 
 
-        self.retranslateUi(SciFiChannel)
-        QtCore.QMetaObject.connectSlotsByName(SciFiChannel)
-
-    def retranslateUi(self, SciFiChannel):
-        _translate = QtCore.QCoreApplication.translate
-        SciFiChannel.setWindowTitle(_translate("SciFiChannel", "Form"))
-
 #==============================================================================
 ## Threshold Channel Widget
 #==============================================================================
@@ -154,22 +147,30 @@ class Ui_BoardInfo(object):
         self.groupBox.setTitle(f"Board {self.board+1}")
         self.horizontalLayout.addWidget(self.groupBox)
 
-        self.groupBoxLayout = QtWidgets.QHBoxLayout(self.groupBox)
+        self.groupBoxLayout = QtWidgets.QGridLayout(self.groupBox)
         # self.groupBoxLayout.setContentsMargins(2,2,2,2)
 
-        self.isb_dac = QtWidgets.QSpinBox(parent=self.groupBox)
-        self.isb_dac.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
-        self.isb_dac.setMaximum(1023)
-        self.isb_dac.setProperty("value", 0)
-        self.groupBoxLayout.addWidget(self.isb_dac)
+        # Temperatures in deg C
+        # SciFi_652 FPGA: 42.2
+        # SciFi_652 SiPM sensor: 37.9
+        # SciFi FEB sensor: 0.0
+        fpga_temp = 43.2
+        SiPM_temp = 38.9
+        font = QFont("Arial", 12, QFont.Weight.Bold)
+        lable_alignment = QtCore.Qt.AlignmentFlag.AlignCenter
 
+        self.lab_fpga = QLabel(parent=self.groupBox)
+        self.lab_fpga.setText(f"FPGA {fpga_temp:.1f} °C")
+        self.lab_fpga.setFont(font)
+        self.lab_fpga.setAlignment(lable_alignment)
+        self.groupBoxLayout.addWidget(self.lab_fpga, 0, 0) # row, column, rowspan, colspan
 
-        self.retranslateUi(BoardInfo)
-        QtCore.QMetaObject.connectSlotsByName(BoardInfo)
+        self.lab_sipm = QLabel(parent=self.groupBox)
+        self.lab_sipm.setText(f"SiPM {SiPM_temp:.1f} °C")
+        self.lab_sipm.setFont(font)
+        self.lab_sipm.setAlignment(lable_alignment)
+        self.groupBoxLayout.addWidget(self.lab_sipm, 1, 0) # row, column, rowspan, colspan
 
-    def retranslateUi(self, BoardInfo):
-        _translate = QtCore.QCoreApplication.translate
-        BoardInfo.setWindowTitle(_translate("BoardInfo", "Form"))
 
 
 
@@ -215,8 +216,6 @@ class SciFiMainWindow(  QMainWindow,
         # Create tabs
         self.tab_main = QWidget()
         self.tab_thresholds = QWidget()
-        self.tab_pulses = QWidget()
-        self.tab_clock = QWidget()
 
         #_/main\_____
         self.tab_widget.addTab(self.tab_main, "Main")
@@ -232,8 +231,8 @@ class SciFiMainWindow(  QMainWindow,
         
         self.tab_main_layout.addWidget(SciFi_svg, 1, 1, 2, 6) # add to grid layout
 
-        # self.board = [None]*BOARDS_TOTAL # 
-        self.board = [None]*16 # 
+        self.board = [None]*BOARDS_TOTAL # 
+        # self.board = [None]*16 # 
         layout = [(1,0), (2,0), (3,0), (4,0), (5,0), (6,0), 
                   (0,1), (0,2), 
                   (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), 
@@ -252,9 +251,7 @@ class SciFiMainWindow(  QMainWindow,
         # Create a grid layout for two columns and 8 rows
         self.tab_thresholds_layout = QVBoxLayout()
         self.tab_thresholds.setLayout(self.tab_thresholds_layout)
-               
-        # self.tab_thresholds_layout.addWidget(SciFi_svg)
-        
+                       
         self.gl_threshold = QGridLayout()
         self.tab_thresholds_layout.addLayout(self.gl_threshold)
 
@@ -266,8 +263,6 @@ class SciFiMainWindow(  QMainWindow,
             self.gl_threshold.addWidget(self.scifi_ch[i].layoutWidget, i//16, i%16) # add to grid layout
 
             self.scifi_ch[i].isb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_value_changed(ch, value))
-            # self.scifi_ch[i].hsb_dac.valueChanged.connect(lambda value, ch=i: self.on_dac_slider_changed(ch, value))
-
 
         #_/default\_____
         self.tab_widget.setCurrentIndex(0) # set default tab to 
@@ -359,23 +354,9 @@ class SciFiMainWindow(  QMainWindow,
     #==========================================================================
     # DAC value changed by spinbox
     def on_dac_value_changed(self, ch, value):
-        logger.debug(f"Channel {ch+1} DAC value changed to {value}")
-        self.scifi_ch[ch].hsb_dac.setValue(value) # update slider
+        logger.success(f"Channel {ch+1} DAC value changed to {value}")
 
-    #==========================================================================
-    # DAC value changed by slider
-    def on_dac_slider_changed(self, ch, value):
-        logger.debug(f"Channel {ch+1} DAC slider changed to {value}")
-        self.scifi_ch[ch].isb_dac.setValue(value) # update spinbox
-
-    #==========================================================================
-    # mV value changed by double spinbox
-    def on_mv_value_changed(self, ch, value):
-        logger.debug(f"Channel {ch+1} mV value changed to {value}")
-        dac_value = int(value * 1023.0 / 1000.0) # convert mV to DAC value
-        self.scifi_ch[ch].isb_dac.setValue(dac_value) # update spinbox
-        self.scifi_ch[ch].hsb_dac.setValue(dac_value) # update slider       
-    
+   
     #==========================================================================
     def closeEvent(self, event):
         '''Must stay with Main widget'''
