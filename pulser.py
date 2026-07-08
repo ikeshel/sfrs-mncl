@@ -8,6 +8,7 @@ __email__      = "i.keshelashvili@gsi.de"
 __status__     = "Production"
 
 ##
+import argparse
 import sys, os
 import signal
 from loguru import logger
@@ -25,8 +26,6 @@ sys.path.append('package')
 from mncl_logger      import MnclLogger
 from win_pos_manager  import WindowPositionManager
 from ssh_commander    import SSHCommander
-
-PULSER_NODE = "x86l-132"  # Where the pulser is connected, for now hardcoded, can be made dynamic later
 
 # /frs/usr/ikeshel/Pulser10Hz/clk-gen-standalone dev/ttyUSB0 IO3 15 0.1 0
 #
@@ -57,15 +56,20 @@ class PulserWindow( QMainWindow,
         widget = QWidget()
         main_layout = QVBoxLayout()
         
+        col1 = QVBoxLayout()
+        col1.addWidget(QLabel(f"Node: {PULSER_NODE}"), alignment=Qt.AlignmentFlag.AlignCenter)
+
         # Row 1: USB Device, Set Button, and empty space
         row1 = QHBoxLayout()
         row1.addWidget(QLabel("USB Device:"))
+
         self.device_combo = QComboBox()
         self.device_combo.setToolTip("Select the USB device for the pulser")
         self.device_combo.setDisabled(True) # disable until devices are populated
         self.populate_usb_devices() # needs to be implemented to detect available /dev/ttyUSB* devices
         row1.addWidget(self.device_combo)
-        main_layout.addLayout(row1)
+        col1.addLayout(row1)
+        main_layout.addLayout(col1)
 
         row12 = QHBoxLayout()
         chkb_IO=[]
@@ -117,6 +121,7 @@ class PulserWindow( QMainWindow,
         self.set_button.setStyleSheet("font-size: 16px;")
         self.set_button.setToolTip("Apply the settings to the pulser")
         self.set_button.setShortcut("Return")  # Pressing Enter will trigger the button
+        
         self.set_button.clicked.connect(self.on_set_clicked)
         main_layout.addWidget(self.set_button)
 
@@ -182,8 +187,28 @@ class PulserWindow( QMainWindow,
 ##
 #==============================================================================
 if __name__ == "__main__":
+ 
+    list_of_nodes = ["x86l-132", "x86l-253"]  # Example list of nodes
 
-    app = QApplication(sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--node', '-n', help='Comma-separated list of nodes')
+
+    args = parser.parse_args()
+
+    # Determine which node to use
+    if args.node:
+        selected_node = args.node
+        if selected_node not in list_of_nodes:
+            logger.error(f"Error: Node '{selected_node}' not in available nodes: {', '.join(list_of_nodes)}")
+            sys.exit(1)
+    else:
+        selected_node = list_of_nodes[0]  # Use first node as default
+    
+    # Override PULSER_NODE with selected node
+    global PULSER_NODE
+    PULSER_NODE = selected_node
+
+    app = QApplication([])
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
 
