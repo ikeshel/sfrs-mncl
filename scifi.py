@@ -142,10 +142,10 @@ class Ui_BoardInfo(object):
 
     def setupUi(self, BoardInfo):
         BoardInfo.setObjectName(f"BoardInfo_{self.board}")
-        # BoardInfo.resize(10, 10)
+        BoardInfo.resize(100, 100)
 
         self.layoutWidget = QtWidgets.QWidget(parent=BoardInfo)
-        # self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
+        self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
 
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
         # self.horizontalLayout.setContentsMargins(2,2,2,2)
@@ -221,21 +221,27 @@ class SciFiMainWindow(  QMainWindow,
         #_/main\_____
         self.tab_widget.addTab(self.tab_main, "Main")
 
-        self.tab_main_layout = QVBoxLayout()
-        self.tab_main_layout.setContentsMargins(0, 0, 0, 0)
+        self.tab_main_layout = QGridLayout()
+        # self.tab_main_layout.setContentsMargins(0, 0, 0, 0)
 
         SciFi_svg = QLabel()
         SciFi_svg.setPixmap(QPixmap(f"images/det_scifi.svg"))
+        # SciFi_svg.setScaledContents(True)
         SciFi_svg.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        SciFi_svg.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         
-        self.tab_main_layout.addWidget(SciFi_svg)
+        self.tab_main_layout.addWidget(SciFi_svg, 1, 1, 2, 6) # add to grid layout
 
         # self.board = [None]*BOARDS_TOTAL # 
-        self.board = [None]*2 # 
+        self.board = [None]*16 # 
+        layout = [(1,0), (2,0), (3,0), (4,0), (5,0), (6,0), 
+                  (0,1), (0,2), 
+                  (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), 
+                  (7,1), (7,2)]
         for i in range(len(self.board)):
             self.board[i] = Ui_BoardInfo(i)
             self.board[i].setupUi(self)
-            self.tab_main_layout.addWidget(self.board[i].layoutWidget) # add to main layout
+            self.tab_main_layout.addWidget(self.board[i].layoutWidget, layout[i][1], layout[i][0]) # add to grid layout
 
         self.tab_main.setLayout(self.tab_main_layout)
        
