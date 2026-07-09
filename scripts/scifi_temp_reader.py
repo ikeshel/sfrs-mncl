@@ -40,6 +40,9 @@ def read_sipm_temp(sfp, board):
         text=True,
         check=True
     )
+
+    logger.debug(f"result.stdout={result.stdout.strip()}")
+    
     out = result.stdout.strip()[2:-2]
     logger.debug(f"out={out}")
 
