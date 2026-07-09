@@ -19,7 +19,6 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QMainWindow, QWidget, 
                              QVBoxLayout, QHBoxLayout, 
                              QLabel, QSpinBox, QPushButton, QComboBox)
-# from PyQt6.QtWidgets import 
 
 ##
 sys.path.append('package')

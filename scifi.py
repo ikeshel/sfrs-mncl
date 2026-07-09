@@ -9,16 +9,16 @@ __status__     = "Production"
 
 ##
 import sys, os, time
-from PyQt6 import QtWidgets
-from PyQt6 import QtCore
-from PyQt6 import QtGui
 from loguru import logger
 from Xlib.display import Display
 
 ##
-from PyQt6.QtCore import QSignalBlocker, QThread, Qt, pyqtSlot, pyqtSignal
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
-from PyQt6.QtCore import QThreadPool, QObject, QRunnable
+from PyQt6.QtCore import (Qt, QThread, QThreadPool, QRunnable,  
+                          pyqtSlot, pyqtSignal, 
+                          QObject, QSignalBlocker, QRect)
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QSizePolicy,
+                             QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, 
+                             QGroupBox, QSpinBox)
 from PyQt6.QtGui import QFont, QPixmap
 
 ##
@@ -33,8 +33,8 @@ from win_pos_manager  import WindowPositionManager
 from menu_bar         import MenuBarManager
 from ssh_commander    import SSHCommander
 
-# GUI
-sys.path.append('gui')
+# # GUI
+# sys.path.append('gui')
 
 # Constants
 BOARD_CHANNEL_NUMBER = 128
@@ -105,21 +105,21 @@ class Ui_SciFiChannel(object):
         SciFiChannel.setObjectName(f"SciFiChannel_{self.channel}")
         # SciFiChannel.resize(10, 10)
 
-        self.layoutWidget = QtWidgets.QWidget(parent=SciFiChannel)
-        # self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
+        self.layoutWidget = QWidget(parent=SciFiChannel)
+        # self.layoutWidget.setGeometry(.QRect(5, 10, 50, 30))
 
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout = QHBoxLayout(self.layoutWidget)
         # self.horizontalLayout.setContentsMargins(2,2,2,2)
 
-        self.groupBox = QtWidgets.QGroupBox(parent=self.layoutWidget)
+        self.groupBox = QGroupBox(parent=self.layoutWidget)
         self.groupBox.setTitle(f"CH {self.channel+1}")
         self.horizontalLayout.addWidget(self.groupBox)
 
-        self.groupBoxLayout = QtWidgets.QHBoxLayout(self.groupBox)
+        self.groupBoxLayout = QHBoxLayout(self.groupBox)
         # self.groupBoxLayout.setContentsMargins(2,2,2,2)
 
-        self.isb_dac = QtWidgets.QSpinBox(parent=self.groupBox)
-        self.isb_dac.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.isb_dac = QSpinBox(parent=self.groupBox)
+        self.isb_dac.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
         self.isb_dac.setMaximum(1023)
         self.isb_dac.setProperty("value", 0)
         self.groupBoxLayout.addWidget(self.isb_dac)
@@ -137,17 +137,17 @@ class Ui_BoardInfo(object):
         BoardInfo.setObjectName(f"BoardInfo_{self.board}")
         BoardInfo.resize(100, 100)
 
-        self.layoutWidget = QtWidgets.QWidget(parent=BoardInfo)
-        self.layoutWidget.setGeometry(QtCore.QRect(5, 10, 50, 30))
+        self.layoutWidget = QWidget(parent=BoardInfo)
+        self.layoutWidget.setGeometry(QRect(5, 10, 50, 30))
 
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout = QHBoxLayout(self.layoutWidget)
         # self.horizontalLayout.setContentsMargins(2,2,2,2)
 
-        self.groupBox = QtWidgets.QGroupBox(parent=self.layoutWidget)
+        self.groupBox = QGroupBox(parent=self.layoutWidget)
         self.groupBox.setTitle(f"Board {self.board+1}")
         self.horizontalLayout.addWidget(self.groupBox)
 
-        self.groupBoxLayout = QtWidgets.QGridLayout(self.groupBox)
+        self.groupBoxLayout = QGridLayout(self.groupBox)
         # self.groupBoxLayout.setContentsMargins(2,2,2,2)
 
         # Temperatures in deg C
@@ -157,7 +157,7 @@ class Ui_BoardInfo(object):
         fpga_temp = 43.2
         SiPM_temp = 38.9
         font = QFont("Arial", 12, QFont.Weight.Bold)
-        lable_alignment = QtCore.Qt.AlignmentFlag.AlignCenter
+        lable_alignment = Qt.AlignmentFlag.AlignCenter
 
         self.lab_fpga = QLabel(parent=self.groupBox)
         self.lab_fpga.setText(f"FPGA {fpga_temp:.1f} °C")
@@ -227,7 +227,7 @@ class SciFiMainWindow(  QMainWindow,
         SciFi_svg.setPixmap(QPixmap(f"images/det_scifi.svg"))
         # SciFi_svg.setScaledContents(True)
         SciFi_svg.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        SciFi_svg.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        SciFi_svg.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         
         self.tab_main_layout.addWidget(SciFi_svg, 1, 1, 2, 6) # add to grid layout
 
