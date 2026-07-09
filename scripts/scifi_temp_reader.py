@@ -41,9 +41,16 @@ def read_sipm_temp(sfp, board):
         check=True
     )
     out = result.stdout.strip()[2:-2]
+    loguru.debug(f"out={out}")
+
     bin_str = f"{int(out, 16):016b}"
+    loguru.debug(f"bin_str={bin_str}")
+
     val_int = int(bin_str, 2)
+    loguru.debug(f"val_int={val_int}")
+
     t_deg = round(val_int * 0.0078125, 1)
+    loguru.debug(f"t_deg={t_deg}")
     return t_deg
 
 
