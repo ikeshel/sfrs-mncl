@@ -14,10 +14,8 @@ from loguru import logger
 from Xlib.display import Display
 
 ## 
-from PyQt6 import QtGui, QtWidgets
-from PyQt6.QtGui import QAction, QPainter
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget, QVBoxLayout
-from PyQt6.QtCore import Qt, QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
+from PyQt6.QtCore import QThreadPool, QObject, QRunnable, QThread, pyqtSlot, pyqtSignal
 
 ##
 sys.path.append('package')

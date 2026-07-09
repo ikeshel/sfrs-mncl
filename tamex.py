@@ -13,9 +13,8 @@ from loguru import logger
 from Xlib.display import Display
 
 ##
-from PyQt6.QtCore import QSignalBlocker, QThread, pyqtSlot, pyqtSignal
+from PyQt6.QtCore import QSignalBlocker, QThread, QThreadPool, QObject, QRunnable, pyqtSlot, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QTabWidget, QGridLayout
-from PyQt6.QtCore import QThreadPool, QObject, QRunnable
 
 ##
 sys.path.append('package')

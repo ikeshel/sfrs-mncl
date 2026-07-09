@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env ~/venv/bin/python
 
 __author__     = "Irakli Keshelashvili"
 __copyright__  = "Copyright 2026, The Super FRS Project"
