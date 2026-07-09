@@ -13,46 +13,46 @@ __status__     = "Production"
     Thanks to Michael Heils for the original scripts. ;)
 '''
 import argparse
-from subprocess import call, Popen, PIPE
+import subprocess
 
-#=============================================================================
+
 def read_fpga_temp(sfp, board):
-    # Read value from FPGA temperature sensor
-    out = Popen(["gosipcmd", "-r", "-x", sfp, board, "0x20005c"], stdout=PIPE).communicate()[0][2:-2]
-    bin_str = "{0:016b}".format(int(out, 16))
+    """Read value from FPGA temperature sensor."""
+    result = subprocess.run(
+        ["gosipcmd", "-r", "-x", str(sfp), str(board), "0x20005c"],
+        stdout=subprocess.PIPE,
+        text=True,
+        check=True
+    )
+    out = result.stdout.strip()[2:-2]
+    bin_str = f"{int(out, 16):016b}"
     val_int = int(bin_str[-16:], 2)
-    t_deg = round(val_int*503.975/4096-273.15,1)
+    t_deg = round(val_int * 503.975 / 4096 - 273.15, 1)
     return t_deg
 
-#=============================================================================
+
 def read_sipm_temp(sfp, board):
-    # Read value from on-board temperature sensor (TMP117)
-    out = Popen(["gosipcmd", "-r", "-x", sfp, board, "0x200064"], stdout=PIPE).communicate()[0][2:-2]
-    bin_str = "{0:016b}".format(int(out, 16))
+    """Read value from on-board temperature sensor (TMP117)."""
+    result = subprocess.run(
+        ["gosipcmd", "-r", "-x", str(sfp), str(board), "0x200064"],
+        stdout=subprocess.PIPE,
+        text=True,
+        check=True
+    )
+    out = result.stdout.strip()[2:-2]
+    bin_str = f"{int(out, 16):016b}"
     val_int = int(bin_str, 2)
-    t_deg = round(val_int*0.0078125,1)
+    t_deg = round(val_int * 0.0078125, 1)
     return t_deg
 
-#=============================================================================
-#=============================================================================
+
 def main():
+    """Read temperatures from all SciFi boards."""
     list_sft_board = [
-    (0, 0),
-    (0, 1),
-    (0, 2),
-    (0, 3),
-    (0, 4),
-    (0, 5),
-    (1, 0),
-    (1, 1),
-    (2, 0),
-    (2, 1),
-    (2, 2),
-    (2, 3),
-    (2, 4),
-    (2, 5),
-    (3, 0),
-    (3, 1),
+        (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+        (1, 0), (1, 1),
+        (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5),
+        (3, 0), (3, 1),
     ]
 
     for sfp, board in list_sft_board:
@@ -60,14 +60,11 @@ def main():
         sipm_temp = read_sipm_temp(sfp, board)
         print(f" --sfp {sfp} --board {board} --fpga_temp {fpga_temp} --sipm_temp {sipm_temp}")
 
-#=============================================================================
-# main 
-#=============================================================================
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sfp", '-s', help="SFP number [0...3]")
-    parser.add_argument("--board", '-b', help="device number [0...5]")
+    parser.add_argument("--sfp", "-s", help="SFP number [0...3]")
+    parser.add_argument("--board", "-b", help="device number [0...5]")
 
     args = parser.parse_args()
     if args.sfp is None or args.board is None:
