@@ -14,6 +14,7 @@ __status__     = "Production"
 '''
 import argparse
 import subprocess
+import loguru
 
 
 def read_fpga_temp(sfp, board):
