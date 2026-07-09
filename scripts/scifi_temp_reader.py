@@ -30,7 +30,7 @@ def read_fpga_temp(sfp, board):
     val_int = int(bin_str[-16:], 2)
     t_deg = round(val_int * 503.975 / 4096 - 273.15, 1)
 
-    out = Popen(["gosipcmd", "-r", "-x", sfp, dev, "0x20005c"], stdout=PIPE).communicate()[0][2:-2]
+    out = subprocess.Popen(["gosipcmd", "-r", "-x", sfp, dev, "0x20005c"], stdout=PIPE).communicate()[0][2:-2]
     print(out)
     bin_str = "{0:016b}".format(int(out, 16))
     val_int = int(bin_str[-16:], 2)
