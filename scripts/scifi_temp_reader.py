@@ -1,4 +1,4 @@
-#!/usr/bin/env ~/venv/bin/python
+#!/usr/bin/env python3
 
 __author__     = "Irakli Keshelashvili"
 __copyright__  = "Copyright 2026, The Super FRS Project"
@@ -14,7 +14,7 @@ __status__     = "Production"
 '''
 import argparse
 import subprocess
-from loguru import logger
+# from loguru import #logger
 
 
 def read_fpga_temp(sfp, board):
@@ -49,19 +49,19 @@ def read_sipm_temp(sfp, board):
         check=True
     )
 
-    logger.debug(f"result.stdout={result.stdout.strip()}")
+    #logger.debug(f"result.stdout={result.stdout.strip()}")
     
     out = result.stdout.strip()[2:-2]
-    logger.debug(f"out={out}")
+    #logger.debug(f"out={out}")
 
     bin_str = f"{int(out, 16):016b}"
-    logger.debug(f"bin_str={bin_str}")
+    #logger.debug(f"bin_str={bin_str}")
 
     val_int = int(bin_str, 2)
-    logger.debug(f"val_int={val_int}")
+    #logger.debug(f"val_int={val_int}")
 
     t_deg = round(val_int * 0.0078125, 1)
-    logger.debug(f"t_deg={t_deg}")
+    #logger.debug(f"t_deg={t_deg}")
     return t_deg
 
 
