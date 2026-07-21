@@ -11,9 +11,9 @@ import yaml
 from loguru import logger
 
 class WindowPositionManager:
-    def __init__(self):
+    def __init__(self, node_name: str = ""):
 
-        self.yaml_filename = f".size_pos_{self.__class__.__name__}.yaml"
+        self.yaml_filename = f".size_pos_{self.__class__.__name__}_{node_name}.yaml"
 
         self.xx = 10
         self.yy = 10
@@ -21,8 +21,8 @@ class WindowPositionManager:
         self.hh = 800
 
     #==========================================================================
-    def read_window_data(self):
-        
+    def read_window_data(self) -> bool:
+
         try:
             with open(self.yaml_filename, "r") as yaml_file:
                 window_data = yaml.safe_load(yaml_file)
@@ -41,7 +41,13 @@ class WindowPositionManager:
             return False
 
     #==========================================================================
-    def save_window_data(self):
+    def save_window_data(self) -> None:
+        """
+        Save the current window position and size to the YAML file.
+
+        Args:
+            node_name (str): The name of the node for which to save the window data.
+        """
 
         window_data = {
             "x_position": self.pos().x(),

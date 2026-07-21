@@ -41,7 +41,7 @@ class PulserWindow( QMainWindow,
 
         super().__init__()
 
-        WindowPositionManager.__init__(self)
+        WindowPositionManager.__init__(self, PULSER_NODE)
 
         SSHCommander.__init__(self, PULSER_NODE)  # Where the pulser is connected, for now hardcoded, can be made dynamic later
 
@@ -130,7 +130,7 @@ class PulserWindow( QMainWindow,
 
         ## -------------------------------------------------------------------------------------------
         ## read window position
-        if self.read_window_data():
+        if self.read_window_data(): # read window position and size from YAML file
             logger.debug(f"Window position: x={self.xx}, y={self.yy}, "
                          f"width={self.ww}, height={self.hh}")
             self.move(self.xx, self.yy)
@@ -178,7 +178,7 @@ class PulserWindow( QMainWindow,
         self.run_screen_command("com", command)
 
     #==========================================================================
-    def closeEvent(self, event) -> None:
+    def closeEvent(self, event) -> None:        
         self.save_window_data() # save window position and size on close
 
 
