@@ -196,10 +196,9 @@ class SuperFrsManager(   QMainWindow,
             self.move(  int(screen.width_in_pixels/2)+10,
                         int(0.01*screen.height_in_pixels))
         
-        self.setWindowTitle("MBS Node Manager")
+        self.setWindowTitle("Super FRS Detector Manager")
         self.show()
         self.raise_()
-
 
     #==========================================================================
     @pyqtSlot(dict)
