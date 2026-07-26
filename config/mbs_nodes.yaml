@@ -18,13 +18,13 @@ nodes:
       node_name:  'MUSIC FMF1'
       directory:  MUSIC_FMF1
       active:     true
-      pc_type:    'intel_x86'
+      pc_type:    'intel_music'
 
     - host_name:  x86l-261
       node_name:  'MUSIC FHF1'
       directory:  MUSIC_FHF1
       active:     true
-      pc_type:    'intel_x86'
+      pc_type:    'intel_music'
 
     - host_name:  x86l-253
       node_name:  'SciFi FHF1'

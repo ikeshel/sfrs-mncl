@@ -150,7 +150,9 @@ class MbsNodeManager(   QMainWindow,
                 continue
 
             self.layout.addWidget(MBSNode.list_of_nodes[-1]) # add the last created node to the layout
+
             MBSNode.list_of_nodes[-1].menu = self.menubar.addMenu(f"{MBSNode.list_of_nodes[-1].name}")
+
             self.build_node_menu(MBSNode.list_of_nodes[-1]) # build the menu for the last created node
             logger.debug(f"Added Node from YAML: {node_dict}")
 

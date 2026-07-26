@@ -19,6 +19,7 @@ from loguru import logger
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QFont, QPixmap
+from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QLabel
 
 ##
@@ -78,8 +79,9 @@ class MBSNode(QtWidgets.QWidget,
 
     #=========================================================================
     def init_ui(self):
-        node_svg = QLabel()
-        node_svg.setPixmap(QPixmap(f"images/{self.pc_type}.svg"))
+        node_svg = QSvgWidget(f"images/{self.pc_type}.svg", self)
+        # node_svg.setMinimumSize(1500, 240)
+        # node_svg.setGeometry(QtCore.QRect(0, 0, 200, 200))
         
         svg_layout = QtWidgets.QVBoxLayout()
         svg_layout.setContentsMargins(0, 0, 0, 0)
@@ -92,7 +94,7 @@ class MBSNode(QtWidgets.QWidget,
         self.lbl_node_name.setText(f"{self.directory}\n{self.node_host}")
         self.lbl_node_name.setCursor(Qt.CursorShape.PointingHandCursor)
         self.lbl_node_name.setToolTip(f"Click to open {self.directory} Dashboard")
-        self.lbl_node_name.setGeometry(QtCore.QRect(20, 10, 90, 40))
+        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 110, 50))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_node_name.setFont(QFont("Courier", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
@@ -105,14 +107,14 @@ class MBSNode(QtWidgets.QWidget,
         self.lbl_subsystem_id.setText(f"Eve ID: {self.WR_SUBSYSTEM_ID}")
         self.lbl_subsystem_id.setToolTip(f"Subsystem event ID")
         self.lbl_subsystem_id.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lbl_subsystem_id.setGeometry(QtCore.QRect(120, 50, 90, 25))
+        self.lbl_subsystem_id.setGeometry(QtCore.QRect(10, 55, 110, 30))
 
         # Create red circle widget for status indicator
         self.status_ping = QtWidgets.QWidget(self)
         self.status_ping.setToolTip(f"Ping for {self.directory} node")
         diameter = 13
         self.radius = diameter // 2
-        self.status_ping.setGeometry(90-self.radius, 145-self.radius, diameter, diameter)
+        self.status_ping.setGeometry(64-self.radius, 90-self.radius, diameter, diameter)
         self.status_ping.setStyleSheet(f"background-color: red; border-radius: {self.radius}px;")
         self.status_ping.raise_()
 
