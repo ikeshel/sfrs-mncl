@@ -2,26 +2,32 @@
 ## i.keshelashvili@gsi.de
 ## comment line starts with # and is ignored; empty lines are also ignored
 nodes:
-    - host_name:  x86l-157
+    - host_name:  x86l-170
       node_name:  'Time Sorter'
       directory:  TimeSorter
       active:     true
       pc_type:    'intel_nuc'
 
     - host_name:  x86l-132
-      node_name:  'Time of Flight'
-      directory:  ToF
+      node_name:  'PlSci FMF2'
+      directory:  PlSci_FMF2
       active:     true
       pc_type:    'intel_x86'
 
-    - host_name:  x86l-170
-      node_name:  'MUSIC'
-      directory:  MUSIC
+    - host_name:  x86l-260
+      node_name:  'MUSIC FMF1'
+      directory:  MUSIC_FMF1
       active:     true
-      pc_type:    'intel_nuc'
+      pc_type:    'intel_x86'
+
+    - host_name:  x86l-261
+      node_name:  'MUSIC FHF1'
+      directory:  MUSIC_FHF1
+      active:     true
+      pc_type:    'intel_x86'
 
     - host_name:  x86l-253
-      node_name:  'Scintillating Fibers'
-      directory:  SiFi
+      node_name:  'SciFi FHF1'
+      directory:  SciFi_FHF1
       active:     true
       pc_type:    'intel_x86'
