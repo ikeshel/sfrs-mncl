@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+__author__     = "Irakli Keshelashvili"
+__copyright__  = "Copyright 2026, The Super FRS Project"
+__version__    = "0.2.1"
+__maintainer__ = "Irakli Keshelashvili"
+__email__      = "i.keshelashvili@gsi.de"
+__status__     = "Production"
+
 """
 Read FPGA and SiPM temperatures from Super-FRS SciFi boards
 and publish them to EPICS process variables.
@@ -23,9 +30,6 @@ from dataclasses import dataclass
 import epics
 from loguru import logger
 
-
-__author__ = "Irakli Keshelashvili"
-__version__ = "0.2.0"
 
 GOSIP_COMMAND = "gosipcmd"
 GOSIP_TIMEOUT_SECONDS = 2.0
