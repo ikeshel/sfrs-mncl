@@ -14,22 +14,18 @@ __status__     = "Production"
 '''
 import argparse
 import subprocess
-# from loguru import #logger
+from loguru import logger
 
 ###############################################################################
 def read_fpga_temp(sfp, dev):
     """Read value from FPGA temperature sensor."""
     out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{dev}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
-    print(out)
 
     bin_str = "{0:016b}".format(int(out, 16))
-    print(bin_str)
 
     val_int = int(bin_str[-16:], 2)
-    print(val_int)
 
     t_deg = round(val_int*503.975/4096-273.15,1)
-    print("SciFi_652 FPGA: {0}".format(t_deg))
 
     return t_deg
 
@@ -83,9 +79,9 @@ def main():
         temp_fpga = read_fpga_temp(sfp, dev)
         temp_sipm = read_sipm_temp(sfp, dev)
         temp_dictionary = {"SFP": sfp, "DEV": dev, "FPGA": temp_fpga, "SiPM": temp_sipm}
+        logger.info(f"Read temperatures for SFP {sfp}, DEV {dev}: FPGA={temp_fpga}, SiPM={temp_sipm}")
         temp_list.append(temp_dictionary.copy())
         temp_dictionary.clear()  # Clear the dictionary for the next iteration
-
 
     for temp in temp_list:
         print(temp)
