@@ -216,7 +216,9 @@ class MenuBarManager(SSHCommander):
 
         logger.info("Checking for updates...")
 
-        command_list = ["cd ~/mncl", "git fetch", "git pull", "cd"]
+        command_list = ["setenv https_proxy http://proxy.gsi.de:8080",
+                        "setenv http_proxy http://proxy.gsi.de:8080",
+                        "cd ~/sfrs-mncl", "git fetch", "git pull", "cd"]
         success_flag = True
 
         if QMessageBox.question(self, "Check for Updates", "Would you like to pull from git?") == QMessageBox.StandardButton.Yes:           
