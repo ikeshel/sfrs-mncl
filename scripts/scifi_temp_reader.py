@@ -26,29 +26,19 @@ def read_fpga_temp(sfp, board):
         text=True,
         check=True
     )
-    out = result.stdout.strip()[2:-2]
-    bin_str = f"{int(out, 16):016b}"
-    val_int = int(bin_str[-16:], 2)
-    t_deg = round(val_int * 503.975 / 4096 - 273.15, 1)
-
     out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{board}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
-    print(out)
+    # print(out)
     bin_str = "{0:016b}".format(int(out, 16))
     val_int = int(bin_str[-16:], 2)
     t_deg = round(val_int*503.975/4096-273.15,1)
-    print("SciFi_652 FPGA: {0}".format(t_deg))
+    # print("SciFi_652 FPGA: {0}".format(t_deg))
 
     return t_deg
 
 
 def read_sipm_temp(sfp, board):
     """Read value from on-board temperature sensor (TMP117)."""
-    result = subprocess.run(
-        ["gosipcmd", "-r", "-x", str(sfp), str(board), "0x200064"],
-        stdout=subprocess.PIPE,
-        text=True,
-        check=True
-    )
+    result = subprocess.run(["gosipcmd", "-r", "-x", str(sfp), str(board), "0x200064"], stdout=subprocess.PIPE, text=True, check=True)
 
     #logger.debug(f"result.stdout={result.stdout.strip()}")
     
