@@ -13,11 +13,10 @@ __status__     = "Production"
     Thanks to Michael Heils for the original scripts. ;)
 '''
 import argparse
-import re
 import subprocess
 # from loguru import #logger
 
-
+###############################################################################
 def read_fpga_temp(sfp, board):
     """Read value from FPGA temperature sensor."""
     out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{board}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
@@ -29,7 +28,7 @@ def read_fpga_temp(sfp, board):
 
     return t_deg
 
-
+###############################################################################
 def read_sipm_temp(sfp, board):
     """Read value from on-board temperature sensor (TMP117)."""
     result = subprocess.Popen(["gosipcmd", "-r", "-x", str(sfp), str(board), "0x200064"], stdout=subprocess.PIPE, text=True).communicate()[0]
@@ -49,7 +48,8 @@ def read_sipm_temp(sfp, board):
     #logger.debug(f"t_deg={t_deg}")
     return t_deg
 
-
+###############################################################################
+###############################################################################
 def main():
     """Read temperatures from all SciFi boards."""
     list_sft_board = [
@@ -90,18 +90,25 @@ def main():
     for temp in temp_list:
         print(temp)
 
-
+###############################################################################
+###############################################################################
+###############################################################################
 if __name__ == "__main__":
+
+    # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--sfp", "-s", help="SFP number [0...3]")
-    parser.add_argument("--board", "-b", help="device number [0...5]")
+    parser.add_argument("--dev", "-d", help="device number [0...5]")
 
     args = parser.parse_args()
-    if args.sfp is None or args.board is None:
+
+    if args.sfp is None or args.dev is None:
+        # If no arguments are provided, read temperatures from all SciFi boards
         main()
     else:
+        # If arguments are provided, read temperatures from the specified SFP and device
         sfp = int(args.sfp)
-        board = int(args.board)
-        fpga_temp = read_fpga_temp(sfp, board)
-        sipm_temp = read_sipm_temp(sfp, board)
-        print(f" --sfp {sfp} --board {board} --fpga_temp {fpga_temp} --sipm_temp {sipm_temp}")
+        dev = int(args.dev)
+        fpga_temp = read_fpga_temp(sfp, dev)
+        sipm_temp = read_sipm_temp(sfp, dev)
+        print(f" --sfp {sfp} --dev {dev} --fpga_temp {fpga_temp} --sipm_temp {sipm_temp}")
