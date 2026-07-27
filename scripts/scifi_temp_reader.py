@@ -17,9 +17,9 @@ import subprocess
 # from loguru import #logger
 
 ###############################################################################
-def read_fpga_temp(sfp, board):
+def read_fpga_temp(sfp, dev):
     """Read value from FPGA temperature sensor."""
-    out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{board}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
+    out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{dev}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
     print(out)
 
     bin_str = "{0:016b}".format(int(out, 16))
@@ -34,23 +34,18 @@ def read_fpga_temp(sfp, board):
     return t_deg
 
 ###############################################################################
-def read_sipm_temp(sfp, board):
+def read_sipm_temp(sfp, dev):
     """Read value from on-board temperature sensor (TMP117)."""
-    result = subprocess.Popen(["gosipcmd", "-r", "-x", str(sfp), str(board), "0x200064"], stdout=subprocess.PIPE, text=True).communicate()[0]
 
-    #logger.debug(f"result.stdout={result.strip()}")
-    
-    out = result.strip()[2:-2]
-    #logger.debug(f"out={out}")
-
-    bin_str = f"{int(out, 16):016b}"
-    #logger.debug(f"bin_str={bin_str}")
-
+    # Read value from on-board temperature sensor (TMP117)
+    #out = Popen(["gosipcmd", "-w", "-x", sfp, dev, "0x200074"], stdout=PIPE).communicate()[0][2:-2]
+    #sleep 0.05
+    out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{dev}", "0x200064"], stdout=subprocess.PIPE).communicate()[0][2:-2]
+    bin_str = "{0:016b}".format(int(out, 16))
     val_int = int(bin_str, 2)
-    #logger.debug(f"val_int={val_int}")
+    t_deg = round(val_int*0.0078125,1)
+    print("SciFi_652 SiPM sensor: {0}".format(t_deg))
 
-    t_deg = round(val_int * 0.0078125, 1)
-    #logger.debug(f"t_deg={t_deg}")
     return t_deg
 
 ###############################################################################
@@ -84,10 +79,10 @@ def main():
         # {'SFP': 3, 'DEV': 1, 'FPGA': 0.0, 'SiPM': 0.0},
     ]
 
-    for sfp, board in list_sft_board:
-        temp_fpga = read_fpga_temp(sfp, board)
-        temp_sipm = read_sipm_temp(sfp, board)
-        temp_dictionary = {"SFP": sfp, "DEV": board, "FPGA": temp_fpga, "SiPM": temp_sipm}
+    for sfp, dev in list_sft_board:
+        temp_fpga = read_fpga_temp(sfp, dev)
+        temp_sipm = read_sipm_temp(sfp, dev)
+        temp_dictionary = {"SFP": sfp, "DEV": dev, "FPGA": temp_fpga, "SiPM": temp_sipm}
         temp_list.append(temp_dictionary.copy())
         temp_dictionary.clear()  # Clear the dictionary for the next iteration
 
