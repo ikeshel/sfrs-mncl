@@ -14,17 +14,19 @@ __status__     = "Production"
 '''
 import argparse
 import subprocess
+import sys
 from loguru import logger
+
+logger.remove()
+logger.add(sys.stdout, level="INFO")
+logger.add("scifi_temp_reader.log", rotation="1 MB", retention="10 days", level="DEBUG")
 
 ###############################################################################
 def read_fpga_temp(sfp, dev):
     """Read value from FPGA temperature sensor."""
     out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{dev}", "0x20005c"], stdout=subprocess.PIPE).communicate()[0][2:-2]
-
     bin_str = "{0:016b}".format(int(out, 16))
-
     val_int = int(bin_str[-16:], 2)
-
     t_deg = round(val_int*503.975/4096-273.15,1)
 
     return t_deg
@@ -32,15 +34,10 @@ def read_fpga_temp(sfp, dev):
 ###############################################################################
 def read_sipm_temp(sfp, dev):
     """Read value from on-board temperature sensor (TMP117)."""
-
-    # Read value from on-board temperature sensor (TMP117)
-    #out = Popen(["gosipcmd", "-w", "-x", sfp, dev, "0x200074"], stdout=PIPE).communicate()[0][2:-2]
-    #sleep 0.05
     out = subprocess.Popen(["gosipcmd", "-r", "-x", f"{sfp}", f"{dev}", "0x200064"], stdout=subprocess.PIPE).communicate()[0][2:-2]
     bin_str = "{0:016b}".format(int(out, 16))
     val_int = int(bin_str, 2)
     t_deg = round(val_int*0.0078125,1)
-    print("SciFi_652 SiPM sensor: {0}".format(t_deg))
 
     return t_deg
 
@@ -56,35 +53,16 @@ def main():
     ]
 
     temp_dictionary = {"SFP": 0, "DEV": 0, "FPGA": 0.0, "SiPM": 0.0}
-    temp_list = [
-        # {'SFP': 0, 'DEV': 0, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 0, 'DEV': 1, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 0, 'DEV': 2, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 0, 'DEV': 3, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 0, 'DEV': 4, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 0, 'DEV': 5, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 1, 'DEV': 0, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 1, 'DEV': 1, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 0, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 1, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 2, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 3, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 4, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 2, 'DEV': 5, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 3, 'DEV': 0, 'FPGA': 0.0, 'SiPM': 0.0},
-        # {'SFP': 3, 'DEV': 1, 'FPGA': 0.0, 'SiPM': 0.0},
-    ]
+    temp_list = []
 
     for sfp, dev in list_sft_board:
         temp_fpga = read_fpga_temp(sfp, dev)
         temp_sipm = read_sipm_temp(sfp, dev)
+
         temp_dictionary = {"SFP": sfp, "DEV": dev, "FPGA": temp_fpga, "SiPM": temp_sipm}
-        logger.info(f"Read temperatures for SFP {sfp}, DEV {dev}: FPGA={temp_fpga}, SiPM={temp_sipm}")
+        logger.success(f"SFP: {sfp}, DEV: {dev}, FPGA Temp: {temp_fpga} °C, SiPM Temp: {temp_sipm} °C")
         temp_list.append(temp_dictionary.copy())
         temp_dictionary.clear()  # Clear the dictionary for the next iteration
-
-    for temp in temp_list:
-        print(temp)
 
 ###############################################################################
 ###############################################################################
