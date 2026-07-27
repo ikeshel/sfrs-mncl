@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/scripts/konsole_manager.py --nodes "x86l-132,x86l-253,x86l-170,x86l-157" --screens "mbs,web,com" --open
+Exec=~/sfrs-mncl/scripts/konsole_manager.py --nodes "x86l-170,x86l-132,x86l-253,x86l-260,x86l-261" --screens "mbs,web,com" --open
 GenericName[en_US]=
 GenericName=
-Icon=/home/irakli/mncl/icons/open_konsoles.png
+Icon=~/sfrs-mncl/icons/open_konsoles.png
 MimeType=
 Name[en_US]=Open konsoles
 Name=Open konsoles
-Path=/home/irakli/mncl
+Path=~/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=

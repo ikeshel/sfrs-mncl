@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/pulser.py -n x86l-132
+Exec=~/sfrs-mncl/pulser.py -n x86l-132
 GenericName[en_US]=
 GenericName=
-Icon=/home/irakli/mncl/icons/mbs_pulser.png
+Icon=~/sfrs-mncl/icons/mbs_pulser.png
 MimeType=
 Name[en_US]=Pulser x86l-132
 Name=Pulser x86l-132
-Path=/home/irakli/mncl
+Path=~/sfrs-mncl/
 StartupNotify=true
 Terminal=false
 TerminalOptions=

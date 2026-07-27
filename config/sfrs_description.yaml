@@ -1,0 +1,50 @@
+## Super FRS description file
+## i.keshelashvili@gsi.de
+## comment line starts with # and is ignored; empty lines are also ignored
+## chambers: FPF2, FPF3, FPF4, FMF1, FMF2, FMF3, FHF1
+## detector: PLSCI, SCIFI, MUSIC
+chambers:
+  - chamber:  FPF2
+    node_name: 'FPF2'
+    directory: FPF2
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-234'
+      directory:  SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'PLSCI'
+      directory:  PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-235'
+      directory:  SCIFI2
+      active:     true
+    
+  - chamber:  FHF1
+    node_name: 'FHF 1'
+    directory: FHF1
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-234'
+      directory:  SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'x86l-212'
+      directory:  PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-234'
+      directory:  SCIFI2
+      active:     true
+
+    - detector:   SCIFI3
+      node_name:  'x86l-235'
+      directory:  SCIFI3
+      active:     true

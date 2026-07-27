@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/tamex.py
+Exec=~/sfrs-mncl/tamex.py
 GenericName[en_US]=
 GenericName=
-Icon=/home/irakli/mncl/icons/tamex.png
+Icon=~/sfrs-mncl/icons/tamex.png
 MimeType=
 Name[en_US]=Tamex
 Name=Tamex
-Path=/home/irakli/mncl
+Path=~/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=

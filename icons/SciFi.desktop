@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/home/irakli/mncl/scifi.py
+Exec=~/sfrs-mncl/scifi.py
 GenericName[en_US]=
 GenericName=
-Icon=/home/irakli/mncl/icons/det_scifi.png
+Icon=~/sfrs-mncl/icons/det_scifi.png
 MimeType=
 Name[en_US]=SciFi
 Name=SciFi
-Path=/home/irakli/mncl
+Path=~/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=
