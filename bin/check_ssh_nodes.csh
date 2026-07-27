@@ -2,14 +2,14 @@
 
 # i.keshelashvili@gsi.de
 
-set conf_file = "$HOME/mncl/config/list_of_nodes.conf"
+set conf_file = "$HOME/sfrs-mncl/config/list_of_nodes.conf"
 
 if (! -f $conf_file) then
     echo "\033[5;31mError: $conf_file file not found\033[0m"
     exit 1
 endif
 
-source $HOME/mncl/bin/read_config.csh
+source $HOME/sfrs-mncl/bin/read_config.csh
 
 foreach node ($list_paras)
     # Check if ssh connection can be established to the node

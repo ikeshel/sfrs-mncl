@@ -31,9 +31,11 @@ echo "Current user: $username"
 
 # List of logins
 logins=(
-  "$username@X86L-132"
   "$username@X86L-170"
+  "$username@X86L-132"
   "$username@X86L-253"
+  "$username@X86L-260"
+  "$username@X86L-261"  
 )
 
 tabs=(
@@ -53,7 +55,7 @@ for login in "${logins[@]}"; do
     wind_title="${login}_${tab}"
     echo "Calculated position for $wind_title: x=$pos_x, y=$pos_y"
     
-    cmd="konsole -p tabtitle=\"$wind_title\" -e bash -lc 'ssh $login -t \"./mncl/bin/check_screens.csh;screen -d $tab;screen -r $tab\"'"
+    cmd="konsole -p tabtitle=\"$wind_title\" -e bash -lc 'ssh $login -t \"./sfrs-mncl/bin/check_screens.csh;screen -d $tab;screen -r $tab\"'"
     
     echo "command: $cmd"
     eval $cmd &
