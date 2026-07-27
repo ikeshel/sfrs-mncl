@@ -33,8 +33,8 @@ ssh -v ikeshel@X86L-1740 "screen -S mbs -X stuff 'quit\n'"
 
 
 
-ssh -v ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/mncl\n;./bin/check_screens.csh'"
-ssh -vvv ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/mncl\n;./bin/check_screens.csh'"
+ssh -v ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/sfrs-mncl\n;./bin/check_screens.csh'"
+ssh -vvv ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/sfrs-mncl\n;./bin/check_screens.csh'"
 ssh -v ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/Sifi\n;mbs -dabc'"
 ssh -v ikeshel@X86L-253 "screen -S mbs -X stuff 'cd ~/Sifi\n;mbs -dabc\n'"
 ssh -v ikeshel@X86L-253 "screen -S mbs -X stuff 'quit\n'"
