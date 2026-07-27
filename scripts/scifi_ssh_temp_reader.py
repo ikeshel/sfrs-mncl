@@ -81,7 +81,7 @@ def main():
         SSH_COMMAND+=f"/mbs/driv/mbspexV3_5.10-64_DEB/bin/gosipcmd -rxd {sfp} {board} 0x200064;" # SiPM temperature
     
     result = subprocess.run(
-        [SSH_COMMAND],
+        ["ssh", "-o", "ConnectTimeout=1", "ikeshel@X86L-253", SSH_COMMAND],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
