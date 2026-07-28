@@ -182,7 +182,7 @@ class SuperFrsManager(   QMainWindow,
                          f"width={self.ww}, height={self.hh}")
             self.move(self.xx, self.yy)
             self.resize(self.ww, self.hh)
-            self.setFixedSize(self.ww, self.hh)
+            # self.setFixedSize(self.ww, self.hh)
 
         else:
             # screen = Display(os.environ['DISPLAY']).screen() 

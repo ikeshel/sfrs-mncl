@@ -11,6 +11,7 @@ __status__     = "Production"
 import sys, os, time
 from loguru import logger
 from Xlib.display import Display
+import epics
 
 ##
 from PyQt6.QtCore import (QUrl, Qt, QThread, QThreadPool, QRunnable,  
@@ -47,25 +48,25 @@ BOARDS_TOTAL = BOARDS_UP + BOARDS_DOWN + BOARDS_RIGHT + BOARDS_LEFT
 CHANNEL_TOTAL = BOARD_CHANNEL_NUMBER * BOARDS_TOTAL
 
 SCIFI_BOARD_MAPPING = {
-    0: {'sfp': 0, 'dev': 0},  # Board 1
-    1: {'sfp': 0, 'dev': 1},  # Board 2
-    2: {'sfp': 0, 'dev': 2},  # Board 3
-    3: {'sfp': 0, 'dev': 3},  # Board 4
-    4: {'sfp': 0, 'dev': 4},  # Board 5
-    5: {'sfp': 0, 'dev': 5},  # Board 6
+    0:  {'sfp': 0, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 1
+    1:  {'sfp': 0, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 2
+    2:  {'sfp': 0, 'dev': 2, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 3
+    3:  {'sfp': 0, 'dev': 3, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 4
+    4:  {'sfp': 0, 'dev': 4, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 5
+    5:  {'sfp': 0, 'dev': 5, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 6
+ 
+    6:  {'sfp': 1, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 7
+    7:  {'sfp': 1, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 8
+ 
+    8:  {'sfp': 2, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 9
+    9:  {'sfp': 2, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 10
+    10: {'sfp': 2, 'dev': 2, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0}, # Board 11
+    11: {'sfp': 2, 'dev': 3, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0}, # Board 12
+    12: {'sfp': 2, 'dev': 4, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 13
+    13: {'sfp': 2, 'dev': 5, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 14
 
-    6: {'sfp': 1, 'dev': 0},  # Board 7
-    7: {'sfp': 1, 'dev': 1},  # Board 8
-
-    8: {'sfp': 2, 'dev': 0},  # Board 9
-    9: {'sfp': 2, 'dev': 1},  # Board 10
-    10: {'sfp': 2, 'dev': 2}, # Board 11
-    11: {'sfp': 2, 'dev': 3}, # Board 12
-    12: {'sfp': 2, 'dev': 4},  # Board 13
-    13: {'sfp': 2, 'dev': 5},  # Board 14
-
-    14: {'sfp': 3, 'dev': 0},  # Board 15
-    15: {'sfp': 3, 'dev': 1},  # Board 16
+    14: {'sfp': 3, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 15
+    15: {'sfp': 3, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 16
     # Add more boards as needed
 }
 
@@ -106,6 +107,21 @@ class SciFiWorker(QRunnable):
             self.datadict['time'] = time.time() # seconds
             if self.last_time < self.datadict['time']-1: # check every 1 second
                 self.last_time = self.datadict['time']
+                for board_id, board in SCIFI_BOARD_MAPPING.items():
+                    sfp = board['sfp']
+                    dev = board['dev']
+                    fpga_temp = None
+                    sipm_temp = None
+                    if board['pv_fpga'].wait_for_connection(timeout=1.0):
+                        fpga_temp = board['pv_fpga'].get()
+                    else:
+                        fpga_temp = 0.0
+                    if board['pv_sipm'].wait_for_connection(timeout=1.0):
+                        sipm_temp = board['pv_sipm'].get()
+                    else:
+                        sipm_temp = 0.0
+                    self.datadict[f'board_{sfp}_{dev}_fpga_temp'] = fpga_temp
+                    self.datadict[f'board_{sfp}_{dev}_sipm_temp'] = sipm_temp
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
 
@@ -163,7 +179,6 @@ class Ui_BoardInfo(object):
 
     def setupUi(self, BoardInfo):
         BoardInfo.setObjectName(f"BoardInfo_{self.board}")
-        BoardInfo.resize(100, 100)
 
         self.layoutWidget = QWidget(parent=BoardInfo)
         self.layoutWidget.setGeometry(QRect(5, 10, 50, 30))
@@ -234,6 +249,7 @@ class SciFiMainWindow(  QMainWindow,
         MenuBarManager.__init__(self)
         SSHCommander.__init__(self, hostname='x86l-253') # initialize SSHCommander with node_host
 
+        self.init_epics()
 
         # node widget
         self.central_widget = QWidget()
@@ -345,6 +361,15 @@ class SciFiMainWindow(  QMainWindow,
         self.raise_()
 
     #==========================================================================
+    def init_epics(self):
+        logger.debug("Initializing EPICS PVs")
+        for board_id, board in SCIFI_BOARD_MAPPING.items():
+            sfp = board['sfp']
+            dev = board['dev']
+            board['pv_fpga']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:FPGA:TEMP")
+            board['pv_sipm']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:TEMP")
+
+    #==========================================================================
     def show_hide_dashboard(self, sensor="FPGA", sfp=0, dev=0):
 
         url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}:TEMP"
@@ -399,7 +424,13 @@ class SciFiMainWindow(  QMainWindow,
         ''' timer loop to HMP readout and status check '''
        
         # logger.debug(f"Data received: {data_dict}")
-
+        for board_id, board_dict in SCIFI_BOARD_MAPPING.items():
+            sfp = board_dict['sfp']
+            dev = board_dict['dev']
+            fpga_temp = data_dict.get(f'board_{sfp}_{dev}_fpga_temp', 0.0)
+            sipm_temp = data_dict.get(f'board_{sfp}_{dev}_sipm_temp', 0.0)
+            self.board[board_id].lab_fpga.setText(f"FPGA {fpga_temp:.1f} °C")
+            self.board[board_id].lab_sipm.setText(f"SiPM {sipm_temp:.1f} °C")
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
 
     #==========================================================================
