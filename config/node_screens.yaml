@@ -7,3 +7,5 @@ screens:
   mbs: 'MBS - Multi Node Control System'
   web: 'MBS - Web Interface'
   com: 'COM - Communication Node'
+  ioc: 'IOC - Input Output Controller'
+  epx: 'EPX - EPICS Control System'

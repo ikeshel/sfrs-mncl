@@ -189,7 +189,7 @@ def open_konsoles()->None:
     for key_login, mbs_node in enumerate(LOGINS):
         pos_x = key_login*win_w
 
-        check_scrn = ["ssh", f"{mbs_node}", "cd ~/sfrs-mncl;./bin/check_screens.csh"]
+        check_scrn = ["ssh", f"{mbs_node}", "cd /home/irakli/sfrs-mncl;./bin/check_screens.csh"]
         logger.debug(f"Checking screen: {check_scrn}")
         result = run(check_scrn)
         logger.debug(result.stdout)

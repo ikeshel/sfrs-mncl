@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=~/sfrs-mncl/mbs_node_manager.py
+Exec[$e]=$HOME/sfrs-mncl/mbs_node_manager.py
 GenericName[en_US]=
 GenericName=
-Icon=~/sfrs-mncl/icons/MBS_Node_Manager.png
+Icon[$e]=$HOME/sfrs-mncl/icons/MBS_Node_Manager.png
 MimeType=
 Name[en_US]=MBS Node Manager
 Name=MBS Node Manager
-Path=~/sfrs-mncl
+Path[$e]=$HOME/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=

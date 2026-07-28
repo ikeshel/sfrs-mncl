@@ -366,7 +366,7 @@ class MBSNode(QtWidgets.QWidget,
         # For demonstration, we will just show a message box
         try:
             result = subprocess.run(
-                f'ssh -o ConnectTimeout=3 ikeshel@{self.node_host} "~/sfrs-mncl/bin/check_screens.csh"',
+                f'ssh -o ConnectTimeout=3 ikeshel@{self.node_host} "/home/irakli/sfrs-mncl/bin/check_screens.csh"',
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -392,7 +392,7 @@ class MBSNode(QtWidgets.QWidget,
         ) == QtWidgets.QMessageBox.StandardButton.Yes:
             try:
                 result = subprocess.run(
-                    f'ssh ikeshel@{self.node_host} "~/sfrs-mncl/bin/kill_screens.csh"',
+                    f'ssh ikeshel@{self.node_host} "/home/irakli/sfrs-mncl/bin/kill_screens.csh"',
                     shell=True,
                     capture_output=True,
                     text=True,

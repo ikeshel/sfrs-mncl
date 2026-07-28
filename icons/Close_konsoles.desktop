@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=~/sfrs-mncl/scripts/konsole_manager.py --nodes "x86l-170,x86l-132,x86l-253,x86l-260,x86l-261" --screens "com,web,mbs" --close
+Exec[$e]=$HOME/sfrs-mncl/scripts/konsole_manager.py --nodes x86l-170,x86l-132,x86l-253,x86l-260,x86l-261 --screens epx,ioc,com,web,mbs --close
 GenericName[en_US]=
 GenericName=
-Icon=~/sfrs-mncl/icons/close_konsoles.png
+Icon[$e]=$HOME/sfrs-mncl/icons/close_konsoles.png
 MimeType=
 Name[en_US]=Close konsoles
 Name=Close konsoles
-Path=~/sfrs-mncl
+Path[$e]=$HOME/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=

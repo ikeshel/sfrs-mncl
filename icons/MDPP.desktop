@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=~/sfrs-mncl/mdpp.py
+Exec[$e]=$HOME/sfrs-mncl/mdpp.py
 GenericName[en_US]=
 GenericName=
-Icon=~/sfrs-mncl/icons/mesytec.png
+Icon[$e]=$HOME/sfrs-mncl/icons/mesytec.png
 MimeType=
 Name[en_US]=MDPP
 Name=MDPP
-Path=~/sfrs-mncl
+Path[$e]=$HOME/sfrs-mncl
 StartupNotify=true
 Terminal=false
 TerminalOptions=

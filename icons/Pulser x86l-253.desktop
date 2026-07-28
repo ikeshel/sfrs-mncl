@@ -1,14 +1,14 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=~/sfrs-mncl/pulser.py -n x86l-253
+Exec[$e]=$HOME/sfrs-mncl/pulser.py -n x86l-253
 GenericName[en_US]=
 GenericName=
-Icon=~/sfrs-mncl/icons/mbs_pulser.png
+Icon[$e]=$HOME/sfrs-mncl/icons/mbs_pulser.png
 MimeType=
 Name[en_US]=Pulser x86l-253
 Name=Pulser x86l-253
-Path=~/sfrs-mncl/
+Path[$e]=$HOME/sfrs-mncl/
 StartupNotify=true
 Terminal=false
 TerminalOptions=
