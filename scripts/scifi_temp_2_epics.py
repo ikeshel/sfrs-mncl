@@ -88,9 +88,9 @@ def configure_logging(debug: bool = False) -> None:
     )
 
     logger.add(
-        "scifi_temp_reader.log",
+        "logs/scifi_temp_reader.log",
         level="DEBUG",
-        rotation="1 MB",
+        rotation="10 MB",
         retention="10 days",
         compression="gz",
         enqueue=True,
