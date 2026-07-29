@@ -55,8 +55,8 @@ SCIFI_BOARD_MAPPING = {
     4:  {'sfp': 0, 'dev': 4, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 5
     5:  {'sfp': 0, 'dev': 5, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 6
  
-    6:  {'sfp': 1, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 7
-    7:  {'sfp': 1, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 8
+    6:  {'sfp': 1, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0}, # Board 7
+    7:  {'sfp': 1, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0}, # Board 8
  
     8:  {'sfp': 2, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 9
     9:  {'sfp': 2, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 10
@@ -65,8 +65,8 @@ SCIFI_BOARD_MAPPING = {
     12: {'sfp': 2, 'dev': 4, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 13
     13: {'sfp': 2, 'dev': 5, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 14
 
-    14: {'sfp': 3, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 15
-    15: {'sfp': 3, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},  # Board 16
+    14: {'sfp': 3, 'dev': 0, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},   # Board 15
+    15: {'sfp': 3, 'dev': 1, 'pv_fpga':None, 'fpga_temp': 0.0, 'pv_sipm': None, 'sipm_temp': 0.0},   # Board 16
     # Add more boards as needed
 }
 
@@ -281,23 +281,24 @@ class SciFiMainWindow(  QMainWindow,
         
         self.tab_main_layout.addWidget(SciFi_svg, 1, 1, 2, 6) # add to grid layout
 
-        self.browser_window = MBSBrowser(url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP0:DEV2:FPGA:TEMP")
+        self.browser_window = MBSBrowser(url=f"")
 
         self.board = [None]*BOARDS_TOTAL # 
         # self.board = [None]*16 # 
 
+        # draw the boards in the layout according to the SciFi detector layout
         layout = [(1,0), (2,0), (3,0), (4,0), (5,0), (6,0), 
                   (0,1), (0,2), 
                   (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), 
                   (7,1), (7,2)]
-        for i in range(len(self.board)):
-            sfp=SCIFI_BOARD_MAPPING[i]['sfp']
-            dev=SCIFI_BOARD_MAPPING[i]['dev']
-            self.board[i] = Ui_BoardInfo(i, sfp, dev)
-            self.board[i].setupUi(self)
-            self.board[i].lab_fpga.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("FPGA", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
-            self.board[i].lab_sipm.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
-            self.tab_main_layout.addWidget(self.board[i].layoutWidget, layout[i][1], layout[i][0]) # add to grid layout
+        for board_id, board in SCIFI_BOARD_MAPPING.items():
+            sfp = board['sfp']
+            dev = board['dev']
+            self.board[board_id] = Ui_BoardInfo(board_id, sfp, dev)
+            self.board[board_id].setupUi(self)
+            self.board[board_id].lab_fpga.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("FPGA", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
+            self.board[board_id].lab_sipm.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
+            self.tab_main_layout.addWidget(self.board[board_id].layoutWidget, layout[board_id][1], layout[board_id][0]) # add to grid layout
 
         self.tab_main.setLayout(self.tab_main_layout)
        

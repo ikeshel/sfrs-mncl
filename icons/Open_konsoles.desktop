@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec[$e]=$HOME/sfrs-mncl/scripts/konsole_manager.py --nodes x86l-170,x86l-132,x86l-253,x86l-260,x86l-261 --screens mbs,web,com,epx --open
+Exec[$e]=$HOME/sfrs-mncl/scripts/konsole_manager.py --nodes x86l-170,x86l-132,x86l-253,x86l-260,x86l-261 --screens mbs,web,com --open
 GenericName[en_US]=
 GenericName=
 Icon[$e]=$HOME/sfrs-mncl/icons/open_konsoles.png
