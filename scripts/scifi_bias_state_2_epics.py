@@ -10,17 +10,22 @@ Detector:
 PV examples:
     SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_SET
     SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_RBV
+    SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_STATE
 
 The 32-bit bias readback register contains:
     upper 16 bits: bias set value
     lower 16 bits: measured ADC value
+
+BIAS_STATE values:
+    0: NOT_STABLE
+    1: STABLE
 """
 
 from __future__ import annotations
 
 __author__ = "Irakli Keshelashvili"
 __copyright__ = "Copyright 2026, The Super FRS Project"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __maintainer__ = "Irakli Keshelashvili"
 __email__ = "i.keshelashvili@gsi.de"
 __status__ = "Production"
@@ -47,6 +52,8 @@ ADC_FACTOR = 400.0
 
 STABILITY_WINDOW_SIZE = 4
 STABILITY_TOLERANCE_VOLTS = 0.01
+BIAS_STATE_NOT_STABLE = 0
+BIAS_STATE_STABLE = 1
 
 PV_PREFIX = "SFRS:FHF1:SCIFI3"
 
@@ -98,7 +105,7 @@ def configure_logging(debug: bool = False) -> None:
     )
 
     logger.add(
-        "logs/scifi_bias_2_epics.log",
+        "scifi_bias_2_epics.log",
         level="DEBUG",
         rotation="1 MB",
         retention="10 days",
@@ -219,7 +226,7 @@ def connect_pvs() -> dict[tuple[int, int, str], epics.PV]:
     pvs: dict[tuple[int, int, str], epics.PV] = {}
 
     for sfp, device in SCIFI_BOARDS:
-        for field in ("BIAS_SET", "BIAS_RBV"):
+        for field in ("BIAS_SET", "BIAS_RBV", "BIAS_STATE"):
             name = pv_name(sfp, device, field)
 
             pv = epics.PV(
@@ -240,8 +247,9 @@ def connect_pvs() -> dict[tuple[int, int, str], epics.PV]:
 
 def write_pv(
     pv: epics.PV,
-    value: float,
-    old_value: float | None,
+    value: float | int,
+    old_value: float | int | None,
+    field: str,
 ) -> bool:
     """
     Write a PV only if the value changed.
@@ -263,18 +271,27 @@ def write_pv(
         timeout=2.0,
     )
 
+    if field == "BIAS_STATE":
+        displayed_value = (
+            "STABLE (1)"
+            if value == BIAS_STATE_STABLE
+            else "NOT_STABLE (0)"
+        )
+    else:
+        displayed_value = f"{float(value):.3f} V"
+
     if success != 1:
         logger.error(
-            "Failed to write {} = {:.3f} V",
+            "Failed to write {} = {}",
             pv.pvname,
-            value,
+            displayed_value,
         )
         return False
 
     logger.success(
-        "{} = {:.3f} V",
+        "{} = {}",
         pv.pvname,
-        value,
+        displayed_value,
     )
 
     return True
@@ -302,7 +319,7 @@ def monitor_bias(interval: float) -> None:
     """Continuously read all boards and update their EPICS PVs."""
     pvs = connect_pvs()
 
-    previous_values: dict[tuple[int, int, str], float] = {}
+    previous_values: dict[tuple[int, int, str], float | int] = {}
     histories = {
         board: deque(maxlen=STABILITY_WINDOW_SIZE)
         for board in SCIFI_BOARDS
@@ -327,6 +344,20 @@ def monitor_bias(interval: float) -> None:
                     device,
                     error,
                 )
+
+                histories[(sfp, device)].clear()
+
+                state_key = (sfp, device, "BIAS_STATE")
+                state_value = BIAS_STATE_NOT_STABLE
+
+                if write_pv(
+                    pvs[state_key],
+                    state_value,
+                    previous_values.get(state_key),
+                    "BIAS_STATE",
+                ):
+                    previous_values[state_key] = state_value
+
                 continue
 
             history = histories[(sfp, device)]
@@ -350,6 +381,11 @@ def monitor_bias(interval: float) -> None:
             values = {
                 "BIAS_SET": reading.set_voltage,
                 "BIAS_RBV": reading.measured_voltage,
+                "BIAS_STATE": (
+                    BIAS_STATE_STABLE
+                    if stable
+                    else BIAS_STATE_NOT_STABLE
+                ),
             }
 
             for field, value in values.items():
@@ -357,7 +393,7 @@ def monitor_bias(interval: float) -> None:
                 pv = pvs[key]
                 old_value = previous_values.get(key)
 
-                if write_pv(pv, value, old_value):
+                if write_pv(pv, value, old_value, field):
                     previous_values[key] = value
 
         elapsed = time.monotonic() - cycle_started
