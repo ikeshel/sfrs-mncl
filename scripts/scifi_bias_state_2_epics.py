@@ -105,7 +105,7 @@ def configure_logging(debug: bool = False) -> None:
     )
 
     logger.add(
-        "scifi_bias_2_epics.log",
+        "logs/scifi_bias_2_epics.log",
         level="DEBUG",
         rotation="1 MB",
         retention="10 days",
