@@ -20,17 +20,15 @@ from __future__ import annotations
 
 __author__ = "Irakli Keshelashvili"
 __copyright__ = "Copyright 2026, The Super FRS Project"
-__version__ = "0.1.0"
+__version__ = "0.3.0"
 __maintainer__ = "Irakli Keshelashvili"
 __email__ = "i.keshelashvili@gsi.de"
 __status__ = "Production"
 
 import argparse
-import math
 import subprocess
 import sys
 import time
-from collections import deque
 from dataclasses import dataclass
 
 import epics
@@ -44,9 +42,6 @@ POLL_INTERVAL_SECONDS = 1.0
 BIAS_READ_REGISTER = 0x20011C
 PWM_FACTOR = 755.0
 ADC_FACTOR = 400.0
-
-STABILITY_WINDOW_SIZE = 4
-STABILITY_TOLERANCE_VOLTS = 0.01
 
 PV_PREFIX = "SFRS:FHF1:SCIFI3"
 
@@ -240,8 +235,9 @@ def connect_pvs() -> dict[tuple[int, int, str], epics.PV]:
 
 def write_pv(
     pv: epics.PV,
-    value: float,
-    old_value: float | None,
+    value: float | int,
+    old_value: float | int | None,
+    field: str,
 ) -> bool:
     """
     Write a PV only if the value changed.
@@ -263,50 +259,30 @@ def write_pv(
         timeout=2.0,
     )
 
+    displayed_value = f"{float(value):.3f} V"
+
     if success != 1:
         logger.error(
-            "Failed to write {} = {:.3f} V",
+            "Failed to write {} = {}",
             pv.pvname,
-            value,
+            displayed_value,
         )
         return False
 
     logger.success(
-        "{} = {:.3f} V",
+        "{} = {}",
         pv.pvname,
-        value,
+        displayed_value,
     )
 
     return True
-
-
-def is_stable(history: deque[float]) -> bool:
-    """Return True when a complete measurement window is within tolerance."""
-    if len(history) < history.maxlen:
-        return False
-
-    difference = max(history) - min(history)
-
-    return (
-        difference < STABILITY_TOLERANCE_VOLTS
-        or math.isclose(
-            difference,
-            STABILITY_TOLERANCE_VOLTS,
-            rel_tol=0.0,
-            abs_tol=1e-12,
-        )
-    )
 
 
 def monitor_bias(interval: float) -> None:
     """Continuously read all boards and update their EPICS PVs."""
     pvs = connect_pvs()
 
-    previous_values: dict[tuple[int, int, str], float] = {}
-    histories = {
-        board: deque(maxlen=STABILITY_WINDOW_SIZE)
-        for board in SCIFI_BOARDS
-    }
+    previous_values: dict[tuple[int, int, str], float | int] = {}
 
     logger.info(
         "Starting SiPM bias monitor for {} with {:.1f} s interval",
@@ -327,16 +303,13 @@ def monitor_bias(interval: float) -> None:
                     device,
                     error,
                 )
-                continue
 
-            history = histories[(sfp, device)]
-            history.append(reading.measured_voltage)
-            stable = is_stable(history)
+                continue
 
             logger.debug(
                 (
                     "SFP {}, DEV {} | set raw: {} ({:.3f} V), "
-                    "ADC raw: {} ({:.3f} V){}"
+                    "ADC raw: {} ({:.3f} V)"
                 ),
                 sfp,
                 device,
@@ -344,7 +317,6 @@ def monitor_bias(interval: float) -> None:
                 reading.set_voltage,
                 reading.adc_raw,
                 reading.measured_voltage,
-                " | STABLE" if stable else "",
             )
 
             values = {
@@ -357,7 +329,7 @@ def monitor_bias(interval: float) -> None:
                 pv = pvs[key]
                 old_value = previous_values.get(key)
 
-                if write_pv(pv, value, old_value):
+                if write_pv(pv, value, old_value, field):
                     previous_values[key] = value
 
         elapsed = time.monotonic() - cycle_started
