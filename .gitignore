@@ -4,6 +4,7 @@ logs/
 package/__pycache__/ 
 gui/__pycache__/
 scripts/__pycache__/
+.venv/
 
 .size_pos_*.yaml
 *.pyc

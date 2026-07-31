@@ -15,6 +15,9 @@ pyserial
 opencv-python
 python-xlib
 PyQt6
+PyQt6-WebEngine-Qt6
+PyQt6-WebEngine
 pyqtgraph
 bs4
 pyyaml
+pyepics
