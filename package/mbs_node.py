@@ -104,7 +104,7 @@ class MBSNode(QtWidgets.QWidget,
         self.lbl_subsystem_id = QtWidgets.QLabel(self)
         self.lbl_subsystem_id.setObjectName(f"lbl_{self.directory}_subsystem_id")
         self.lbl_subsystem_id.setFont(QFont("Times", 10, QFont.Weight.Bold))
-        self.lbl_subsystem_id.setText(f"Eve ID: {self.WR_SUBSYSTEM_ID}")
+        self.lbl_subsystem_id.setText(f"WR: {self.WR_SUBSYSTEM_ID}")
         self.lbl_subsystem_id.setToolTip(f"Subsystem event ID")
         self.lbl_subsystem_id.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_subsystem_id.setGeometry(QtCore.QRect(10, 55, 110, 30))

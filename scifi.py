@@ -112,16 +112,37 @@ class SciFiWorker(QRunnable):
                     dev = board['dev']
                     fpga_temp = None
                     sipm_temp = None
+
                     if board['pv_fpga'].wait_for_connection(timeout=1.0):
                         fpga_temp = board['pv_fpga'].get()
                     else:
                         fpga_temp = 0.0
+
                     if board['pv_sipm'].wait_for_connection(timeout=1.0):
                         sipm_temp = board['pv_sipm'].get()
                     else:
                         sipm_temp = 0.0
+
+                    if board['pv_bias_set'].wait_for_connection(timeout=1.0):
+                        bias_set = board['pv_bias_set'].get()
+                    else:
+                        bias_set = 0.0
+
+                    if board['pv_bias_rbv'].wait_for_connection(timeout=1.0):
+                        bias_rbv = board['pv_bias_rbv'].get()
+                    else:
+                        bias_rbv = 0.0
+
+                    if board['pv_bias_state'].wait_for_connection(timeout=1.0):
+                        bias_state = board['pv_bias_state'].get()
+                    else:
+                        bias_state = 0
+
                     self.datadict[f'board_{sfp}_{dev}_fpga_temp'] = fpga_temp
                     self.datadict[f'board_{sfp}_{dev}_sipm_temp'] = sipm_temp
+                    self.datadict[f'board_{sfp}_{dev}_bias_set'] = bias_set
+                    self.datadict[f'board_{sfp}_{dev}_bias_rbv'] = bias_rbv
+                    self.datadict[f'board_{sfp}_{dev}_bias_state'] = bias_state
             
             self.signals.data.emit( self.datadict ) # emit the data when it's ready
 
@@ -199,7 +220,7 @@ class Ui_BoardInfo(object):
         # SciFi FEB sensor: 0.0
         fpga_temp = 0.0
         SiPM_temp = 0.0
-        font = QFont("Arial", 12, QFont.Weight.Bold)
+        fontBold = QFont("Arial", 12, QFont.Weight.Bold)
         lable_alignment = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
 
         self.lab_sfp_dev = QLabel(parent=self.groupBox)
@@ -210,18 +231,27 @@ class Ui_BoardInfo(object):
 
         self.lab_fpga = QLabel(parent=self.groupBox)
         self.lab_fpga.setText(f"FPGA {fpga_temp:.1f} °C")
-        self.lab_fpga.setFont(font)
+        self.lab_fpga.setFont(fontBold)
         self.lab_fpga.setAlignment(lable_alignment)
         self.groupBoxLayout.addWidget(self.lab_fpga, 1, 0) # row, column, rowspan, colspan
 
         self.lab_sipm = QLabel(parent=self.groupBox)
         self.lab_sipm.setText(f"SiPM {SiPM_temp:.1f} °C")
-        self.lab_sipm.setFont(font)
+        self.lab_sipm.setFont(fontBold)
         self.lab_sipm.setAlignment(lable_alignment)
         self.groupBoxLayout.addWidget(self.lab_sipm, 2, 0) # row, column, rowspan, colspan
 
+        self.lab_bias_title = QLabel(parent=self.groupBox)
+        self.lab_bias_title.setText(f"Bias Set | RBV | STATE")
+        self.lab_bias_title.setFont(fontBold)
+        self.lab_bias_title.setAlignment(lable_alignment)
+        self.groupBoxLayout.addWidget(self.lab_bias_title, 3, 0) # row, column, rowspan, colspan
 
-
+        self.lab_bias_display = QLabel(parent=self.groupBox)
+        self.lab_bias_display.setText(f" 00.0 V | 00.0 V | 0")
+        self.lab_bias_display.setFont(QFont("Courier", 12, QFont.Weight.Normal))
+        self.lab_bias_display.setAlignment(lable_alignment)
+        self.groupBoxLayout.addWidget(self.lab_bias_display, 4, 0) # row, column, rowspan, colspan
 
 #==============================================================================
 ## MBS Node Manager Main Window
@@ -288,16 +318,18 @@ class SciFiMainWindow(  QMainWindow,
 
         # draw the boards in the layout according to the SciFi detector layout
         layout = [(1,0), (2,0), (3,0), (4,0), (5,0), (6,0), 
-                  (0,1), (0,2), 
-                  (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), 
+                  (0,2), (0,1), 
+                  (6,3), (5,3), (4,3), (3,3), (2,3), (1,3),
                   (7,1), (7,2)]
         for board_id, board in SCIFI_BOARD_MAPPING.items():
             sfp = board['sfp']
             dev = board['dev']
             self.board[board_id] = Ui_BoardInfo(board_id, sfp, dev)
             self.board[board_id].setupUi(self)
-            self.board[board_id].lab_fpga.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("FPGA", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
-            self.board[board_id].lab_sipm.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM", sfp, dev) # connect the mouse click event to the show_hide_dashboard function
+            self.board[board_id].lab_fpga.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("FPGA:TEMP", sfp, dev)
+            self.board[board_id].lab_sipm.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:TEMP", sfp, dev)
+            self.board[board_id].lab_bias_title.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_SET", sfp, dev)
+            self.board[board_id].lab_bias_display.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_RBV", sfp, dev)
             self.tab_main_layout.addWidget(self.board[board_id].layoutWidget, layout[board_id][1], layout[board_id][0]) # add to grid layout
 
         self.tab_main.setLayout(self.tab_main_layout)
@@ -369,11 +401,18 @@ class SciFiMainWindow(  QMainWindow,
             dev = board['dev']
             board['pv_fpga']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:FPGA:TEMP")
             board['pv_sipm']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:TEMP")
+            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_SET
+            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_RBV
+            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_STATE
+            board['pv_bias_set']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_SET")
+            board['pv_bias_rbv']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_RBV")
+            board['pv_bias_state']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_STATE")
+
 
     #==========================================================================
-    def show_hide_dashboard(self, sensor="FPGA", sfp=0, dev=0):
+    def show_hide_dashboard(self, sensor="FPGA:TEMP", sfp=0, dev=0):
 
-        url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}:TEMP"
+        url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}"
         self.browser_window.view.load(QUrl(url))
 
         if self.browser_window.isVisible():
@@ -432,6 +471,18 @@ class SciFiMainWindow(  QMainWindow,
             sipm_temp = data_dict.get(f'board_{sfp}_{dev}_sipm_temp', 0.0)
             self.board[board_id].lab_fpga.setText(f"FPGA {fpga_temp:.1f} °C")
             self.board[board_id].lab_sipm.setText(f"SiPM {sipm_temp:.1f} °C")
+
+            bias_state = int(data_dict.get(f'board_{sfp}_{dev}_bias_state', 0))
+            bias_text = f"{data_dict.get(f'board_{sfp}_{dev}_bias_set', 0.0):4.1f} V | {data_dict.get(f'board_{sfp}_{dev}_bias_rbv', 0.0):.1f} V"
+            self.board[board_id].lab_bias_display.setText(bias_text)
+            
+            if bias_state == 0:
+                self.board[board_id].lab_bias_display.setStyleSheet("color: gray;")
+            elif bias_state == 1:
+                self.board[board_id].lab_bias_display.setStyleSheet("color: darkgreen;")
+            elif bias_state == 2:
+                self.board[board_id].lab_bias_display.setStyleSheet("color: red;")
+
         self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
 
     #==========================================================================
@@ -451,6 +502,9 @@ class SciFiMainWindow(  QMainWindow,
         logger.debug("closeEvent")
         self.save_window_data() # save window position and size on close
 
+        # close browser if open
+        if self.browser_window.isVisible():
+            self.browser_window.close()
 
         # stop the worker thread
         self.tamex_worker.is_running = False  # Stop the worker loop

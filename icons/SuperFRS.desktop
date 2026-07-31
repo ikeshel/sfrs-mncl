@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec[$e]=$HOME/sfrs-mncl/./super_frs_manager.py
+GenericName[en_US]=
+GenericName=
+Icon[$e]=$HOME/sfrs-mncl/icons/SuperFRS.png
+MimeType=
+Name[en_US]=SuperFRS
+Name=SuperFRS
+Path[$e]=$HOME/sfrs-mncl
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
