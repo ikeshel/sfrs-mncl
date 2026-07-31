@@ -27,7 +27,6 @@ sys.path.append('package')
 # from gui_env import ensure_gui_environment
 # ensure_gui_environment()
 
-from mbs_node         import MBSNode
 from mncl_logger      import MnclLogger
 
 from win_pos_manager  import WindowPositionManager
@@ -254,7 +253,7 @@ class Ui_BoardInfo(object):
         self.groupBoxLayout.addWidget(self.lab_bias_display, 4, 0) # row, column, rowspan, colspan
 
 #==============================================================================
-## MBS Node Manager Main Window
+## SciFi Main Window
 #==============================================================================
 class SciFiMainWindow(  QMainWindow, 
                         MnclLogger,
@@ -270,18 +269,12 @@ class SciFiMainWindow(  QMainWindow,
         MnclLogger.__init__(self)
         self.setup_logger()
 
-        node = {'host_name': 'x86l-253', 'node_name': 'SciFi', 'directory': 'SiFi', 'active': True, 'pc_type': 'intel_pc'}
-
-        self.nodes = []
-        self.nodes.append(MBSNode(node))
-
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
         SSHCommander.__init__(self, hostname='x86l-253') # initialize SSHCommander with node_host
 
         self.init_epics()
 
-        # node widget
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
