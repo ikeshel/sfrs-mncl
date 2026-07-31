@@ -405,12 +405,15 @@ class SciFiMainWindow(  QMainWindow,
     #==========================================================================
     def show_hide_dashboard(self, sensor="FPGA:TEMP", sfp=0, dev=0):
 
-        url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}"
-        self.browser_window.view.load(QUrl(url))
 
-        if self.browser_window.isVisible():
+        if self.browser_window.isVisible() and self.shown_sensor==sensor and self.shown_sfp==sfp and self.shown_dev==dev:
             self.browser_window.close() # close the existing window before opening a new one
         else:
+            url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}"
+            self.browser_window.view.load(QUrl(url))
+            self.shown_sensor = sensor
+            self.shown_sfp = sfp
+            self.shown_dev = dev
             self.browser_window.move(200, 20) # move the window to a specific position on the screen
             self.browser_window.resize(900, 600) # resize the window to a specific size
             self.browser_window.show()
