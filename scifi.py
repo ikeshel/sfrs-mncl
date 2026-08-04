@@ -392,14 +392,14 @@ class SciFiMainWindow(  QMainWindow,
         for board_id, board in SCIFI_BOARD_MAPPING.items():
             sfp = board['sfp']
             dev = board['dev']
-            board['pv_fpga']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:FPGA:TEMP")
-            board['pv_sipm']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:TEMP")
-            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_SET
-            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_RBV
-            # SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_STATE
-            board['pv_bias_set']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_SET")
-            board['pv_bias_rbv']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_RBV")
-            board['pv_bias_state']=epics.PV(f"SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:SIPM:BIAS_STATE")
+            board['pv_fpga']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:FPGA:TEMP")
+            board['pv_sipm']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:TEMP")
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_SET
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_RBV
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_STATE
+            board['pv_bias_set']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_SET")
+            board['pv_bias_rbv']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_RBV")
+            board['pv_bias_state']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_STATE")
 
 
     #==========================================================================
@@ -409,7 +409,7 @@ class SciFiMainWindow(  QMainWindow,
         if self.browser_window.isVisible() and self.shown_sensor==sensor and self.shown_sfp==sfp and self.shown_dev==dev:
             self.browser_window.close() # close the existing window before opening a new one
         else:
-            url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI3:SFP{sfp}:DEV{dev}:{sensor}"
+            url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv=SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:{sensor}"
             self.browser_window.view.load(QUrl(url))
             self.shown_sensor = sensor
             self.shown_sfp = sfp

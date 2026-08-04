@@ -4,47 +4,162 @@
 ## chambers: FPF2, FPF3, FPF4, FMF1, FMF2, FMF3, FHF1
 ## detector: PLSCI, SCIFI, MUSIC
 chambers:
+#------------------------------------------------------------------------------
+  - chamber:  FTF0
+    name: 'FTF 0'
+    directory: FTF0
+    active:    false
+
+#------------------------------------------------------------------------------
+  - chamber:  FPF0
+    name: 'FPF 0'
+    directory: FPF0
+    active:    false
+
+#------------------------------------------------------------------------------
+  - chamber:  FPF1
+    name: 'FPF 1'
+    directory: FPF1
+    active:    false
+
+#------------------------------------------------------------------------------
   - chamber:  FPF2
-    node_name: 'FPF2'
+    name: 'FPF 2'
     directory: FPF2
     active:    true
 
     - detector:   SCIFI1
       node_name:  'x86l-234'
-      directory:  SCIFI1
+      directory:  FPF2_SCIFI1
       active:     true
 
     - detector:   PLSCI
-      node_name:  'PLSCI'
-      directory:  PLSCI
+      node_name:  'x86l-208'
+      directory:  FPF2_PLSCI
       active:     true
 
     - detector:   SCIFI2
       node_name:  'x86l-235'
-      directory:  SCIFI2
+      directory:  FPF2_SCIFI2
       active:     true
     
-  - chamber:  FHF1
-    node_name: 'FHF 1'
-    directory: FHF1
+#------------------------------------------------------------------------------
+  - chamber:  FPF3
+    name: 'FPF 3'
+    directory: FPF3
     active:    true
 
     - detector:   SCIFI1
-      node_name:  'x86l-234'
-      directory:  SCIFI1
+      node_name:  'x86l-237'
+      directory:  FPF3_SCIFI1
+      active:     true
+
+#------------------------------------------------------------------------------
+  - chamber:  FPF4
+    name: 'FPF 4'
+    directory: FPF4
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-241'
+      directory:  FPF4_SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'x86l-209'
+      directory:  FPF4_PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-244'
+      directory:  FPF4_SCIFI2
+      active:     true
+
+#------------------------------------------------------------------------------
+  - chamber:  FMF1
+    name: 'FMF 1'
+    directory: FMF1
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-245'
+      directory:  FMF1_SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'x86l-209'
+      directory:  FMF1_PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-246'
+      directory:  FMF1_SCIFI2
+      active:     true
+
+#------------------------------------------------------------------------------
+  - chamber:  FMF2
+    name: 'FMF 2'
+    directory: FMF2
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-247'
+      directory:  FMF2_SCIFI1
       active:     true
 
     - detector:   PLSCI
       node_name:  'x86l-212'
-      directory:  PLSCI
+      directory:  FMF2_PLSCI
       active:     true
 
     - detector:   SCIFI2
-      node_name:  'x86l-234'
-      directory:  SCIFI2
+      node_name:  'x86l-248'
+      directory:  FMF2_SCIFI2
+      active:     true
+
+#------------------------------------------------------------------------------
+  - chamber:  FMF3
+    name: 'FMF 3'
+    directory: FMF3
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-249'
+      directory:  FMF3_SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'x86l-212'
+      directory:  FMF3_PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-250'
+      directory:  FMF3_SCIFI2
+      active:     true
+
+#------------------------------------------------------------------------------
+  - chamber:  FHF1
+    name: 'FHF 1'
+    directory: FHF1
+    active:    true
+
+    - detector:   SCIFI1
+      node_name:  'x86l-251'
+      directory:  FHF1_SCIFI1
+      active:     true
+
+    - detector:   PLSCI
+      node_name:  'x86l-212'
+      directory:  FHF1_PLSCI
+      active:     true
+
+    - detector:   SCIFI2
+      node_name:  'x86l-252'
+      directory:  FHF1_SCIFI2
       active:     true
 
     - detector:   SCIFI3
-      node_name:  'x86l-235'
-      directory:  SCIFI3
+      node_name:  'x86l-253'
+      directory:  FHF1_SCIFI3
       active:     true
