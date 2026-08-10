@@ -241,7 +241,7 @@ class Ui_BoardInfo(object):
         self.groupBoxLayout.addWidget(self.lab_sipm, 2, 0) # row, column, rowspan, colspan
 
         self.lab_bias_title = QLabel(parent=self.groupBox)
-        self.lab_bias_title.setText(f"Bias Set | RBV | STATE")
+        self.lab_bias_title.setText(f"Bias Set | RBV ")
         self.lab_bias_title.setFont(fontBold)
         self.lab_bias_title.setAlignment(lable_alignment)
         self.groupBoxLayout.addWidget(self.lab_bias_title, 3, 0) # row, column, rowspan, colspan

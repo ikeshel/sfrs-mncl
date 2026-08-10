@@ -54,9 +54,23 @@ class MBSBrowser(QWidget):
 # M A I N
 #******************************************************************************
 if __name__ == "__main__":
+
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default Ctrl+C behavior
+
     app = QApplication(sys.argv)
 
-    browser = MBSBrowser(sys.argv[1] if len(sys.argv) == 2 else "http://x86l-132:8899/MBS/localhost/ControlGUI/")
+    mypv = "SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:TEMP" if len(sys.argv) < 2 else sys.argv[1]
+
+    browser = MBSBrowser()
+
+    url=f"http://dtlpc019.gsi.de:17665/retrieval/ui/viewer/archViewer.html?pv={mypv}"
+    browser.view.load(QUrl(url))
+
+    browser.move(200, 20) # move the window to a specific position on the screen
+    browser.resize(900, 600) # resize the window to a specific size
     browser.show()
+    browser.raise_()
+    browser.activateWindow()
 
     sys.exit(app.exec())
