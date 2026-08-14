@@ -320,8 +320,8 @@ def monitor_bias(interval: float) -> None:
             )
 
             values = {
-                "BIAS_SET": reading.set_voltage,
-                "BIAS_RBV": reading.measured_voltage,
+                "BIAS_V_SET": reading.set_voltage,
+                "BIAS_V_RBV": reading.measured_voltage,
             }
 
             for field, value in values.items():
