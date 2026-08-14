@@ -8,8 +8,8 @@ Detector:
     SFRS:FHF1:SCIFI3
 
 PV examples:
-    SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_SET
-    SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_RBV
+    SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_V_SET
+    SFRS:FHF1:SCIFI3:SFP0:DEV0:SIPM:BIAS_V_RBV
 
 The 32-bit bias readback register contains:
     upper 16 bits: bias set value
@@ -214,7 +214,7 @@ def connect_pvs() -> dict[tuple[int, int, str], epics.PV]:
     pvs: dict[tuple[int, int, str], epics.PV] = {}
 
     for sfp, device in SCIFI_BOARDS:
-        for field in ("BIAS_SET", "BIAS_RBV"):
+        for field in ("BIAS_V_SET", "BIAS_V_RBV"):
             name = pv_name(sfp, device, field)
 
             pv = epics.PV(
