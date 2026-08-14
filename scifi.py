@@ -321,8 +321,8 @@ class SciFiMainWindow(  QMainWindow,
             self.board[board_id].setupUi(self)
             self.board[board_id].lab_fpga.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("FPGA:TEMP", sfp, dev)
             self.board[board_id].lab_sipm.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:TEMP", sfp, dev)
-            self.board[board_id].lab_bias_title.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_SET", sfp, dev)
-            self.board[board_id].lab_bias_display.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_RBV", sfp, dev)
+            self.board[board_id].lab_bias_title.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_V_SET", sfp, dev)
+            self.board[board_id].lab_bias_display.mousePressEvent = lambda event, sfp=sfp, dev=dev: self.show_hide_dashboard("SIPM:BIAS_V_RBV", sfp, dev)
             self.tab_main_layout.addWidget(self.board[board_id].layoutWidget, layout[board_id][1], layout[board_id][0]) # add to grid layout
 
         self.tab_main.setLayout(self.tab_main_layout)
@@ -394,11 +394,11 @@ class SciFiMainWindow(  QMainWindow,
             dev = board['dev']
             board['pv_fpga']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:FPGA:TEMP")
             board['pv_sipm']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:TEMP")
-            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_SET
-            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_RBV
-            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_STATE
-            board['pv_bias_set']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_SET")
-            board['pv_bias_rbv']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_RBV")
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_V_SET
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_V_RBV
+            # SFRS:FHF1:SCIFI2:SFP0:DEV0:SIPM:BIAS_V_STATE
+            board['pv_bias_set']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_V_SET")
+            board['pv_bias_rbv']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_V_RBV")
             board['pv_bias_state']=epics.PV(f"SFRS:FHF1:SCIFI2:SFP{sfp}:DEV{dev}:SIPM:BIAS_STATE")
 
 
