@@ -216,7 +216,7 @@ class MenuBarManager(SSHCommander):
 
         logger.info("Checking for updates...")
 
-        command_list = ["setenv https_proxy http://proxy.gsi.de:8080",
+        command_list = ["setenv https_proxy https://proxy.gsi.de:8080",
                         "setenv http_proxy http://proxy.gsi.de:8080",
                         "cd ~/sfrs-mncl", "git fetch", "git pull", "cd"]
         success_flag = True
