@@ -1,23 +1,57 @@
 #
 # Python Dependencies Documentation
 # This file contains a list of Python package dependencies required for the project.
+# Author: i.keshelashvili@gsi.de
 #
 ## How to Install Dependencies
 #
 # To install all dependencies listed in this file, use pip:
 # pip3 install -r python_dependencies.txt
 
-#
-loguru
-requests
-numpy
-pyserial
-opencv-python
-python-xlib
+## Desktop interface and visualization
+# Qt widgets, signals, and threads for desktop interfaces.
 PyQt6
-PyQt6-WebEngine-Qt6
+
+# Python bindings for embedding Qt WebEngine browser views.
 PyQt6-WebEngine
+
+# Qt WebEngine runtime libraries for embedded browser views.
+PyQt6-WebEngine-Qt6
+
+# Interactive plotting and visualization for Qt applications.
 pyqtgraph
-bs4
-pyyaml
+
+# Access to the X11 display server and screen information.
+python-xlib
+
+## Numerical and image processing
+# Numerical arrays and scientific calculations.
+numpy
+
+# Image processing and camera capture.
+opencv-python
+
+## Hardware communication
+# Read and write EPICS process variables through Channel Access.
 pyepics
+
+# Serial communication with connected hardware.
+pyserial
+
+## Web access and parsing
+# HTTP requests for web services and APIs.
+requests
+
+# Beautiful Soup for parsing HTML content.
+bs4
+
+## Configuration, logging, and process utilities
+# Read and write YAML configuration files.
+pyyaml
+
+# Application logging with configurable output and formatting.
+loguru
+
+# Stream subprocess output to the terminal while also capturing it.
+# Debian/Ubuntu package: python3-subprocess-tee; pip package: subprocess-tee.
+subprocess-tee
