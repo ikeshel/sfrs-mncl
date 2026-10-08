@@ -1,0 +1,42 @@
+# Debian/Ubuntu desktop dependencies for MBS Node Control Library.
+# Author: i.keshelashvili@gsi.de
+# One package per line; comments and blank lines are ignored by the installer.
+
+## Python environment and UI generation
+# Python interpreter and isolated environments with pip.
+python3
+python3-venv
+
+# Regenerate Qt Designer UI modules using the project Makefiles.
+make
+
+## Desktop tools
+# KDE terminal used for node consoles.
+konsole
+
+# Qt 6 D-Bus tool (qdbus6) for KDE panel information.
+qdbus-qt6
+
+# Move and close X11 console windows.
+wmctrl
+
+# Display information (xdpyinfo) and monitor configuration (xrandr).
+x11-utils
+x11-xserver-utils
+
+## Qt and OpenCV runtime libraries
+# OpenGL and EGL shared libraries used by graphical applications.
+libgl1
+libegl1
+
+# X11 cursor and keyboard support for Qt's XCB platform plugin.
+libxcb-cursor0
+libxkbcommon-x11-0
+
+## Network and shell tools
+# Connect to remote MBS nodes and check connectivity.
+openssh-client
+iputils-ping
+
+# Run the C-shell helper scripts in bin/ (provides csh and tcsh).
+tcsh

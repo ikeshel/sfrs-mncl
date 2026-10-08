@@ -5,8 +5,8 @@
 #
 ## How to Install Dependencies
 #
-# To install all dependencies listed in this file, use pip:
-# pip3 install -r python_dependencies.txt
+# For full desktop setup, run ./scripts/install_dependencies.sh.
+# For Python packages only: .venv/bin/python -m pip install -r python_dependencies.txt
 
 ## Desktop interface and visualization
 # Qt widgets, signals, and threads for desktop interfaces.
