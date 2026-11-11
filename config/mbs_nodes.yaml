@@ -6,7 +6,7 @@ nodes:
       node_name:  'Time Sorter'
       directory:  'TimeSorter'
       active:     true
-      pc_type:    'intel_nuc'
+      pc_type:    'intel_music'
 
     - host_name:  x86l-260
       node_name:  'FMF1 MUSIC'
