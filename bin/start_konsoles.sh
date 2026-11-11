@@ -31,7 +31,7 @@ echo "Current user: $username"
 
 # List of logins
 logins=(
-  "$username@X86L-170"
+  "$username@x86l-259"
   "$username@X86L-132"
   "$username@X86L-253"
   "$username@X86L-260"

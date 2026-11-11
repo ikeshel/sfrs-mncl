@@ -2,7 +2,7 @@
 ## i.keshelashvili@gsi.de
 ## comment line starts with # and is ignored; empty lines are also ignored
 nodes:
-    - host_name:  x86l-170
+    - host_name:  x86l-259
       node_name:  'Time Sorter'
       directory:  'TimeSorter'
       active:     true

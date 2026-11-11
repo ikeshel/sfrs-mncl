@@ -422,7 +422,7 @@ if __name__ == "__main__":
     
     node1 = MBSNode({
         'node_name': 'TimeSorter',
-        'host_name': 'x86l-170',
+        'host_name': 'x86l-259',
         'directory': 'MBS_Node1'
     })
     node1.show()

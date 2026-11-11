@@ -29,8 +29,8 @@ from config_reader import ConfigReader
 
 ## constants
 USERNAME = "ikeshel"
-NODES    = [] # ['x86l-170', 'x86l-132', 'x86l-253']
-LOGINS   = [] # ['ikeshel@x86l-132', 'ikeshel@x86l-170', 'ikeshel@x86l-253', 'ikeshel@x86l-157']
+NODES    = [] # ['x86l-259', 'x86l-132', 'x86l-253']
+LOGINS   = [] # ['ikeshel@x86l-132', 'ikeshel@x86l-259', 'ikeshel@x86l-253', 'ikeshel@x86l-157']
 SCREENS  = [] # ["mbs", "web", "com"]
 SLEEP_TIME = 0.5
 

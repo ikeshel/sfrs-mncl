@@ -127,7 +127,7 @@ class SSHCommander:
 #==============================================================================
 def main():
     """Test the SSHCommander with a sample command."""
-    commander = SSHCommander(hostname='x86l-170')
+    commander = SSHCommander(hostname='x86l-259')
     screen_name = "mbs"
     list_of_commands = [
         '\x1A', # Ctrl+Z to suspend the screen session

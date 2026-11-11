@@ -155,14 +155,14 @@ class MdppMainWindow(  QMainWindow,
         MnclLogger.__init__(self)
         self.setup_logger()
 
-        node = {'host_name': 'x86l-170', 'node_name': 'MUSIC', 'directory': 'MUSIC', 'active': True, 'pc_type': 'intel_nuc'}
+        node = {'host_name': 'x86l-259', 'node_name': 'MUSIC', 'directory': 'MUSIC', 'active': True, 'pc_type': 'intel_nuc'}
 
         self.nodes = []
         self.nodes.append(MBSNode(node))
 
         WindowPositionManager.__init__(self)
         MenuBarManager.__init__(self)
-        SSHCommander.__init__(self, hostname='x86l-170') # initialize SSHCommander with node_host
+        SSHCommander.__init__(self, hostname='x86l-259') # initialize SSHCommander with node_host
 
 
         # node widget
