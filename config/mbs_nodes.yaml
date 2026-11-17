@@ -1,33 +1,109 @@
 ## List of nodes
 ## i.keshelashvili@gsi.de
 ## comment line starts with # and is ignored; empty lines are also ignored
+
+# Time Sorter node
 nodes:
-    - host_name:  x86l-259
-      node_name:  'Time Sorter'
-      directory:  'TimeSorter'
-      active:     true
-      pc_type:    'intel_music'
+  - host_name:  x86l-259
+    node_name:  'Time Sorter'
+    directory:  'TimeSorter'
+    active:     true
+    pc_type:    'intel_music'
 
-    - host_name:  x86l-260
-      node_name:  'FMF1 MUSIC'
-      directory:  'FMF1_MUSIC'
-      active:     true
-      pc_type:    'intel_music'
+# MUSIC nodes
+  - host_name:      x86l-260
+    sfrs_chamber:   'FMF1'
+    sfrs_detectore: 'MUSIC'
+    sfrs_node_id:   1
+    node_name:      'FMF1 MUSIC'
+    directory:      'FMF1_MUSIC'
+    active:         true
+    pc_type:        'intel_music'
 
-    - host_name:  x86l-132
-      node_name:  'FMF2 PlSci'
-      directory:  'FMF2_PLSCI'
-      active:     true
-      pc_type:    'intel_x86'
+  - host_name:      x86l-261
+    sfrs_chamber:   'FHF1'
+    sfrs_detectore: 'MUSIC'
+    sfrs_node_id:   1
+    node_name:      'FHF1 MUSIC'
+    directory:      'FHF1_MUSIC'
+    active:         true
+    pc_type:        'intel_music'
 
-    - host_name:  x86l-261
-      node_name:  'FHF1 MUSIC'
-      directory:  'FHF1_MUSIC'
-      active:     true
-      pc_type:    'intel_music'
+# PLSCI nodes
+  - host_name:      x86l-132
+    sfrs_chamber:   'FMF2'
+    sfrs_detectore: 'PlSci'
+    sfrs_node_id:   1
+    node_name:      'FMF2 PlSci'
+    directory:      'FMF2_PLSCI'
+    active:         true
+    pc_type:        'intel_x86'
 
-    - host_name:  x86l-253
-      node_name:  'FHF1 SciFi3'
-      directory:  'FHF1_SCIFI3'
-      active:     true
-      pc_type:    'intel_x86'
+# SciFi nodes
+  # FPF2
+  - host_name:      x86l-207
+    sfrs_chamber:   'FPF2'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   1
+    node_name:      'FPF2 SciFi1'
+    directory:      'FPF2_SCIFI1'
+    active:         true
+    pc_type:        'intel_x86'
+
+  - host_name:      x86l-210
+    sfrs_chamber:   'FPF2'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   2
+    node_name:      'FPF2 SciFi2'
+    directory:      'FPF2_SCIFI2'
+    active:         true
+    pc_type:        'intel_x86'
+
+  # FPF3
+  - host_name:      x86l-232
+    sfrs_chamber:   'FPF3'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   1
+    node_name:      'FPF3 SciFi1'
+    directory:      'FPF3_SCIFI1'
+    active:         true
+    pc_type:        'intel_x86'
+
+  # FPF4
+  - host_name:      x86l-237
+    sfrs_chamber:   'FPF4'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   1
+    node_name:      'FPF4 SciFi1'
+    directory:      'FPF4_SCIFI1'
+    active:         true
+    pc_type:        'intel_x86'
+
+  - host_name:      x86l-240
+    sfrs_chamber:   'FPF4'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   2
+    node_name:      'FPF4 SciFi2'
+    directory:      'FPF4_SCIFI2'
+    active:         true
+    pc_type:        'intel_x86'
+    
+  # FMF1
+  - host_name:      x86l-245
+    sfrs_chamber:   'FMF1'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   1
+    node_name:      'FMF1 SciFi1'
+    directory:      'FMF1_SCIFI1'
+    active:         true
+    pc_type:        'intel_x86'
+    
+  - host_name:      x86l-253
+    sfrs_chamber:   'FHF1'
+    sfrs_detectore: 'SciFi'
+    sfrs_node_id:   3
+    node_name:      'FHF1 SciFi3'
+    directory:      'FHF1_SCIFI3'
+    active:         true
+    pc_type:        'intel_x86'
+

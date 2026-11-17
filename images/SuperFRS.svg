@@ -193,15 +193,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.23125"
-     inkscape:cx="800"
-     inkscape:cy="302.53807"
+     inkscape:zoom="0.95746731"
+     inkscape:cx="726.91777"
+     inkscape:cy="137.86372"
      inkscape:window-width="2560"
      inkscape:window-height="1368"
-     inkscape:window-x="0"
+     inkscape:window-x="2560"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer-oc8">
+     inkscape:current-layer="layer-oc10">
     <inkscape:page
        x="0"
        y="0"
@@ -13383,6 +13383,189 @@
          style="fill:none;stroke:#000000;stroke-width:0.917002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
          transform="matrix(0.16,0,0,-0.16,18.666667,1058.6667)" />
     </g>
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FPF2_SCIFI2"
+       width="33.74078"
+       height="31.087011"
+       x="359.93488"
+       y="633.42468"
+       transform="rotate(-11.628042)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.14159292"
+       id="FPF2_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="176.74377"
+       y="643.76196"
+       transform="rotate(-13.521961)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.0637168"
+       id="FPF3_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="493.02686"
+       y="613.56976"
+       transform="rotate(-8.1102518)" />
+    <rect
+       style="fill:#ff3f3f;fill-opacity:0.180531"
+       id="FMF1_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="1035.4438"
+       y="-264.63995"
+       transform="rotate(51.32456)" />
+    <rect
+       style="fill:#ff3f3f;fill-opacity:0.148673;stroke-width:0.785325"
+       id="FMF1_SCIFI2"
+       width="26.475637"
+       height="24.433598"
+       x="1106.891"
+       y="-274.76596"
+       transform="matrix(0.6140138,0.78929529,-0.79317121,0.60899871,0,0)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.127434"
+       id="FMF2_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="1154.3867"
+       y="410.47086"
+       transform="rotate(18.919184)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.0778761"
+       id="FMF2_SCIFI2"
+       width="33.74078"
+       height="31.087011"
+       x="1381.9844"
+       y="352.99765"
+       transform="rotate(21.396333)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FMF3_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="1166.2607"
+       y="786.78961"
+       transform="rotate(-6.9785779)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FMF3_SCIFI2"
+       width="33.74078"
+       height="31.087011"
+       x="1224.6111"
+       y="813.61896"
+       transform="rotate(-8.2132135)" />
+    <rect
+       style="fill:#ff00ff;fill-opacity:0.0973452"
+       id="FHF1_MUSIC"
+       width="33.74078"
+       height="31.087011"
+       x="1751.9482"
+       y="306.46039"
+       transform="rotate(19.304526)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FHF1_SCIFI3"
+       width="33.74078"
+       height="31.087011"
+       x="1719.697"
+       y="301.03625"
+       transform="rotate(19.459998)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FHF1_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="1586.2325"
+       y="264.44775"
+       transform="rotate(20.677818)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.1"
+       id="FHF1_SCIFI2"
+       width="33.74078"
+       height="31.087011"
+       x="1658.2587"
+       y="287.66464"
+       transform="rotate(19.908955)" />
+    <rect
+       style="fill:#ff00ff;fill-opacity:0.0973452"
+       id="FMF1_MUSIC"
+       width="33.74078"
+       height="31.087011"
+       x="1137.6113"
+       y="-263.80029"
+       transform="rotate(51.249556)"
+       inkscape:label="FMF1_MUSIC" />
+    <rect
+       style="fill:#0000ff;fill-opacity:0.1;stroke:none"
+       id="rect1"
+       width="33.651062"
+       height="28.410324"
+       x="1076.5934"
+       y="-272.11115"
+       transform="rotate(51.836416)"
+       inkscape:label="FMF1_PLSCI" />
+    <rect
+       style="fill:#0000ff;fill-opacity:0.09911504;stroke:none"
+       id="rect1-6"
+       width="33.651062"
+       height="28.410324"
+       x="1225.163"
+       y="392.93991"
+       transform="rotate(19.740813)"
+       inkscape:label="FMF2_PLSCI" />
+    <rect
+       style="fill:#0000ff;fill-opacity:0.106195;stroke:none"
+       id="rect1-6-9"
+       width="33.651062"
+       height="28.410324"
+       x="1211.0889"
+       y="784.96857"
+       transform="rotate(-6.7992857)"
+       inkscape:label="FMF3_PLSCI" />
+    <rect
+       style="fill:#0000ff;fill-opacity:0.10973451;stroke:none"
+       id="rect1-6-6"
+       width="33.651062"
+       height="28.410324"
+       x="926.2616"
+       y="288.05978"
+       transform="rotate(19.740813)"
+       inkscape:label="FPF4_PLSCI" />
+    <rect
+       style="opacity:1;fill:#ff0000;fill-opacity:0.1"
+       id="FPF4_SCIFI2"
+       width="33.74078"
+       height="31.087011"
+       x="976.07568"
+       y="230.30782"
+       transform="rotate(23.112046)" />
+    <rect
+       style="fill:#ff0000;fill-opacity:0.0849557"
+       id="FPF4_SCIFI1"
+       width="33.74078"
+       height="31.087011"
+       x="774.13831"
+       y="299.5596"
+       transform="rotate(18.715298)" />
+    <rect
+       style="opacity:1;fill:#0000ff;fill-opacity:0.0725664;stroke:none"
+       id="rect2"
+       width="33.228352"
+       height="33.228352"
+       x="248.36348"
+       y="633.07336"
+       transform="rotate(-11.309932)"
+       inkscape:label="FPF2_PLSCI" />
+    <rect
+       style="fill:#0000ff;fill-opacity:0.1;stroke:none"
+       id="rect1-6-9-3"
+       width="33.651062"
+       height="28.410324"
+       x="1610.2019"
+       y="318.97525"
+       transform="rotate(18.787555)"
+       inkscape:label="FHF1_PLSCI" />
   </g>
   <g
      id="layer-oc11"

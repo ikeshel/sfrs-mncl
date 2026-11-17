@@ -9,9 +9,8 @@ __status__     = "Production"
 
 ##
 import signal
-import sys, os, time
+import sys, os
 from loguru import logger
-from Xlib.display import Display
 
 ## 
 from PyQt6.QtWidgets import (
@@ -20,21 +19,9 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QWidget,
     QVBoxLayout,
-    QSizePolicy,
 )
-from PyQt6.QtCore import (
-    Qt,
-    QRectF,
-    QThreadPool,
-    QObject,
-    QRunnable,
-    QThread,
-    pyqtSlot,
-    pyqtSignal,
-)
-from PyQt6.QtSvg import QSvgRenderer
-from PyQt6.QtGui import QAction, QPainter
-from PyQt6.QtSvgWidgets import QSvgWidget
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QAction
 
 ##
 sys.path.append('package')
@@ -46,58 +33,10 @@ sys.path.append('package')
 from mncl_logger        import MnclLogger
 from win_pos_manager    import WindowPositionManager
 from menu_bar           import MenuBarManager
-from mbs_node           import MBSNode
 from yaml_manager       import YamlManager
-
-###############################################################################
-class NodeWorkerSignals(QObject):
-    """ Signals to be emitted from the worker thread """
-    data = pyqtSignal(dict)
-
-###############################################################################
-class NodeWorker(QRunnable):
-    """ Worker thread that performs a task in the background. """
-
-    def __init__(self, nodes=None):
-        super(NodeWorker, self).__init__()
-
-        self.nodes       = nodes
-        self.signals     = NodeWorkerSignals()
-        self.is_running  = True
-        self.datadict    = {}
-
-        logger.debug(f"{__class__.__module__} started")
-
-        self.delay_ms = 1000 # milliseconds
-        self.last_time = 0
-
-    #==========================================================================
-    def run(self):
-
-        logger.debug("NodeWorker.run()")
-
-        while True:
-            if self.is_running == False:
-                logger.debug("NodeWorker.run() break")
-                break
-
-            QThread.msleep(self.delay_ms)
-            
-            # self.datadict['time'] = time.time() # seconds
-            # if self.last_time < self.datadict['time']-1: # check every 1 second
-            #     for node in self.nodes:
-            #         # self.datadict[f"alive_{node.name}"] = node.check_ping()
-            #         self.datadict[f"alive_{node.name}"] = node.check_ssh()
-            #     self.last_time = self.datadict['time']
-            
-            # self.signals.data.emit( self.datadict ) # emit the data when it's ready
-
-        logger.debug("NodeWorker.run() finished")
-
-    #==========================================================================
-    def stop(self):
-        logger.debug("NodeWorker.stop()")
-        self.is_running = False
+from detector_map       import DetectorMapWidget
+from node_process       import NodeProcessController
+from node_groups        import DETECTOR_GROUPS, node_group
 
 #==============================================================================
 #==============================================================================
@@ -121,7 +60,10 @@ class SuperFrsManager(   QMainWindow,
             QMessageBox.critical(self, "Error", f"Configuration file not found: {e}")
             sys.exit(1)
         logger.debug(f"Loaded MBS nodes configuration from YAML: {self.node_yaml.get_dict()}")
-        self.list_node_hosts = [node["host_name"] for node in self.node_yaml.get_dict()["nodes"]]
+        self.node_configs = {node['directory'].upper(): node
+                             for node in self.node_yaml.get_dict()['nodes']}
+        self.node_controller = NodeProcessController(self.node_configs.values())
+        self.list_node_hosts = [node["host_name"] for node in self.node_configs.values()]
 
         # yaml manager for mbs screens configuration
         try:
@@ -134,13 +76,29 @@ class SuperFrsManager(   QMainWindow,
         self.list_screens = list(self.screen_yaml.get_dict()['screens'].keys())
 
         ## intialize the parent classes
-        super(MnclLogger, self).__init__()
+        MnclLogger.__init__(self)
         self.setup_logger()
     
         WindowPositionManager.__init__(self)
 
         MenuBarManager.__init__(self)
         self.setup_mbs_menu()
+        self.node_menu.setTitle('Opened nodes')
+        self.timesorter_action = self.menubar.addAction('Time sorter')
+        sorter_directory = next((directory for directory, config in self.node_configs.items()
+                                 if node_group(config) == 'TIMESORTER'), None)
+        self.timesorter_action.setEnabled(sorter_directory is not None)
+        if sorter_directory is not None:
+            self.timesorter_action.setToolTip('Open the TimeSorter main window')
+            self.timesorter_action.triggered.connect(
+                lambda checked=False: self.open_node(sorter_directory)
+            )
+        self.setup_detector_menus()
+        self.node_menu_timer = QTimer(self)
+        self.node_menu_timer.setInterval(1000)
+        self.node_menu_timer.timeout.connect(self.refresh_node_menus)
+        self.node_menu_timer.start()
+        self.refresh_node_menus()
 
         
         # node widget
@@ -160,20 +118,9 @@ class SuperFrsManager(   QMainWindow,
         self.btn_show_dashboards.triggered.connect(self.show_all_dashboards)
         self.toolbar.addAction(self.btn_show_dashboards)
 
-        sfrs_svg = QSvgWidget(f"images/SuperFRS.svg", self)
-        self.layout.addWidget(sfrs_svg) # add the last created node to the layout
-
-
-        self.nodes = MBSNode.list_of_nodes.copy() # list of node objects for the worker thread
-
-        # -------------------------------------------------------------------------------------------
-        # starting threads
-        self.threadpool = QThreadPool()
-        logger.debug(f"Multithreading with maximum {self.threadpool.maxThreadCount()} threads")
-
-        self.node_worker = NodeWorker(MBSNode.list_of_nodes)
-        self.node_worker.signals.data.connect(self.data_received)
-        self.threadpool.start(self.node_worker)
+        self.sfrs_svg = DetectorMapWidget('images/SuperFRS.svg', self.node_configs.values(), self)
+        self.sfrs_svg.node_clicked.connect(self.open_node)
+        self.layout.addWidget(self.sfrs_svg)
 
         ## -------------------------------------------------------------------------------------------
         ## read window position
@@ -185,47 +132,88 @@ class SuperFrsManager(   QMainWindow,
             # self.setFixedSize(self.ww, self.hh)
 
         else:
-            # screen = Display(os.environ['DISPLAY']).screen() 
-            try:
-                screen = Display(os.environ['DISPLAY']).screen() 
-            except Exception as e:
-                logger.error(f"Cannot connect to X server. Exception: {e}\n")
-                screen = type('obj', (object,), {})()  # create empty object
-                screen.width_in_pixels = 1920
-                screen.height_in_pixels = 1080
-            self.move(  int(screen.width_in_pixels/2)+10,
-                        int(0.01*screen.height_in_pixels))
+            screen = QApplication.primaryScreen()
+            if screen is not None:
+                area = screen.availableGeometry()
+                self.resize(self.sizeHint().boundedTo(area.size()))
+                self.move(area.left(), area.top())
         
         self.setWindowTitle("Super FRS Detector Manager")
         self.show()
         self.raise_()
 
-    #==========================================================================
-    @pyqtSlot(dict)
-    def data_received (self, data_dict):
-        ''' timer loop to HMP readout and status check '''
-       
-        # logger.debug(f"Data received: {data_dict}")
+    @property
+    def nodes(self):
+        return self.node_controller.nodes
 
-        self.ping_toggling = not getattr(self, 'ping_toggling', False) # invert the toggling value to alternate colors on each check
-        for node in MBSNode.list_of_nodes:
-            if f"alive_{node.name}" in data_dict:
-                if data_dict[f"alive_{node.name}"] == True:
-                    if self.ping_toggling:
-                        node.status_ping.setStyleSheet(f"background-color: lightgreen; border-radius: {node.radius}px;")
-                    else:
-                        node.status_ping.setStyleSheet(f"background-color: green; border-radius: {node.radius}px;")
-                else:
-                    if self.ping_toggling:
-                        node.status_ping.setStyleSheet(f"background-color: pink; border-radius: {node.radius}px;")
-                    else:
-                        node.status_ping.setStyleSheet(f"background-color: red; border-radius: {node.radius}px;")
-                del data_dict[f"alive_{node.name}"] # remove the key to avoid processing it again
+    def setup_detector_menus(self):
+        self.detector_menus = {}
+        self.detector_nodes = {}
+        self.node_actions = {}
+        for group in DETECTOR_GROUPS:
+            directories = [directory for directory, config in self.node_configs.items()
+                           if node_group(config) == group]
+            self.detector_nodes[group] = directories
+            menu = self.menubar.addMenu(group)
+            self.detector_menus[group] = menu
+            menu.addAction('Open all nodes').triggered.connect(
+                lambda checked=False, group=group: self.set_detector_windows_open(group, True)
+            )
+            menu.addAction('Close all nodes').triggered.connect(
+                lambda checked=False, group=group: self.set_detector_windows_open(group, False)
+            )
+            menu.addSeparator()
+            for directory in directories:
+                config = self.node_configs[directory]
+                action = menu.addAction(config['node_name'])
+                action.setCheckable(True)
+                action.setToolTip(f"Open or close {config['node_name']} manager ({config['host_name']})")
+                action.triggered.connect(
+                    lambda checked, directory=directory: self.set_node_window_open(directory, checked)
+                )
+                self.node_actions[directory] = action
+            menu.setEnabled(bool(directories))
+            menu.aboutToShow.connect(self.refresh_node_menus)
+
+    def refresh_node_menus(self):
+        opened = self.node_controller.open_directories
+        for directory, action in self.node_actions.items():
+            # Programmatic checks do not trigger the open/close QAction signal.
+            action.setChecked(directory in opened)
+
+    def set_node_window_open(self, directory, opened):
+        if opened:
+            self.open_node(directory)
+        else:
+            self.node_controller.close_node(self.node_configs[directory])
+            self.refresh_node_menus()
+
+    def set_detector_windows_open(self, group, opened):
+        for directory in self.detector_nodes[group]:
+            self.set_node_window_open(directory, opened)
+
+    def open_node(self, element_id):
+        config = self.node_configs.get(element_id.upper())
+        if config is None:
+            QMessageBox.information(
+                self, 'Node not configured',
+                f'{element_id} has no node entry in config/mbs_nodes.yaml.\n'
+                'Add its directory and host_name to enable this detector.'
+            )
+            return
+        try:
+            node = self.node_controller.open_node(config)
+            self.refresh_node_menus()
+            return node
+        except RuntimeError as error:
+            logger.error(str(error))
+            QMessageBox.critical(self, 'Cannot open node manager', str(error))
+            self.refresh_node_menus()
 
     #==========================================================================
     def open_external_browsers(self):
 
-        for node in MBSNode.list_of_nodes:
+        for node in self.nodes:
             node_host = node.node_host
             logger.info(f"Opening {node_host} dashboard...")
             node.open_external_browser()
@@ -233,7 +221,7 @@ class SuperFrsManager(   QMainWindow,
     #==========================================================================
     def show_all_dashboards(self):
 
-        for node in MBSNode.list_of_nodes:
+        for node in self.nodes:
             logger.info(f"Showing {node.name} dashboard...")
             node.show_hide_dashboard()
        
@@ -241,16 +229,9 @@ class SuperFrsManager(   QMainWindow,
     def closeEvent(self, event):
         '''Must stay with Main widget'''
         logger.debug("closeEvent")
+        self.node_menu_timer.stop()
+        self.stop_konsole_monitor()
         self.save_window_data() # save window position and size on close
-
-        # close all node browser windows
-        for node in MBSNode.list_of_nodes:
-             node.browser_window.close() # close browser windows
-
-        # stop the worker thread
-        self.node_worker.is_running = False  # Stop the worker loop
-        self.node_worker.stop()  # Stop the worker
-        self.threadpool.waitForDone()
 
         # accept the close event to allow the window to close
         event.accept() # let the window close

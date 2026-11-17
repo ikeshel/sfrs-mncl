@@ -13,19 +13,22 @@ import signal
 import subprocess
 import re
 from enum import Enum
+from pathlib import Path
 from loguru import logger
 
 ## 
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtGui import QFont
-from PyQt6.QtSvgWidgets import QSvgWidget
 from PyQt6.QtWidgets import QLabel
 
 ##
 sys.path.append('package')
 from mbs_browser import MBSBrowser
 from ssh_commander import SSHCommander
+from node_groups import node_group
+from node_svg import svg_for_host, svg_for_subsystem_id
+from node_svg_widget import NodeSvgWidget
 
 #==============================================================================
 #==============================================================================
@@ -51,6 +54,7 @@ class MBSNode(QtWidgets.QWidget,
         self.name               = node_dict['node_name']
         self.node_host          = node_dict['host_name']
         self.directory          = node_dict['directory']
+        self.sfrs_chamber       = node_dict.get('sfrs_chamber', '')
         self.active             = node_dict.get('active', True) # get active status from config, default to True if not specified
         self.pc_type            = node_dict.get('pc_type', 'intel_x86') # get PC type from config, default to 'intel_x86' if not specified
         self.status             = NodeStatus.UNKNOWN # initialize status to UNKNOWN, will be updated later based on checks
@@ -70,6 +74,7 @@ class MBSNode(QtWidgets.QWidget,
         self.read_node_murx_config() # read the MURX config to get the subsystem ID for this node
 
         self.init_ui()
+        self.set_connection_status(self.status == NodeStatus.ALIVE)
         if not self.active or self.status == NodeStatus.DEAD:
             self.setDisabled(True) # disable the widget if the node is not active
 
@@ -79,7 +84,19 @@ class MBSNode(QtWidgets.QWidget,
 
     #=========================================================================
     def init_ui(self):
-        node_svg = QSvgWidget(f"images/{self.pc_type}.svg", self)
+        svg_path = Path("images") / f"{self.pc_type}.svg"
+        self.node_svg = node_svg = NodeSvgWidget(self)
+        svg_data = svg_for_host(svg_path.read_bytes(), self.node_host)
+        is_timesorter = node_group({'directory': self.directory, 'node_name': self.name}) == 'TIMESORTER'
+        node_svg.load_node_svg(svg_for_subsystem_id(
+            svg_data, None if is_timesorter else str(self.WR_SUBSYSTEM_ID)
+        ))
+        # Read the SVG's intrinsic dimensions instead of deriving them from a window.
+        self.svg_size = node_svg.renderer().defaultSize()
+        if self.svg_size.isEmpty():
+            self.svg_size = node_svg.sizeHint()
+        # Fit the illustration inside the node area without stretching it.
+        node_svg.renderer().setAspectRatioMode(Qt.AspectRatioMode.KeepAspectRatio)
         # node_svg.setMinimumSize(1500, 240)
         # node_svg.setGeometry(QtCore.QRect(0, 0, 200, 200))
         
@@ -91,32 +108,39 @@ class MBSNode(QtWidgets.QWidget,
         # Create label-link for node name and set it up
         self.lbl_node_name = QtWidgets.QLabel(self)
         self.lbl_node_name.setObjectName(f"lbl_{self.directory}")
-        self.lbl_node_name.setText(f"{self.directory}\n{self.node_host}")
+        self.lbl_node_name.setText(self.sfrs_chamber or self.directory)
         self.lbl_node_name.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.lbl_node_name.setToolTip(f"Click to open {self.directory} Dashboard")
-        self.lbl_node_name.setGeometry(QtCore.QRect(10, 5, 110, 50))
+        self.lbl_node_name.setToolTip(f"Click to open {self.directory} Dashboard ({self.node_host})")
+        self.lbl_node_name.setGeometry(QtCore.QRect(100, 5, 110, 30))
         self.lbl_node_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lbl_node_name.setFont(QFont("Courier", 10, QFont.Weight.Bold))
         self.browser_window = MBSBrowser(url=f"http://{self.node_host}:8899/MBS/localhost/ControlGUI/")
         self.lbl_node_name.mousePressEvent = lambda event: self.show_hide_dashboard()      
 
-        # Create label for subsystem ID and set it up
-        self.lbl_subsystem_id = QtWidgets.QLabel(self)
-        self.lbl_subsystem_id.setObjectName(f"lbl_{self.directory}_subsystem_id")
-        self.lbl_subsystem_id.setFont(QFont("Times", 10, QFont.Weight.Bold))
-        self.lbl_subsystem_id.setText(f"WR: {self.WR_SUBSYSTEM_ID}")
-        self.lbl_subsystem_id.setToolTip(f"Subsystem event ID")
-        self.lbl_subsystem_id.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lbl_subsystem_id.setGeometry(QtCore.QRect(10, 55, 110, 30))
+        self._position_node_labels()
 
-        # Create red circle widget for status indicator
-        self.status_ping = QtWidgets.QWidget(self)
-        self.status_ping.setToolTip(f"Ping for {self.directory} node")
-        diameter = 13
-        self.radius = diameter // 2
-        self.status_ping.setGeometry(64-self.radius, 90-self.radius, diameter, diameter)
-        self.status_ping.setStyleSheet(f"background-color: red; border-radius: {self.radius}px;")
-        self.status_ping.raise_()
+    def set_connection_status(self, alive: bool, bright: bool = False):
+        self.status = NodeStatus.ALIVE if alive else NodeStatus.DEAD
+        colors = ('lightgreen', 'green') if alive else ('pink', 'red')
+        self.node_svg.set_power_led_color(colors[0 if bright else 1])
+        state = 'reachable' if alive else 'unreachable'
+        self.node_svg.setToolTip(f'{self.node_host}: SSH {state}')
+
+    def sizeHint(self):
+        # The layout uses this natural size when no saved window geometry exists.
+        if hasattr(self, "svg_size"):
+            return QtCore.QSize(self.svg_size)
+        return super().sizeHint()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if hasattr(self, 'lbl_node_name'):
+            self._position_node_labels()
+
+    def _position_node_labels(self):
+        # Keep the chamber label centered while resizing; the WR ID is in the SVG.
+        x = max(0, (self.width() - self.lbl_node_name.width()) // 2)
+        self.lbl_node_name.move(x, 5)
 
     #=========================================================================
     def extract_subsystem_id(self, murx_content: str) -> str:
@@ -185,9 +209,10 @@ class MBSNode(QtWidgets.QWidget,
         try:
             result = subprocess.run(
                 # ssh -o ConnectTimeout=3 ikeshel@x86l-157 echo alive
-                ["ssh", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo", "alive"],
+                ["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={timeout}", f"ikeshel@{self.node_host}", "echo", "alive"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                timeout=timeout + 1,
             )
             return result.returncode == 0 # return True if SSH connection is successful, False otherwise
         except Exception:

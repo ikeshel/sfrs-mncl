@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="600"
-   height="98.577301"
-   viewBox="0 0 600.00003 98.577309"
+   width="1000.248"
+   height="149.5517"
+   viewBox="0 0 1000.248 149.55171"
    version="1.1"
    id="svg44"
    sodipodi:docname="intel_music.svg"
-   inkscape:version="1.4.1 (unknown)"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -25,15 +25,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showborder="false"
-     inkscape:zoom="3.7013333"
-     inkscape:cx="320.69525"
-     inkscape:cy="103.7464"
-     inkscape:window-width="3440"
+     inkscape:zoom="1.7315706"
+     inkscape:cx="500.12399"
+     inkscape:cy="74.49884"
+     inkscape:window-width="2560"
      inkscape:window-height="1368"
-     inkscape:window-x="0"
+     inkscape:window-x="2560"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g18" />
+     inkscape:current-layer="svg44" />
   <title
      id="title1">1U 19-inch Rack PC Front View</title>
   <desc
@@ -42,9 +42,22 @@
      id="defs6">
     <pattern
        inkscape:collect="always"
-       xlink:href="#mesh"
        id="pattern44"
-       patternTransform="matrix(0.39748911,0,0,0.39748911,-18.650018,-24.021988)" />
+       width="18"
+       height="18"
+       patternUnits="userSpaceOnUse"
+       patternTransform="matrix(0.66264613,0,0,0.60209698,-31.09107,-36.271512)">
+      <rect
+         x="1"
+         y="1"
+         width="13"
+         height="10"
+         rx="1.5"
+         fill="#050607"
+         stroke="#3a4045"
+         stroke-width="1"
+         id="pattern44_tile" />
+    </pattern>
     <linearGradient
        id="panelGrad"
        x1="32.893833"
@@ -153,51 +166,63 @@
   </defs>
   <!-- Background -->
   <rect
-     width="572.04822"
-     height="95.461502"
+     width="953.65015"
+     height="144.6004"
      fill="#f3f4f5"
      id="rect6"
-     style="fill:#2f2f2f;fill-opacity:1;stroke:#000000;stroke-width:3.1158;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-     x="14.01402"
-     y="1.5579" />
+     style="fill:#2f2f2f;fill-opacity:1;stroke:#000000;stroke-width:4.95129;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+     x="23.362494"
+     y="2.4756451" />
+  <rect
+     x="116.01639"
+     y="13.702538"
+     width="558.61066"
+     height="116.80682"
+     rx="5"
+     fill="url(#mesh)"
+     stroke="#070809"
+     stroke-width="1.89495"
+     id="rect18"
+     style="fill:url(#pattern44)"
+     ry="5" />
   <!-- Rack ears -->
   <!-- Left USB section -->
   <g
      id="g18"
-     transform="matrix(0.39748911,0,0,0.39748911,-18.650018,-24.021988)">
+     transform="matrix(0.66264614,0,0,0.60209699,-31.091071,-36.271513)">
     <rect
        x="112"
        y="92"
        width="92"
        height="138"
-       rx="10.063169"
+       rx="6.0364041"
        fill="#111416"
        stroke="#34393e"
        stroke-width="2"
        id="rect11"
-       ry="10.063169" />
+       ry="6.6434479" />
     <g
        transform="translate(128,111)"
        id="g14">
       <rect
          width="55"
          height="25"
-         rx="5.0315843"
+         rx="3.0182021"
          fill="#050708"
          stroke="#555b60"
          id="rect12"
          x="0"
          y="0"
-         ry="5.0315843" />
+         ry="3.3217239" />
       <rect
          x="6"
          y="5"
          width="43"
          height="15"
-         rx="2.5157921"
+         rx="1.509101"
          fill="#1576bd"
          id="rect13"
-         ry="2.5157921" />
+         ry="1.660862" />
       <rect
          x="10"
          y="8"
@@ -213,22 +238,22 @@
       <rect
          width="55"
          height="25"
-         rx="5.0315843"
+         rx="3.0182021"
          fill="#050708"
          stroke="#555b60"
          id="rect15"
          x="0"
          y="0"
-         ry="5.0315843" />
+         ry="3.3217239" />
       <rect
          x="6"
          y="5"
          width="43"
          height="15"
-         rx="2.5157921"
+         rx="1.509101"
          fill="#1576bd"
          id="rect16"
-         ry="2.5157921" />
+         ry="1.660862" />
       <rect
          x="10"
          y="8"
@@ -245,34 +270,22 @@
        sodipodi:nodetypes="cccscccscccccccccccccssccccccscccccccccccccsccscccccsccscsccccsccccccscccccccccccccccccccccccccscccscccccccccccccssccccccccssscccscsccccscssccccccccccccccccccccscssccsccccccsccscccccccccccccccccscccscccccccc" />
   </g>
   <!-- Ventilation grille -->
-  <rect
-     x="69.592567"
-     y="8.9696083"
-     width="335.08331"
-     height="77.112885"
-     rx="5"
-     fill="url(#mesh)"
-     stroke="#070809"
-     stroke-width="1.19247"
-     id="rect18"
-     style="fill:url(#pattern44)"
-     ry="5" />
   <!-- Hints of internal fans/components -->
   <!-- Drive bay module -->
   <g
      id="g34"
-     transform="matrix(0.39748911,0,0,0.39748911,-18.650018,-24.021988)">
+     transform="matrix(0.66264614,0,0,0.60209699,-31.091071,-36.271513)">
     <rect
        x="1090"
        y="82"
        width="315"
        height="196"
-       rx="12.57896"
+       rx="7.545505"
        fill="#0d0f10"
        stroke="#3b4044"
        stroke-width="3"
        id="rect23"
-       ry="12.57896" />
+       ry="8.3043098" />
     <!-- Upper drive -->
     <g
        transform="translate(1115,96)"
@@ -280,7 +293,7 @@
       <rect
          width="236"
          height="72"
-         rx="7.5473766"
+         rx="4.5273032"
          fill="url(#bayGrad)"
          stroke="#050607"
          stroke-width="3"
@@ -288,7 +301,7 @@
          x="0"
          y="0"
          style="fill:url(#linearGradient44)"
-         ry="7.5473766" />
+         ry="4.9825859" />
       <g
          stroke="#53595e"
          stroke-width="3"
@@ -323,12 +336,12 @@
          y="9"
          width="38"
          height="53"
-         rx="7.5473766"
+         rx="4.5273032"
          fill="#a5c9ee"
          stroke="#326da8"
          stroke-width="2"
          id="rect27"
-         ry="7.5473766" />
+         ry="4.9825859" />
       <path
          d="m 82,16 h 22 l -4,38 H 86 Z"
          fill="#4d89c7"
@@ -338,10 +351,10 @@
          y="5"
          width="16"
          height="62"
-         rx="5.0315843"
+         rx="3.0182021"
          fill="#ee6a21"
          id="rect28"
-         ry="5.0315843" />
+         ry="3.3217239" />
     </g>
     <!-- Lower drive -->
     <g
@@ -350,7 +363,7 @@
       <rect
          width="236"
          height="72"
-         rx="7.5473766"
+         rx="4.5273032"
          fill="url(#bayGrad)"
          stroke="#050607"
          stroke-width="3"
@@ -358,7 +371,7 @@
          x="0"
          y="0"
          style="fill:url(#linearGradient45)"
-         ry="7.5473766" />
+         ry="4.9825859" />
       <g
          stroke="#53595e"
          stroke-width="3"
@@ -393,12 +406,12 @@
          y="9"
          width="38"
          height="53"
-         rx="7.5473766"
+         rx="4.5273032"
          fill="#a5c9ee"
          stroke="#326da8"
          stroke-width="2"
          id="rect32"
-         ry="7.5473766" />
+         ry="4.9825859" />
       <path
          d="m 82,16 h 22 l -4,38 H 86 Z"
          fill="#4d89c7"
@@ -408,38 +421,38 @@
          y="5"
          width="16"
          height="62"
-         rx="5.0315843"
+         rx="3.0182021"
          fill="#ee6a21"
          id="rect33"
-         ry="5.0315843" />
+         ry="3.3217239" />
     </g>
   </g>
   <!-- Status/control section -->
   <g
      id="g43"
-     transform="matrix(0.39748911,0,0,0.39748911,-18.650018,-24.021988)">
+     transform="matrix(0.66264614,0,0,0.60209699,-31.091071,-36.271513)">
     <rect
        x="1417"
        y="83"
        width="78"
        height="194"
-       rx="10.063169"
+       rx="6.0364041"
        fill="#0c0f10"
        stroke="#363b3f"
        stroke-width="2"
        id="rect34"
-       ry="10.063169" />
+       ry="6.6434479" />
     <!-- Yellow equipment label -->
     <rect
        x="1425"
        y="90"
        width="60"
        height="28"
-       rx="5.0315843"
+       rx="3.0182021"
        fill="#f5d20a"
        stroke="#a58c00"
        id="rect35"
-       ry="5.0315843" />
+       ry="3.3217239" />
     <text
        x="1455"
        y="109"
@@ -448,7 +461,7 @@
        font-size="13px"
        font-weight="700"
        fill="#c0392b"
-       id="text35">X86-261</text>
+       id="host_name">X86-XXX</text>
     <!-- Power LED and button -->
     <circle
        cx="1436"
@@ -456,21 +469,24 @@
        r="7"
        fill="#6ce230"
        filter="url(#glowGreen)"
-       id="circle35" />
-    <circle
-       cx="1467"
-       cy="135"
-       r="9"
-       fill="#171b1e"
-       stroke="#81888d"
-       stroke-width="2"
-       id="circle36" />
-    <path
-       d="m 1467,129 v 8 m -5,-5 a 6,6 0 1 0 10,0"
-       fill="none"
-       stroke="#ccd2d6"
-       stroke-width="2"
-       id="path36" />
+       id="led_power" />
+    <g
+       id="g1">
+      <circle
+         cx="1467"
+         cy="135"
+         r="9"
+         fill="#171b1e"
+         stroke="#81888d"
+         stroke-width="2"
+         id="circle36" />
+      <path
+         d="m 1467,129 v 8 m -5,-5 a 6,6 0 1 0 10,0"
+         fill="none"
+         stroke="#ccd2d6"
+         stroke-width="2"
+         id="path36" />
+    </g>
     <!-- Indicator LEDs -->
     <g
        font-family="Arial, Helvetica, sans-serif"
@@ -550,21 +566,23 @@
   </g>
   <!-- Top highlight -->
   <path
-     d="M 19.111447,4.5972282 H 579.57112"
+     d="M 31.860311,7.0794703 H 966.19142"
      stroke="#4b5156"
-     stroke-width="0.794978"
+     stroke-width="1.26329"
      opacity="0.75"
      id="path43" />
   <!-- Caption -->
   <text
-     x="477.26254"
-     y="83.524925"
+     x="758.41376"
+     y="132.85022"
      text-anchor="middle"
      font-family="Arial, Helvetica, sans-serif"
-     font-size="7.1548px"
+     font-size="11.3697px"
      fill="#3c4145"
      id="text44"
-     style="stroke-width:0.397489">1U 19-inch rack PC — front elevation</text>
+     style="fill:#e6e6e6;stroke-width:0.631646"
+     inkscape:label="text44"
+     transform="scale(1.0490776,0.95321834)">1U 19-inch rack PC — front elevation</text>
   <metadata
      id="metadata44">
     <rdf:RDF>
@@ -575,20 +593,20 @@
     </rdf:RDF>
   </metadata>
   <path
-     d="M 65.538812,5.9596062 V 88.238828"
+     d="M 109.25844,9.1431336 V 133.77566"
      stroke="#4b5156"
-     stroke-width="0.304599"
+     stroke-width="0.484035"
      opacity="0.75"
      id="path43-6" />
   <path
-     d="M 409.6745,5.9596058 V 88.238828"
+     d="M 682.96016,9.143133 V 133.77566"
      stroke="#4b5156"
-     stroke-width="0.304599"
+     stroke-width="0.484035"
      opacity="0.75"
      id="path43-6-5" />
   <g
      id="g2"
-     transform="matrix(0.39748911,0,0,0.39748911,2.0575108,-0.86225191)">
+     transform="matrix(0.66264614,0,0,0.60209699,3.430035,-1.1902821)">
     <rect
        style="fill:#151515;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect1-6"
@@ -613,7 +631,7 @@
   </g>
   <g
      id="g4"
-     transform="matrix(0.39748911,0,0,0.39748911,587.1615,-0.86225191)">
+     transform="matrix(0.66264614,0,0,0.60209699,978.84519,-1.1902821)">
     <rect
        style="fill:#151515;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect2"
@@ -637,14 +655,25 @@
        ry="6.2432971" />
   </g>
   <rect
-     style="fill:#161616;fill-opacity:1;stroke:none;stroke-width:3.17959;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
+     style="fill:#161616;fill-opacity:1;stroke:none;stroke-width:5.05266;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
      id="rect4"
-     width="568.80426"
-     height="6.3786879"
-     x="15.629944"
-     y="89.032372" />
+     width="948.24219"
+     height="9.6621237"
+     x="26.056368"
+     y="134.97768" />
   <path
-     style="fill:#161616;fill-opacity:0.47982064;stroke:none;stroke-width:3.17991;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
-     d="M 69.608583,27.884855 V 85.446316 H 343.24031 Z"
+     style="fill:#161616;fill-opacity:0.479821;stroke:none;stroke-width:5.05316;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0.6;stroke-opacity:1;paint-order:markers fill stroke"
+     d="M 116.04307,42.354424 V 129.5457 h 456.16598 z"
      id="path4" />
+  <text
+     x="152.76967"
+     y="270.27075"
+     text-anchor="middle"
+     font-family="Arial, Helvetica, sans-serif"
+     font-size="23.4098px"
+     font-weight="700"
+     fill="#c0392b"
+     id="whiterabbit_id"
+     style="fill:#ffffff;stroke-width:1.80075"
+     transform="matrix(0.66264614,0,0,0.60209699,-31.091071,-36.271513)">WR:0x0300</text>
 </svg>

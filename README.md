@@ -67,7 +67,79 @@ source .venv/bin/activate
 python mbs_node_manager.py
 ```
 
-Other entry points include `super_frs_manager.py`, `tamex.py`, `mdpp.py`,
+The default manager window shows the TimeSorter node. Its bottom row has three
+equal-width buttons, **MUSIC**, **PLSCI**, and **SCIFI**, which open the respective
+node windows. Clicking a button again raises the existing window.
+Each detector window has a **TimeSorter** action in its top menu bar to open
+the main window or bring it forward if it is already open.
+
+To select one or more windows directly (names are case-insensitive):
+
+```bash
+python mbs_node_manager.py MUSIC
+python mbs_node_manager.py PLSCI
+python mbs_node_manager.py SCIFI
+./mbs_node_manager.py music plsci
+python mbs_node_manager.py all
+```
+
+`all` opens four separate windows: TimeSorter, MUSIC, PLSCI, and SCIFI.
+Multiple names open only the requested systems; repeated names reuse the same window.
+Nodes are grouped from their existing `directory` or `node_name` values in
+`config/mbs_nodes.yaml`, including numbered names such as `SCIFI3` and `SCIFI4`.
+The equipment label (`host_name`, with `text35` / `X86-XXX` as fallbacks) in `intel_music.svg`
+and `intel_x86.svg` displays each node's `host_name` at runtime. The shared SVG
+files remain unchanged. The dashboard link shows `sfrs_chamber` from the node
+configuration, falling back to the directory for nodes such as TimeSorter that
+have no chamber. The full directory and hostname remain available in its tooltip.
+The SVG text object `whiterabbit_id` (also accepting `whiterubbit_id`) shows
+`WR: <WR_SUBSYSTEM_ID>` from the node's
+MURX configuration, replacing the separate subsystem label. It is hidden for TimeSorter.
+The SVG element `led_power` displays SSH reachability: green/light green when
+reachable, red/pink when unreachable. It replaces the separate status dot and
+scales with the illustration; this is connectivity status, not a hardware power measurement.
+Each window's menus control only its own nodes and its position is saved
+separately. Normal window resizing preserves the width-to-height ratio of its
+saved size. Without a saved geometry file, the initial layout uses each node
+SVG's original dimensions, plus the menu, margins, spacing and launcher buttons.
+That initial window ratio is then preserved. Dragging a side adjusts the
+other dimension automatically; maximized/fullscreen windows follow the desktop.
+On X11, the window manager enforces this ratio directly during resizing. Other
+platforms use a deferred size correction. SVG backgrounds are repainted during
+resizing so previous image positions do not leave fragments behind.
+Closing one window leaves the others open; it can be reopened from
+TimeSorter. Opening a window does not automatically start acquisition processes.
+
+Run `python super_frs_manager.py` for the clickable SuperFRS diagram. Clicking a
+named detector rectangle opens a manager for that node only; clicking again raises
+its existing window. SVG object IDs match the `directory` fields in
+`config/mbs_nodes.yaml`; Inkscape labels are also supported when the object has a
+generated ID such as `rect1-6`, including the PLSCI regions. Hovering shows the node name and hostname; objects without
+a matching configuration report that they are not configured. Each individual
+node window saves its own geometry and runs in a separate process. Closing the
+overview leaves all node managers and their dashboards open. Reopening the overview
+and clicking a detector brings its existing manager forward. The **Opened nodes**
+menu controls running individual node managers for this repository and desktop session.
+Each node manager has separate log files under `logs/`.
+The **Time sorter** action in the overview's top menu bar opens its independent
+main window or brings it forward if already running.
+The overview's **MUSIC**, **PLSCI**, and **SCIFI** menus each have **Open all nodes**,
+**Close all nodes**, and a checkbox for every configured node. Checking an item
+opens its individual manager; unchecking closes that manager and its dashboard.
+The checkboxes update when managers are opened or closed separately.
+Console checkboxes also refresh every second using the local window titles
+(`ikeshel@<host>_<screen>`), including consoles opened or closed outside the manager.
+The **Open/Close node konsoles** and **Open/Close all konsoles** items are checked
+only when all console windows they control are open. Window checks run in the
+background through `wmctrl`; a failed check leaves the previous state unchanged.
+
+An individual manager can also be launched directly:
+
+```bash
+./mbs_node_manager.py --node FHF1_SCIFI3
+```
+
+Other entry points include `tamex.py`, `mdpp.py`,
 `scifi.py`, and `pulser.py`. For example:
 
 ```bash
